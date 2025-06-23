@@ -6,6 +6,7 @@
 
   "files.associations": {
     ".env.*": "properties",
+    "**/.azure/**/*.yaml": "azure-pipelines"
   },
   "files.exclude": {
     "**/coverage": true,
