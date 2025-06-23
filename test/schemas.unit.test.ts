@@ -27,17 +27,16 @@ describe("Core Scenes Schema Tests", () => {
       const missingSamples = [];
       schemaFiles.forEach((file) => {
         const schemaName = basename(file, extname(file));
-        if(schemaName === "CommonTypes") {
+        if (schemaName === "CommonTypes") {
           return; // Skip CommonTypes definitions
         }
         const sampleName = `${schemaName}.sample.json`;
-        if(!samples.includes(sampleName)) {
+        if (!samples.includes(sampleName)) {
           missingSamples.push(sampleName);
         }
       });
 
-       expect(missingSamples.join("\n")).toBe("");
-
+      expect(missingSamples.join("\n")).toBe("");
     });
 
     it("test schema validation with samples", async () => {
