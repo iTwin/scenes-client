@@ -1,9 +1,9 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
-import { loadSchemas, ajv } from "@bentley/itwin-scenes-schema-validation";
+import { loadSchema, ajv } from "@bentley/itwin-scenes-schema-validation";
 
 describe("Common Types Schema Tests", () => {
   beforeAll(() => {
-    loadSchemas("schemas");
+    loadSchema("./schemas/CommonTypes.json");
   });
 
   describe("Test CommonType definitions", () => {

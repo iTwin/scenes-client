@@ -3,15 +3,21 @@ import { readFileSync } from "fs";
 import { basename, extname } from "path";
 import {
   getAllFilePaths,
-  loadSchemas,
+  loadAllSchemas,
   validateDataMatchesSchema,
   validateSchemaIsLoaded,
 } from "@bentley/itwin-scenes-schema-validation";
 
 describe("Core Scenes Schema Tests", () => {
   beforeAll(() => {
-    // Load schemas
-    loadSchemas("./schemas");
+    try {
+      loadAllSchemas("./schemas");
+    } catch (error) {
+      // Throw a more descriptive error if schema loading fails
+      throw Error(
+        `Failed to load schema: ${error.additionalDetails?.filePath}. Error: ${error.message}`,
+      );
+    }
   });
 
   describe("Test schemas with samples", () => {
