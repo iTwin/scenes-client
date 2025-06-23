@@ -1,0 +1,36 @@
+{
+  "$id": "/schemas/View3d.1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "position": {
+      "$ref": "/schemas/CommonTypes#/definitions/vector3d"
+    },
+    "isOrthographic": {
+      "type": "boolean",
+      "description": "Whether the view is orthographic or perspective"
+    },
+    "aspectRatio": {
+      "type": "number",
+      "description": "Aspect ratio of the view"
+    },
+    "direction": {
+      "$ref": "/schemas/CommonTypes#/definitions/vector3d"
+    },
+    "up": {
+      "$ref": "/schemas/CommonTypes#/definitions/vector3d"
+    },
+    "near": {
+      "type": "number",
+      "description": "Near plane distance"
+    },
+    "far": {
+      "type": "number",
+      "description": "Far plane distance"
+    },
+    "ecefTransform": {
+      "$ref": "/schemas/CommonTypes#/definitions/transform"
+    }
+  },
+  "required": [ "position", "isOrthographic", "aspectRatio", "direction", "up", "near", "far", "ecefTransform" ]
+}

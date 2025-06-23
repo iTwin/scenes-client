@@ -1,0 +1,28 @@
+{
+  "$id": "/schemas/RepositoryResource.1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "visible": {
+      "type": "boolean",
+      "description": "Whether the layer is turned on or off"
+    },
+    "repositoryId": {
+      "$ref": "/schemas/CommonTypes#/definitions/safeString",
+      "description": "Id of the repository. Should be the same as class for internal repos and a GUID for custom repos"
+    },
+    "id": {
+      "$ref": "/schemas/CommonTypes#/definitions/safeString",
+      "description": "Id of the individual resource"
+    },
+    "class": {
+      "$ref": "/schemas/CommonTypes#/definitions/safeString",
+      "description": "Class of the repository, such as iModels or RealityData"
+    },
+    "subClass": {
+      "$ref": "/schemas/CommonTypes#/definitions/safeString",
+      "description": "SubClass of the repository if applicable"
+    }
+  },
+  "required": [ "repositoryId", "id", "class", "visible" ]
+}

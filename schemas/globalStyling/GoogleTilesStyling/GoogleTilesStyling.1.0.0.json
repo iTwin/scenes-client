@@ -1,0 +1,20 @@
+{
+  "$id": "/schemas/GoogleTilesStyling.1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "quality": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "adjustment": {
+      "description": "Matrix or vector used for adjusting the positioning of the tiles",
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    }
+  },
+  "required": [ "quality" ]
+}

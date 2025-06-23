@@ -1,0 +1,11 @@
+{
+  "$id": "/schemas/MaterialDecoration.1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "decorationId": {
+      "$ref": "/schemas/CommonTypes#/definitions/guid",
+      "description": "Id of the material decoration for usage with the Decorations API"
+    }
+  }
+}

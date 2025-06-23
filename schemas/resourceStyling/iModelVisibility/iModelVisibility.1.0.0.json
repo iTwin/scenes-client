@@ -1,0 +1,53 @@
+{
+  "$id": "/schemas/iModelVisibility.1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "categories": {
+      "description": "Object maintaining visibility of categories in an iModel",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "shownList": {
+          "description": "Compressed Id64 Set of the categories shown",
+          "$ref": "/schemas/CommonTypes#/definitions/compressedId64Set"
+        },
+        "hiddenList": {
+          "description": "Compressed Id64 Set of the categories hidden",
+          "$ref": "/schemas/CommonTypes#/definitions/compressedId64Set"
+        }
+      },
+      "required": [ "shownList", "hiddenList" ]
+    },
+    "models": {
+      "description": "Object maintaining visibility of models in an iModel",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "shownList": {
+          "description": "Compressed Id64 Set of the models shown",
+          "$ref": "/schemas/CommonTypes#/definitions/compressedId64Set"
+        },
+        "hiddenList": {
+          "description": "Compressed Id64 Set of the models hidden",
+          "$ref": "/schemas/CommonTypes#/definitions/compressedId64Set"
+        }
+      },
+      "required": [ "shownList", "hiddenList" ]
+    },
+    "adjustment": {
+      "description": "Matrix used for adjusting the positioning of the iModel",
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "quality": {
+      "description": "Quality of iModel rendering",
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0
+    }
+  },
+  "required": [ "categories", "models" ]
+}

@@ -1,0 +1,80 @@
+{
+  "$id": "/schemas/UnrealAtmosphericStyling.1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atmosphere": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sunAzimuth": {
+          "type": "number",
+          "minimum": -360,
+          "maximum": 360
+        },
+        "sunPitch": {
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90
+        },
+        "heliodonLongitude": {
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180
+        },
+        "heliodonLatitude": {
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90
+        },
+        "heliodonDate": {
+          "$ref": "/schemas/CommonTypes#/definitions/dateTime"
+        },
+        "weather": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "windOrientation": {
+          "type": "number",
+          "minimum": -360,
+          "maximum": 360
+        },
+        "windForce": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "fog": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "exposure": {
+          "type": "number",
+          "minimum": -4.0,
+          "maximum": 4.0
+        },
+        "useHeliodon": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "sunAzimuth",
+        "sunPitch",
+        "heliodonLongitude",
+        "heliodonLatitude",
+        "heliodonDate",
+        "weather",
+        "windOrientation",
+        "windForce",
+        "fog",
+        "exposure",
+        "useHeliodon"
+      ]
+    }
+  },
+  "required": [
+    "atmosphere"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "$id": "/schemas/CameraAnimation.1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "description": "Timestamps sequence in seconds.",
+      "type": "array",
+      "items": {
+        "type": "number",
+        "minimum": 0.0
+      }
+    },
+    "output": {
+      "description": "Series of 3D views (and optional settings/schedules) for the animation.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "camera": {
+            "$ref": "/schemas/View3d.1.0.0"
+          },
+          "settings": {
+            "$ref": "/schemas/UnrealAtmosphericStyling.1.0.0"
+          },
+          "schedule": {
+            "$ref": "/schemas/ScheduleSimulation.1.0.0"
+          }
+        },
+        "required": ["camera"]
+      }
+    }
+  },
+  "required": ["input", "output"]
+}
