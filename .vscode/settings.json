@@ -2,6 +2,7 @@
   "editor.insertSpaces": true,
   "editor.tabSize": 2,
   "editor.trimAutoWhitespace": true,
+  "editor.formatOnSave": true,
 
   "files.associations": {
     ".env.*": "properties",
@@ -20,11 +21,10 @@
   "typescript.format.semicolons": "insert",
   "typescript.reportStyleChecksAsWarnings": true,
 
-  "[javascript][typescript][typescriptreact]": {
-    "editor.defaultFormatter": "vscode.typescript-language-features",
-  },
-
   "[json][jsonc]": {
     "editor.defaultFormatter": "vscode.json-language-features",
+  },
+  "[typescript][javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
 }

@@ -23,6 +23,7 @@ export default tseslint.config(
       "scene-schemas/no-plain-string-types": "error",
       "scene-schemas/no-additional-properties": "error",
       "scene-schemas/top-level-object-type": "error",
+      "scene-schemas/property-descriptions": "error",
     },
   },
   // lint common types

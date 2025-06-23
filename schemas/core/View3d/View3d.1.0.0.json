@@ -4,7 +4,8 @@
   "additionalProperties": false,
   "properties": {
     "position": {
-      "$ref": "/schemas/CommonTypes#/definitions/vector3d"
+      "$ref": "/schemas/CommonTypes#/definitions/vector3d",
+      "description": "Location of the eye of the camera."
     },
     "isOrthographic": {
       "type": "boolean",
@@ -15,10 +16,12 @@
       "description": "Aspect ratio of the view"
     },
     "direction": {
-      "$ref": "/schemas/CommonTypes#/definitions/vector3d"
+      "$ref": "/schemas/CommonTypes#/definitions/vector3d",
+      "description": "Direction the camera is pointing towards"
     },
     "up": {
-      "$ref": "/schemas/CommonTypes#/definitions/vector3d"
+      "$ref": "/schemas/CommonTypes#/definitions/vector3d",
+      "description": "Defines 'up' direction relative to camera in the view"
     },
     "near": {
       "type": "number",
@@ -29,7 +32,8 @@
       "description": "Far plane distance"
     },
     "ecefTransform": {
-      "$ref": "/schemas/CommonTypes#/definitions/transform"
+      "$ref": "/schemas/CommonTypes#/definitions/transform",
+      "description": "Earth-Centered, Earth-Fixed transform"
     }
   },
   "required": [ "position", "isOrthographic", "aspectRatio", "direction", "up", "near", "far", "ecefTransform" ]

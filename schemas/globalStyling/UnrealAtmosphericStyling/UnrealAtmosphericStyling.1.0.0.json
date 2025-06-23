@@ -4,58 +4,70 @@
   "additionalProperties": false,
   "properties": {
     "atmosphere": {
+      "description": "TODO",
       "type": "object",
       "additionalProperties": false,
       "properties": {
         "sunAzimuth": {
+          "description": "TODO",
           "type": "number",
           "minimum": -360,
           "maximum": 360
         },
         "sunPitch": {
+          "description": "TODO",
           "type": "number",
           "minimum": -90,
           "maximum": 90
         },
         "heliodonLongitude": {
+          "description": "TODO",
           "type": "number",
           "minimum": -180,
           "maximum": 180
         },
         "heliodonLatitude": {
+          "description": "TODO",
           "type": "number",
           "minimum": -90,
           "maximum": 90
         },
         "heliodonDate": {
+          "description": "TODO",
           "$ref": "/schemas/CommonTypes#/definitions/dateTime"
         },
         "weather": {
+          "description": "TODO",
           "type": "number",
           "minimum": 0.0,
           "maximum": 1.0
         },
         "windOrientation": {
+          "description": "TODO",
           "type": "number",
           "minimum": -360,
           "maximum": 360
         },
         "windForce": {
+          "description": "TODO",
           "type": "number",
           "minimum": 0.0,
           "maximum": 1.0
         },
         "fog": {
+          "description": "TODO",
           "type": "number",
           "minimum": 0.0,
           "maximum": 1.0
         },
         "exposure": {
+          "description": "TODO",
           "type": "number",
           "minimum": -4.0,
           "maximum": 4.0
         },
         "useHeliodon": {
+          "description": "TODO",
           "type": "boolean"
         }
       },

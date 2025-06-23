@@ -19,18 +19,21 @@
         "additionalProperties": false,
         "properties": {
           "camera": {
-            "$ref": "/schemas/View3d.1.0.0"
+            "$ref": "/schemas/View3d.1.0.0",
+            "description": "3D view information"
           },
           "settings": {
-            "$ref": "/schemas/UnrealAtmosphericStyling.1.0.0"
+            "$ref": "/schemas/UnrealAtmosphericStyling.1.0.0",
+            "description": "(Optional) settings to animate"
           },
           "schedule": {
-            "$ref": "/schemas/ScheduleSimulation.1.0.0"
+            "$ref": "/schemas/ScheduleSimulation.1.0.0",
+            "description": "(Optional) 4D schedule to animate"
           }
         },
-        "required": ["camera"]
+        "required": [ "camera" ]
       }
     }
   },
-  "required": ["input", "output"]
+  "required": [ "input", "output" ]
 }
