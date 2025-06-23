@@ -1,0 +1,17 @@
+{
+  "categories": {
+    "shownList": "+333",
+    "hiddenList": "+333"
+  },
+  "models": {
+    "shownList": "+333",
+    "hiddenList": "+333"
+  },
+  "adjustment": [
+    1, 0, 0, 0,
+    0, 1, 0, 0,
+    0, 0, 1, 0,
+    0, 0, 0, 1
+  ],
+  "quality": 0.30000001192092896
+}

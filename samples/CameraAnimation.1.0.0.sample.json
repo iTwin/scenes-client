@@ -1,0 +1,93 @@
+{
+  "input": [0.0, 1.0],
+  "output": [
+    {
+      "camera": {
+        "position": {
+          "x": 10,
+          "y": 20,
+          "z": 0
+        },
+        "isOrthographic": true,
+        "aspectRatio": 1,
+        "direction": {
+          "x": 1,
+          "y": 0,
+          "z": 0
+        },
+        "up": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "near": 0,
+        "far": 100,
+        "ecefTransform": [
+          0, 0, 0, 0,
+          0, 0, 0, 0,
+          0, 0, 0, 0,
+          0, 0, 0, 0
+        ]
+      },
+      "settings": {
+        "atmosphere": {
+          "sunAzimuth": 0,
+          "sunPitch": 0,
+          "heliodonLongitude": -77.90736389160156,
+          "heliodonLatitude": 35.857818603515625,
+          "heliodonDate": "2024-06-16T18:00:00.000Z",
+          "weather": 0.4434758722782135,
+          "windOrientation": 0,
+          "windForce": 0,
+          "fog": 0.01919628120958805,
+          "exposure": 0,
+          "useHeliodon": true
+        }
+      }
+    },
+    {
+      "camera": {
+        "position": {
+          "x": 10,
+          "y": 20,
+          "z": 0
+        },
+        "isOrthographic": true,
+        "aspectRatio": 1,
+        "direction": {
+          "x": 1,
+          "y": 0,
+          "z": 0
+        },
+        "up": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        "near": 0,
+        "far": 100,
+        "ecefTransform": [
+          0, 0, 0, 0,
+          0, 0, 0, 0,
+          0, 0, 0, 0,
+          0, 0, 0, 0
+        ]
+      },
+      "settings": {
+        "atmosphere": {
+          "sunAzimuth": 0,
+          "sunPitch": 0,
+          "heliodonLongitude": -77.90736389160156,
+          "heliodonLatitude": 35.857818603515625,
+          "heliodonDate": "2024-06-16T18:00:00.000Z",
+          "weather": 0.4434758722782135,
+          "windOrientation": 0,
+          "windForce": 0,
+          "fog": 0.01919628120958805,
+          "exposure": 0,
+          "useHeliodon": true
+        }
+      }
+    }
+  ]
+}

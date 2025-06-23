@@ -1,0 +1,36 @@
+{
+  "polygon":[
+    { "x": 10, "y": 20, "z": 0},
+    { "x": 15, "y": 25, "z": 0},
+    { "x": 20, "y": 15, "z": 0},
+    { "x": 10, "y": 20, "z": 0}
+  ],
+  "transformFromClip": [
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0
+  ],
+  "transformToClip": [
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0
+  ],
+  "zHigh": 100,
+  "zLow": 0,
+  "mask": false,
+  "invisible": false,
+  "clipPlanes": {
+    "convexSets": [
+      {
+        "planes": [
+          {
+            "normal": { "x": -2, "y": -3, "z": -1},
+            "distance": -10
+          }
+        ]
+      }
+    ]
+  }
+}
