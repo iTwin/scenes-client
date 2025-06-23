@@ -63,6 +63,5 @@ To verify if your schema is valid, you can run unit tests and linting locally (b
 ### Usage
 
 1. Install packages: `pnpm install`
-2. Build: `pnpm run build`
-3. Run unit tests: `pnpm run test`
-4. Check for linting errors: `pnpm run lint`
+2. Run unit tests: `pnpm run test`
+3. Check for linting errors: `pnpm run lint`
