@@ -1,5 +1,6 @@
 {
   "$id": "/schemas/Movie.1.0.0",
+  "description": "A sequence of camera animations, or clips, which can be played independently or sequencially",
   "type": "object",
   "additionalProperties": false,
   "properties": {

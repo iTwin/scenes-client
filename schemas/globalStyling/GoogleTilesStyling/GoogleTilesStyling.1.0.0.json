@@ -1,5 +1,6 @@
 {
   "$id": "/schemas/GoogleTilesStyling.1.0.0",
+  "description": "Global setting to control styling options for Google tiles, such as rendering quality.",
   "type": "object",
   "additionalProperties": false,
   "properties": {

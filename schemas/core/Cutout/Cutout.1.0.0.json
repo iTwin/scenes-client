@@ -1,5 +1,6 @@
 {
   "$id": "/schemas/Cutout.1.0.0",
+  "description": "A polygon-defined area projected along the Z-axis on 3D tiles, used to exclude specific regions from rendering. It's primarily used to prevent visual conflicts between overlapping data layers.",
   "type": "object",
   "additionalProperties": false,
   "properties": {

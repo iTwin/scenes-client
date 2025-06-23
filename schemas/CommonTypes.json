@@ -1,5 +1,6 @@
 {
   "$id": "/schemas/CommonTypes",
+  "description": "Collection of reusable definitions for common structures, types, and constraints.",
   "definitions": {
     "guid": {
       "type": "string",
@@ -60,6 +61,7 @@
       "description": "Array of 16 numbers representing a 4x4 matrix in row-major order"
     },
     "clipPlane": {
+      "description": "A single plane represented as an inward unit normal and a signed distance",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -80,7 +82,7 @@
           "description": "Used by iTwin.Js. Interior planes should not generate edges when clipping geometry in the view."
         }
       },
-      "required": []
+      "required": [ ]
     },
     "clipPlaneSet": {
       "description": "Collection of ClipPlanes, often used for bounding regions of space.",
@@ -88,6 +90,7 @@
       "additionalProperties": false,
       "properties": {
         "planes": {
+          "description": "Collection of ClipPlanes.",
           "type": "array",
           "items": {
             "$ref": "#/definitions/clipPlane"

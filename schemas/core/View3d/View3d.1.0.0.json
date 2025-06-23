@@ -1,5 +1,6 @@
 {
   "$id": "/schemas/View3d.1.0.0",
+  "description": "Representation of an iTwin 3D view",
   "type": "object",
   "additionalProperties": false,
   "properties": {

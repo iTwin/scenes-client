@@ -35,7 +35,6 @@ describe("Core Scenes Schema Tests", () => {
           missingSamples.push(sampleName);
         }
       });
-
       expect(missingSamples.join("\n")).toBe("");
     });
 

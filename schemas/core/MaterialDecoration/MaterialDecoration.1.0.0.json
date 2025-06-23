@@ -1,5 +1,6 @@
 {
   "$id": "/schemas/MaterialDecoration.1.0.0",
+  "description": "Reference to material mapping stored in the decoration service",
   "type": "object",
   "additionalProperties": false,
   "properties": {

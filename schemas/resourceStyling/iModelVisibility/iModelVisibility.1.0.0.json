@@ -1,5 +1,6 @@
 {
   "$id": "/schemas/iModelVisibility.1.0.0",
+  "description": "Defines styling options for a specific iModel, including visible/hidden models and categories, rendering quality, and position adjustments.",
   "type": "object",
   "additionalProperties": false,
   "properties": {

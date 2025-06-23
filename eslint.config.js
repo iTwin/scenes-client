@@ -24,6 +24,7 @@ export default tseslint.config(
       "scene-schemas/no-additional-properties": "error",
       "scene-schemas/top-level-object-type": "error",
       "scene-schemas/property-descriptions": "error",
+      "scene-schemas/top-level-descriptions": "error",
     },
   },
   // lint common types
@@ -37,6 +38,7 @@ export default tseslint.config(
     rules: {
       ...json.configs.recommended.rules,
       "scene-schemas/no-additional-properties": "error",
+      "scene-schemas/property-descriptions": "error",
     },
   },
   // lint test files

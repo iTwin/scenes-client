@@ -1,5 +1,6 @@
 {
   "$id": "/schemas/UnrealAtmosphericStyling.1.0.0",
+  "description": "Global setting to control unreal atmospheric styling  when visualizing the scene in Carrot.",
   "type": "object",
   "additionalProperties": false,
   "properties": {

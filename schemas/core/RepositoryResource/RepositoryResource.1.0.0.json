@@ -1,5 +1,6 @@
 {
   "$id": "/schemas/RepositoryResource.1.0.0",
+  "description": "Reference to a single repository resource",
   "type": "object",
   "additionalProperties": false,
   "properties": {

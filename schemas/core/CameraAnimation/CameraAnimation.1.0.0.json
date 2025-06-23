@@ -1,5 +1,6 @@
 {
   "$id": "/schemas/CameraAnimation.1.0.0",
+  "description": "Camera animation is defined by a series of 3D views with a timestamp. Interpolation of camera postion is done by the application itself.",
   "type": "object",
   "additionalProperties": false,
   "properties": {

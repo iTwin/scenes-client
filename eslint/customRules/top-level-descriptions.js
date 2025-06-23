@@ -1,15 +1,15 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 
-// Custom ESLint rule to enforce top level object type in domain schemas
+// Custom ESLint rule to enforce all domain schemas have a description
 // See https://eslint.org/docs/latest/extend/custom-rules
 export default {
   meta: {
     type: "problem",
     docs: {
-      description: 'Require top-level "type" in json schemas to be "object"',
+      description: "Require top-level json schema descriptions",
     },
     messages: {
-      objectType: 'Top-level "type" must be "object". Received "{{type}}".',
+      schemaDescription: "Schema must contain a top-level description",
     },
   },
   create: (context) => {
@@ -17,11 +17,10 @@ export default {
       Document(node) {
         const sourceCode = context.getSourceCode();
         const data = JSON.parse(sourceCode.text);
-        if (data.type !== "object") {
+        if (!data.description) {
           context.report({
             node,
-            messageId: "objectType",
-            data: { type: data.type },
+            messageId: "schemaDescription",
           });
         }
       },
