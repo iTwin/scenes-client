@@ -30,20 +30,29 @@ schemas
 
 ## Adding a new JSON schema
 
-1. Clone the repository (first time) with `git clone` or pull updates to the repository (subsequent times) with `git pull`.
+1. Clone the repository (first time) using `git clone` or pull the latest updates (subsequent times) using `git pull`.
 2. Determine the type of object you are contributing and create a new folder to store all versions of your schema under the appropriate directory:
    [schemas/core/](/schemas/core),
    [schemas/globalStyling/](/schemas/globalStyling), or
    [schemas/resourceStyling/](/schemas/resourceStyling/).
 
 3. Add your JSON schema(s) under this folder, following the naming convention `<FolderName>.<SemVer>.json`.
-4. Publish changes to your branch and open a pull request.
+4. Provide sample JSON data for each schema version under the [samples](/samples) directory, using the name `<SchemaName>.sample.json`. This helps ensure your schema works correctly, as the sample data is automatically validated against it during unit testing.
+5. Publish changes to your branch and open a pull request.
 
 ## CommonTypes
 
 You can leverage common type definitions (such as `guid`, `id64`, and `dateTime`) in [CommonTypes.json](/schemas/CommonTypes.json) using `$ref` syntax.
 
-**Note**: To ensure input strings are secure, using `"type": "string"` is disallowed. You must use one of the [CommonTypes](schemas/CommonTypes.json) string definitions instead.
+## Schema Rules and Restrictions
+
+1. All schemas must have a top-level `type` of `object`
+
+2. All schemas must include a top-level `description` explaining its purpose
+
+3. Every field under `properties` must include a `description`
+
+4. Direct use of `"type": "string"` is disallowed. To ensure input strings are secure, use one of the predefined string types from [CommonTypes](schemas/CommonTypes.json) instead.
 
 ## Pull Requests
 
