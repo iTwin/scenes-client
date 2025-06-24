@@ -11,7 +11,7 @@
     "test": "jest --config ./test/jest.config.json --verbose"
   },
   "devDependencies": {
-    "@bentley/itwin-scenes-schema-validation": "^1.0.0",
+    "@bentley/itwin-scenes-schema-validation": "^0.0.1",
     "@eslint/json": "^0.12.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.15.18",
