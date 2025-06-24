@@ -15,17 +15,17 @@ jobs:
       with:
         fetch-depth: 0  # Fetch all history for all branches and tags
 
-    - name: Use Node.js 20
-      uses: actions/setup-node@v3
-      with:
-        node-version: 20
-        cache: "pnpm"
-
     - name: Install pnpm
       uses: pnpm/action-setup@v2
       with:
         version: 9
         run_install: false
+
+    - name: Use Node.js 20
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20
+        cache: "pnpm"
 
     - name: Set internal registry config
       run: |
