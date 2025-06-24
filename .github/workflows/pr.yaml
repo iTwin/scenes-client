@@ -27,19 +27,27 @@ jobs:
         node-version: 20
         cache: "pnpm"
 
-    - name: Set internal registry config
+    - name: Creating .npmrc for Azure Artifacts
       run: |
-        pnpm config set "//pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/:username"  "bentleycs"
-        pnpm config set "//pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/:_password" "${{ secrets.AZURE_ARTIFACTS_PAT }}"
-        pnpm config set "//pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/:email"     "npm requires email to be set but doesn't use the value"
-        pnpm config set "//pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/:username"           "bentleycs"
-        pnpm config set "//pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/:_password"          "${{ secrets.AZURE_ARTIFACTS_PAT }}"
-        pnpm config set "//pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/:email"              "npm requires email to be set but doesn't use the value"
+        cat << EOF >> "$HOME/.npmrc"
+          @bentley:registry=https://pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/
+          always-auth=true
+
+          //registry.npmjs.org/:_authToken=XXXXX-XXXXX-XXXXX-XXXXX
+          ; begin auth token
+          //pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/:username=bentleycs
+          //pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/:_password=${AZURE_ARTIFACTS_PAT}
+          //pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/:email=npm requires email to be set but doesn't use the value
+          //pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/:username=bentleycs
+          //pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/:_password=${AZURE_ARTIFACTS_PAT}
+          //pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/:email=npm requires email to be set but doesn't use the value
+          ; end auth token
+        EOF
       env:
         AZURE_ARTIFACTS_PAT: ${{ secrets.NPM_PACKAGE_PUBLISH_BENTLEYCS }}
 
     - name: Install dependencies
-      run: pnpm install --frozen-lockfile
+      run: pnpm install
 
     - name: Lint
       run: pnpm lint
