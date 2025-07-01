@@ -1,0 +1,33 @@
+{
+  "editor.insertSpaces": true,
+  "editor.tabSize": 2,
+  "editor.trimAutoWhitespace": true,
+  "editor.formatOnSave": true,
+
+  "files.associations": {
+    ".env.*": "properties",
+    "**/.azure/**/*.yaml": "azure-pipelines"
+  },
+  "files.exclude": {
+    "**/coverage": true,
+    "**/node_modules": true,
+  },
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "files.trimTrailingWhitespace": true,
+
+  "json.format.enable": true,
+  "json.format.keepLines": true,
+
+  "typescript.format.semicolons": "insert",
+  "typescript.preferences.importModuleSpecifierEnding": "js",
+  "typescript.reportStyleChecksAsWarnings": true,
+
+  "[javascript][typescript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features",
+  },
+
+  "[json][jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features",
+  },
+}
