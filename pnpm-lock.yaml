@@ -1,0 +1,31 @@
+lockfileVersion: '6.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+devDependencies:
+  '@types/node':
+    specifier: ^24.0.7
+    version: 24.0.7
+  typescript:
+    specifier: ^5.8.3
+    version: 5.8.3
+
+packages:
+
+  /@types/node@24.0.7:
+    resolution: {integrity: sha1-7lgPeFDH6rru9h75a42MBP35T1M=}
+    dependencies:
+      undici-types: 7.8.0
+    dev: true
+
+  /typescript@5.8.3:
+    resolution: {integrity: sha1-kvij5ePPSXNW9BeMNM1lp/XoRA4=}
+    engines: {node: '>=14.17'}
+    hasBin: true
+    dev: true
+
+  /undici-types@7.8.0:
+    resolution: {integrity: sha1-3gC4W3EMVBIuRPv9kR+NcBdM0pQ=}
+    dev: true
