@@ -74,10 +74,10 @@ export interface SceneMinimal {
  * Scene response object for restful operations
  */
 export interface Scene extends SceneMinimal {
-/** True if sceneData has been filtered due to insufficient permissions */
-isPartial?: boolean;
-/** Scene informational objects */
-sceneData: SceneData;
+  /** True if sceneData has been filtered due to insufficient permissions */
+  isPartial?: boolean;
+  /** Scene informational objects */
+  sceneData: SceneData;
 }
   
 /** @alpha */

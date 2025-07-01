@@ -46,14 +46,13 @@ export class SceneClient {
     });
   }
 
-  async getScene(params: { iTwinId: string; sceneId: string }): Promise<{ scene: Scene }> {
-    const scene = await getScene({
+  async getScene(params: { iTwinId: string; sceneId: string }): Promise<Scene> {
+    return await getScene({
       id: params.sceneId,
       iTwinId: params.iTwinId,
       getAccessToken: this.getAccessToken,
       urlPrefix: this.urlPrefix,
     });
-    return { scene };
   }
 
   async postScene(params: { iTwinId: string; scene: CreateSceneDto }): Promise<Scene> {
