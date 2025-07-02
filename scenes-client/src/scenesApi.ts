@@ -13,42 +13,43 @@ import type {
     UpdateObjectDto,
   } from "./scenes.js";
 
+// @naron: better organize the methods here
 const BASE_URL = "https://itwinscenes-eus.bentley.com/"; // @naron: should be param?
 
 async function callScenesApi<T>(args: Omit<RequestArgs<T>, "baseUrl">): Promise<T> {
-    return callApi<T>({ ...args, baseUrl: BASE_URL });
+  return callApi<T>({ ...args, baseUrl: BASE_URL });
 }
 
 function* batched<T>(items: T[], batchSize: number) {
-    for (let i = 0; i < items.length; i += batchSize) {
-        yield items.slice(i, i + batchSize);
-    }
+  for (let i = 0; i < items.length; i += batchSize) {
+      yield items.slice(i, i + batchSize);
+  }
 }
 
 export async function getScenes({
-    iTwinId,
+  iTwinId,
+  getAccessToken,
+  urlPrefix,
+}: { iTwinId: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<Pick<Scene, "id" | "iTwinId" | "displayName">[]> {
+  return callScenesApi<Scene[]>({
+    endpoint: `v1/iTwins/${iTwinId}/scenes`,
     getAccessToken,
+    postProcess: async (response) => {
+      const responseJson = await response.json();
+      if ("error" in responseJson) {
+        throw new Error(`Error fetching scenes: ${responseJson.message}`);
+      }
+      if (!("scenes" in responseJson) || !Array.isArray(responseJson.scenes)) {
+        throw new Error(`Error fetching scenes: unexpected response format`);
+      }
+      return responseJson.scenes;
+    },
     urlPrefix,
-  }: { iTwinId: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<Pick<Scene, "id" | "iTwinId" | "displayName">[]> {
-    return callScenesApi<Scene[]>({
-      endpoint: `v1/iTwins/${iTwinId}/scenes`,
-      getAccessToken,
-      postProcess: async (response) => {
-        const responseJson = await response.json();
-        if ("error" in responseJson) {
-          throw new Error(`Error fetching scenes: ${responseJson.message}`);
-        }
-        if (!("scenes" in responseJson) || !Array.isArray(responseJson.scenes)) {
-          throw new Error(`Error fetching scenes: unexpected response format`);
-        }
-        return responseJson.scenes;
-      },
-      urlPrefix,
-      additionalHeaders: {
-        Accept: "application/vnd.bentley.itwin-platform.v1+json",
-      },
-    });
-  }
+    additionalHeaders: {
+      Accept: "application/vnd.bentley.itwin-platform.v1+json",
+    },
+  });
+}
 
 export async function getScene({
   id,
@@ -72,6 +73,37 @@ export async function getScene({
     urlPrefix,
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
+    },
+  });
+}
+
+export async function postScene({
+  scene,
+  iTwinId,
+  getAccessToken,
+  urlPrefix,
+}: { iTwinId: string; scene: CreateSceneDto } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<Scene> {
+  return callScenesApi({
+    endpoint: `v1/iTwins/${iTwinId}/scenes`,
+    getAccessToken,
+    urlPrefix,
+    postProcess: async (response) => {
+      const responseJson = await response.json();
+      if ("error" in responseJson) {
+        throw new Error(`Error creating scene: ${responseJson.message}`);
+      }
+      if (!("scene" in responseJson) || typeof responseJson.scene !== "object") {
+        throw new Error(`Error creating scene: unexpected response format`);
+      }
+      return responseJson.scene;
+    },
+    fetchOptions: {
+      method: "POST",
+      body: JSON.stringify(scene, (_, value) => (value === undefined ? null : value)), // Convert undefined to null for JSON serialization
+    },
+    additionalHeaders: {
+      Accept: "application/vnd.bentley.itwin-platform.v1+json",
+      "Content-Type": "application/json",
     },
   });
 }
@@ -100,37 +132,6 @@ export async function postObject({
     fetchOptions: {
       method: "POST",
       body: JSON.stringify(object, (_, value) => (value === undefined ? null : value)), // Convert undefined to null for JSON serialization
-    },
-    additionalHeaders: {
-      Accept: "application/vnd.bentley.itwin-platform.v1+json",
-      "Content-Type": "application/json",
-    },
-  });
-}
-
-export async function postScene({
-  scene,
-  iTwinId,
-  getAccessToken,
-  urlPrefix,
-}: { iTwinId: string; scene: CreateSceneDto } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<Scene> {
-  return callScenesApi({
-    endpoint: `v1/iTwins/${iTwinId}/scenes`,
-    getAccessToken,
-    urlPrefix,
-    postProcess: async (response) => {
-      const responseJson = await response.json();
-      if ("error" in responseJson) {
-        throw new Error(`Error creating scene: ${responseJson.message}`);
-      }
-      if (!("scene" in responseJson) || typeof responseJson.scene !== "object") {
-        throw new Error(`Error creating scene: unexpected response format`);
-      }
-      return responseJson.scene;
-    },
-    fetchOptions: {
-      method: "POST",
-      body: JSON.stringify(scene, (_, value) => (value === undefined ? null : value)), // Convert undefined to null for JSON serialization
     },
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -171,26 +172,6 @@ export async function patchScene({
   });
 }
 
-export async function deleteScene({
-  sceneId,
-  iTwinId,
-  getAccessToken,
-  urlPrefix,
-}: { sceneId: string; iTwinId: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<void> {
-  return callScenesApi({
-    endpoint: `v1/iTwins/${iTwinId}/scenes/${sceneId}`,
-    getAccessToken,
-    urlPrefix,
-    postProcess: async () => {},
-    fetchOptions: {
-      method: "DELETE",
-    },
-    additionalHeaders: {
-      Accept: "application/vnd.bentley.itwin-platform.v1+json",
-    },
-  });
-}
-
 export async function patchObject({
   sceneId,
   iTwinId,
@@ -223,6 +204,26 @@ export async function patchObject({
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
       "Content-Type": "application/json",
+    },
+  });
+}
+
+export async function deleteScene({
+  sceneId,
+  iTwinId,
+  getAccessToken,
+  urlPrefix,
+}: { sceneId: string; iTwinId: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<void> {
+  return callScenesApi({
+    endpoint: `v1/iTwins/${iTwinId}/scenes/${sceneId}`,
+    getAccessToken,
+    urlPrefix,
+    postProcess: async () => {},
+    fetchOptions: {
+      method: "DELETE",
+    },
+    additionalHeaders: {
+      Accept: "application/vnd.bentley.itwin-platform.v1+json",
     },
   });
 }
