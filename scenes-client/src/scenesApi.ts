@@ -7,17 +7,23 @@ import { callApi, RequestArgs } from "./Fetch";
 import type {
     Scene,
     SceneObject,
-    CreateSceneDto,
-    UpdateSceneDto,
     CreateObjectDto,
     UpdateObjectDto,
   } from "./scenes.js";
 
-// @naron: better organize the methods here
-const BASE_URL = "https://itwinscenes-eus.bentley.com/"; // @naron: should be param?
+import type { 
+  SceneCreateDto,
+  SceneUpdateDTO,
+ } from "./types/index.js";
 
-async function callScenesApi<T>(args: Omit<RequestArgs<T>, "baseUrl">): Promise<T> {
-  return callApi<T>({ ...args, baseUrl: BASE_URL });
+// @naron: better organize the methods here
+const DEFAULT_BASE_URL = "https://itwinscenes-eus.bentley.com/";
+
+async function callScenesApi<T>({
+  baseUrl = DEFAULT_BASE_URL,
+  ...args
+}: Omit<RequestArgs<T>, "baseUrl"> & { baseUrl?: string }): Promise<T> {
+  return callApi<T>({ ...args, baseUrl });
 }
 
 function* batched<T>(items: T[], batchSize: number) {
@@ -30,7 +36,8 @@ export async function getScenes({
   iTwinId,
   getAccessToken,
   urlPrefix,
-}: { iTwinId: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<Pick<Scene, "id" | "iTwinId" | "displayName">[]> {
+  baseUrl,
+}: { iTwinId: string; baseUrl?: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<Pick<Scene, "id" | "iTwinId" | "displayName">[]> {
   return callScenesApi<Scene[]>({
     endpoint: `v1/iTwins/${iTwinId}/scenes`,
     getAccessToken,
@@ -45,6 +52,7 @@ export async function getScenes({
       return responseJson.scenes;
     },
     urlPrefix,
+    baseUrl,
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
     },
@@ -56,7 +64,8 @@ export async function getScene({
   iTwinId,
   getAccessToken,
   urlPrefix,
-}: { id: string; iTwinId: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<Scene> {
+  baseUrl,
+}: { id: string; iTwinId: string; baseUrl?: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<Scene> {
   return callScenesApi<Scene>({
     endpoint: `v1/iTwins/${iTwinId}/scenes/${id}?orderBy=order`,
     getAccessToken,
@@ -71,6 +80,7 @@ export async function getScene({
       return responseJson.scene;
     },
     urlPrefix,
+    baseUrl,
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
     },
@@ -82,11 +92,13 @@ export async function postScene({
   iTwinId,
   getAccessToken,
   urlPrefix,
-}: { iTwinId: string; scene: CreateSceneDto } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<Scene> {
+  baseUrl,
+}: { iTwinId: string; scene: SceneCreateDto; baseUrl?: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<Scene> {
   return callScenesApi({
     endpoint: `v1/iTwins/${iTwinId}/scenes`,
     getAccessToken,
     urlPrefix,
+    baseUrl,
     postProcess: async (response) => {
       const responseJson = await response.json();
       if ("error" in responseJson) {
@@ -99,7 +111,7 @@ export async function postScene({
     },
     fetchOptions: {
       method: "POST",
-      body: JSON.stringify(scene, (_, value) => (value === undefined ? null : value)), // Convert undefined to null for JSON serialization
+      body: JSON.stringify(scene, (_, value) => (value === undefined ? null : value)),
     },
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -114,11 +126,13 @@ export async function postObject({
   object,
   getAccessToken,
   urlPrefix,
-}: { sceneId: string; iTwinId: string; object: CreateObjectDto } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<SceneObject> {
+  baseUrl,
+}: { sceneId: string; iTwinId: string; object: CreateObjectDto; baseUrl?: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<SceneObject> {
   return callScenesApi({
     endpoint: `v1/iTwins/${iTwinId}/scenes/${sceneId}/objects`,
     getAccessToken,
     urlPrefix,
+    baseUrl,
     postProcess: async (response) => {
       const responseJson = await response.json();
       if ("error" in responseJson) {
@@ -131,7 +145,7 @@ export async function postObject({
     },
     fetchOptions: {
       method: "POST",
-      body: JSON.stringify(object, (_, value) => (value === undefined ? null : value)), // Convert undefined to null for JSON serialization
+      body: JSON.stringify(object, (_, value) => (value === undefined ? null : value)),
     },
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -141,20 +155,22 @@ export async function postObject({
 }
 
 export async function patchScene({
-  sceneId,
   iTwinId,
+  sceneId,
   scene,
   getAccessToken,
   urlPrefix,
-}: { sceneId: string; iTwinId: string; scene: UpdateSceneDto } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<Scene> {
+  baseUrl,
+}: { sceneId: string; iTwinId: string; scene: SceneUpdateDTO; baseUrl?: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<Scene> {
   return callScenesApi({
     endpoint: `v1/iTwins/${iTwinId}/scenes/${sceneId}`,
     getAccessToken,
     urlPrefix,
+    baseUrl,
     postProcess: async (response) => {
       const responseJson = await response.json();
       if ("error" in responseJson) {
-        throw new Error(`Error updating scene: ${responseJson.message}`);
+        throw new Error(`Error updating scene: ${responseJson.message}`); //@naron: this error mss is not helping
       }
       if (!("scene" in responseJson) || typeof responseJson.scene !== "object") {
         throw new Error(`Error updating scene: unexpected response format`);
@@ -163,7 +179,7 @@ export async function patchScene({
     },
     fetchOptions: {
       method: "PATCH",
-      body: JSON.stringify(scene, (_, value) => (value === undefined ? null : value)), // Convert undefined to null for JSON serialization
+      body: JSON.stringify(scene, (_, value) => (value === undefined ? null : value)),
     },
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -179,14 +195,13 @@ export async function patchObject({
   object,
   getAccessToken,
   urlPrefix,
-}: { sceneId: string; iTwinId: string; objectId: string; object: UpdateObjectDto } & Pick<
-  RequestArgs<any>,
-  "getAccessToken" | "urlPrefix"
->): Promise<SceneObject> {
+  baseUrl,
+}: { sceneId: string; iTwinId: string; objectId: string; object: UpdateObjectDto; baseUrl?: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<SceneObject> {
   return callScenesApi({
     endpoint: `v1/iTwins/${iTwinId}/scenes/${sceneId}/objects/${objectId}`,
     getAccessToken,
     urlPrefix,
+    baseUrl,
     postProcess: async (response) => {
       const responseJson = await response.json();
       if ("error" in responseJson) {
@@ -199,7 +214,7 @@ export async function patchObject({
     },
     fetchOptions: {
       method: "PATCH",
-      body: JSON.stringify(object, (_, value) => (value === undefined ? null : value)), // Convert undefined to null for JSON serialization
+      body: JSON.stringify(object, (_, value) => (value === undefined ? null : value)),
     },
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -213,11 +228,13 @@ export async function deleteScene({
   iTwinId,
   getAccessToken,
   urlPrefix,
-}: { sceneId: string; iTwinId: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<void> {
+  baseUrl,
+}: { sceneId: string; iTwinId: string; baseUrl?: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<void> {
   return callScenesApi({
     endpoint: `v1/iTwins/${iTwinId}/scenes/${sceneId}`,
     getAccessToken,
     urlPrefix,
+    baseUrl,
     postProcess: async () => {},
     fetchOptions: {
       method: "DELETE",
@@ -234,11 +251,13 @@ export async function deleteObject({
   objectId,
   getAccessToken,
   urlPrefix,
-}: { sceneId: string; iTwinId: string; objectId: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<void> {
+  baseUrl,
+}: { sceneId: string; iTwinId: string; objectId: string; baseUrl?: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<void> {
   return callScenesApi({
     endpoint: `v1/iTwins/${iTwinId}/scenes/${sceneId}/objects/${objectId}`,
     getAccessToken,
     urlPrefix,
+    baseUrl,
     postProcess: async () => {},
     fetchOptions: {
       method: "DELETE",
@@ -255,15 +274,16 @@ export async function deleteObjects({
   objectIds,
   getAccessToken,
   urlPrefix,
-}: { sceneId: string; iTwinId: string; objectIds: string[] } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<void> {
+  baseUrl,
+}: { sceneId: string; iTwinId: string; objectIds: string[]; baseUrl?: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<void> {
   const promises: Promise<void>[] = [];
-  // scene API supports deleting up to 20 objects with a single request
   for (const batch of batched(objectIds, 20)) {
     promises.push(
       callScenesApi({
         endpoint: `v1/iTwins/${iTwinId}/scenes/${sceneId}/objects?ids=${batch.join(",")}`,
         getAccessToken,
         urlPrefix,
+        baseUrl,
         postProcess: async () => {},
         fetchOptions: {
           method: "DELETE",
@@ -274,6 +294,5 @@ export async function deleteObjects({
       }),
     );
   }
-
   await Promise.all(promises);
 }

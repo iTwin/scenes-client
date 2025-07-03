@@ -12,6 +12,7 @@
   "type": "module",
   "devDependencies": {
     "@types/node": "^24.0.7",
+    "dotenv": "^17.0.1",
     "typescript": "^5.8.3",
     "vitest": "^3.2.4"
   }

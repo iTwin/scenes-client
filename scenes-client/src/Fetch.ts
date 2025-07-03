@@ -29,7 +29,10 @@ export async function callApi<T>({
     Accept: "application/json",
     ...additionalHeaders,
   };
+  // @naron: todelete
+  console.log(`${url}${endpoint} - headers:`, headers);
   const response = await fetch(`${url}${endpoint}`, { ...fetchOptions, headers });
+  console.log(`${url}${endpoint} - response:`, response);
   return postProcess(response);
 }
 

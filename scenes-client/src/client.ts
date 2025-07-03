@@ -18,11 +18,14 @@ import {
 import type {
   Scene,
   SceneObject,
-  CreateSceneDto,
-  UpdateSceneDto,
   CreateObjectDto,
   UpdateObjectDto,
 } from "./scenes.js";
+
+import { 
+  SceneCreateDto,
+  SceneUpdateDTO,
+ } from "./types/index.js";
 
 import type { UrlPrefix } from "./Fetch.js";
 
@@ -31,11 +34,13 @@ type AccessTokenFn = () => Promise<string>;
 export class SceneClient {
   private getAccessToken: AccessTokenFn;
   private urlPrefix: UrlPrefix;
+  private baseUrl?: string;
 
   // @naron: should I accept a url prefix here? and should it be default to ""?
-  constructor({ getAccessToken, urlPrefix = "", }: { getAccessToken: AccessTokenFn; urlPrefix?: UrlPrefix }) {
+  constructor({ getAccessToken, urlPrefix = "", baseUrl }: { getAccessToken: AccessTokenFn; urlPrefix?: UrlPrefix; baseUrl?: string; }) {
     this.getAccessToken = getAccessToken;
     this.urlPrefix = urlPrefix;
+    this.baseUrl = baseUrl;
   }
 
   async getScenes(params: { iTwinId: string }): Promise<Pick<Scene, "id" | "iTwinId" | "displayName">[]> {
@@ -43,6 +48,7 @@ export class SceneClient {
       iTwinId: params.iTwinId,
       getAccessToken: this.getAccessToken,
       urlPrefix: this.urlPrefix,
+      baseUrl: this.baseUrl,
     });
   }
 
@@ -52,25 +58,28 @@ export class SceneClient {
       iTwinId: params.iTwinId,
       getAccessToken: this.getAccessToken,
       urlPrefix: this.urlPrefix,
+      baseUrl: this.baseUrl,
     });
   }
 
-  async postScene(params: { iTwinId: string; scene: CreateSceneDto }): Promise<Scene> {
+  async postScene(params: { iTwinId: string; scene: SceneCreateDto }): Promise<Scene> {
     return postScene({
       iTwinId: params.iTwinId,
       scene: params.scene,
       getAccessToken: this.getAccessToken,
       urlPrefix: this.urlPrefix,
+      baseUrl: this.baseUrl,
     });
   }
 
-  async patchScene(params: { iTwinId: string; sceneId: string; scene: UpdateSceneDto }): Promise<Scene> {
+  async patchScene(params: { iTwinId: string; sceneId: string; scene: SceneUpdateDTO }): Promise<Scene> {
     return patchScene({
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,
       scene: params.scene,
       getAccessToken: this.getAccessToken,
       urlPrefix: this.urlPrefix,
+      baseUrl: this.baseUrl,
     });
   }
 
@@ -80,6 +89,7 @@ export class SceneClient {
       sceneId: params.sceneId,
       getAccessToken: this.getAccessToken,
       urlPrefix: this.urlPrefix,
+      baseUrl: this.baseUrl,
     });
   }
 
@@ -90,6 +100,7 @@ export class SceneClient {
       object: params.object,
       getAccessToken: this.getAccessToken,
       urlPrefix: this.urlPrefix,
+      baseUrl: this.baseUrl,
     });
   }
 
@@ -101,6 +112,7 @@ export class SceneClient {
       object: params.object,
       getAccessToken: this.getAccessToken,
       urlPrefix: this.urlPrefix,
+      baseUrl: this.baseUrl,
     });
   }
 
@@ -111,6 +123,7 @@ export class SceneClient {
       objectId: params.objectId,
       getAccessToken: this.getAccessToken,
       urlPrefix: this.urlPrefix,
+      baseUrl: this.baseUrl,
     });
   }
 
@@ -121,6 +134,7 @@ export class SceneClient {
       objectIds: params.objectIds,
       getAccessToken: this.getAccessToken,
       urlPrefix: this.urlPrefix,
+      baseUrl: this.baseUrl,
     });
   }
 }
