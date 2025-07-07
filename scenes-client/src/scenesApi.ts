@@ -11,9 +11,12 @@ import type {
     UpdateObjectDto,
   } from "./scenes.js";
 
-import type { 
+import { 
   SceneCreateDto,
   SceneUpdateDTO,
+  SceneListResponse,
+  ScenesApiError,
+  ScenesErrorResponse
  } from "./types/index.js";
 
 // @naron: better organize the methods here
@@ -37,16 +40,17 @@ export async function getScenes({
   getAccessToken,
   urlPrefix,
   baseUrl,
-}: { iTwinId: string; baseUrl?: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<Pick<Scene, "id" | "iTwinId" | "displayName">[]> {
-  return callScenesApi<Scene[]>({
+}: { iTwinId: string; baseUrl?: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<SceneListResponse> {
+  return callScenesApi<SceneListResponse>({
     endpoint: `v1/iTwins/${iTwinId}/scenes`,
     getAccessToken,
     postProcess: async (response) => {
       const responseJson = await response.json();
-      if ("error" in responseJson) {
-        throw new Error(`Error fetching scenes: ${responseJson.message}`);
+      if(!response.ok){
+        const err = responseJson.error as ScenesErrorResponse; //@naron: directly cast?
+        throw new ScenesApiError(err, responseJson.status)
       }
-      if (!("scenes" in responseJson) || !Array.isArray(responseJson.scenes)) {
+      if (!("scenes" in responseJson) || !Array.isArray(responseJson.scenes)) { //@naron: is this runtime check necessary? if necessary, should it be a type guard?
         throw new Error(`Error fetching scenes: unexpected response format`);
       }
       return responseJson.scenes;
@@ -71,8 +75,9 @@ export async function getScene({
     getAccessToken,
     postProcess: async (response) => {
       const responseJson = await response.json();
-      if ("error" in responseJson) {
-        throw new Error(`Error fetching scene: ${responseJson.message}`);
+      if (!response.ok) {
+        const err = responseJson.error as ScenesErrorResponse;
+        throw new ScenesApiError(err, response.status);
       }
       if (!("scene" in responseJson) || typeof responseJson.scene !== "object") {
         throw new Error(`Error fetching scene: unexpected response format`);
@@ -101,8 +106,9 @@ export async function postScene({
     baseUrl,
     postProcess: async (response) => {
       const responseJson = await response.json();
-      if ("error" in responseJson) {
-        throw new Error(`Error creating scene: ${responseJson.message}`);
+      if (!response.ok) {
+        const err = responseJson.error as ScenesErrorResponse;
+        throw new ScenesApiError(err, response.status);
       }
       if (!("scene" in responseJson) || typeof responseJson.scene !== "object") {
         throw new Error(`Error creating scene: unexpected response format`);
@@ -135,8 +141,9 @@ export async function postObject({
     baseUrl,
     postProcess: async (response) => {
       const responseJson = await response.json();
-      if ("error" in responseJson) {
-        throw new Error(`Error creating scene object: ${responseJson.message}`);
+      if (!response.ok) {
+        const err = responseJson.error as ScenesErrorResponse;
+        throw new ScenesApiError(err, response.status);
       }
       if (!("object" in responseJson) || typeof responseJson.object !== "object") {
         throw new Error(`Error creating scene object: unexpected response format`);
@@ -169,8 +176,9 @@ export async function patchScene({
     baseUrl,
     postProcess: async (response) => {
       const responseJson = await response.json();
-      if ("error" in responseJson) {
-        throw new Error(`Error updating scene: ${responseJson.message}`); //@naron: this error mss is not helping
+      if (!response.ok) {
+        const err = responseJson.error as ScenesErrorResponse;
+        throw new ScenesApiError(err, response.status);
       }
       if (!("scene" in responseJson) || typeof responseJson.scene !== "object") {
         throw new Error(`Error updating scene: unexpected response format`);
@@ -204,8 +212,9 @@ export async function patchObject({
     baseUrl,
     postProcess: async (response) => {
       const responseJson = await response.json();
-      if ("error" in responseJson) {
-        throw new Error(`Error updating scene object: ${responseJson.message}`);
+      if (!response.ok) {
+        const err = responseJson.error as ScenesErrorResponse;
+        throw new ScenesApiError(err, response.status);
       }
       if (!("object" in responseJson) || typeof responseJson.object !== "object") {
         throw new Error(`Error updating scene object: unexpected response format`);
@@ -223,27 +232,26 @@ export async function patchObject({
   });
 }
 
-export async function deleteScene({
-  sceneId,
-  iTwinId,
-  getAccessToken,
-  urlPrefix,
-  baseUrl,
-}: { sceneId: string; iTwinId: string; baseUrl?: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<void> {
+export async function deleteScene({ sceneId, iTwinId, getAccessToken, urlPrefix, baseUrl }: {
+  sceneId: string; iTwinId: string; baseUrl?: string
+} & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<void> {
   return callScenesApi({
     endpoint: `v1/iTwins/${iTwinId}/scenes/${sceneId}`,
     getAccessToken,
     urlPrefix,
     baseUrl,
-    postProcess: async () => {},
-    fetchOptions: {
-      method: "DELETE",
-    },
-    additionalHeaders: {
-      Accept: "application/vnd.bentley.itwin-platform.v1+json",
+    fetchOptions: { method: "DELETE" },
+    additionalHeaders: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
+    postProcess: async response => {
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({} as ScenesErrorResponse));
+        throw new ScenesApiError(err, response.status);
+      }
+      return;
     },
   });
 }
+
 
 export async function deleteObject({
   sceneId,

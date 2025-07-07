@@ -25,6 +25,7 @@ import type {
 import { 
   SceneCreateDto,
   SceneUpdateDTO,
+  SceneListResponse,
  } from "./types/index.js";
 
 import type { UrlPrefix } from "./Fetch.js";
@@ -43,7 +44,7 @@ export class SceneClient {
     this.baseUrl = baseUrl;
   }
 
-  async getScenes(params: { iTwinId: string }): Promise<Pick<Scene, "id" | "iTwinId" | "displayName">[]> {
+  async getScenes(params: { iTwinId: string }): Promise<SceneListResponse> {
     return getScenes({
       iTwinId: params.iTwinId,
       getAccessToken: this.getAccessToken,

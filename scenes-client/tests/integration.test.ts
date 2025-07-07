@@ -1,6 +1,7 @@
 import 'dotenv/config'
 import { describe, it, expect, beforeAll } from 'vitest'
 import { SceneClient } from '../src/client'
+import { ScenesApiError } from '../src/types'
 
 const {
     HOST_URL,
@@ -147,15 +148,21 @@ describe('Scenes operation', () => {
 
   it("delete scene", async () => {
     await client.deleteScene({ iTwinId: ITWIN_ID!, sceneId });
-  
-    // Verify deletion by trying to get the scene, should give 404 not found
-    await expect(client.getScene({ iTwinId: ITWIN_ID!, sceneId })).rejects.toThrow(
-      expect.objectContaining({
-        message: expect.stringContaining("404 Not Found"),
-      })
-    );
+
+    try {
+      await client.getScene({iTwinId: ITWIN_ID!, sceneId});
+    }
+    catch (error) {
+      expect(error).toBeInstanceOf(ScenesApiError);
+      expect((error as ScenesApiError).status).toBe(404);
+      expect((error as ScenesApiError).code).toBe('SceneNotFound');
+      expect((error as ScenesApiError).target).toBe('scene');
+    }
   });
 })
 
-describe('Scenes Objects operations', () => {
-});
+// describe('Scenes Objects operations', () => {
+// });
+
+
+// @naron: there should be tests for exceptions/errors as well
