@@ -361,8 +361,6 @@ describe('Scenes Objects operations', () => {
       expect((error as ScenesApiError).target).toBe('sceneObject');
     }
   });
-
-
 });
 
 
