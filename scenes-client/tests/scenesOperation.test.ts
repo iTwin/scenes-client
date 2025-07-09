@@ -11,8 +11,10 @@ const {
     CLIENT_SECRET,
     ITWIN_ID,
     IMODEL_ID,
+    SCENE_ID,
   } = process.env
 
+// @naron: not necessary now but we could cache the access token
 const getAccessToken = async (): Promise<string> => {
   const params = new URLSearchParams({
     grant_type: 'client_credentials',
@@ -100,7 +102,7 @@ describe('Scenes operation', () => {
 
     sceneId = scene.id;
     expect(sceneId).toBeDefined();
-  })
+  });
 
   it("get scene by id", async () => {
     // Use the ID saved from the createScene test
@@ -134,6 +136,13 @@ describe('Scenes operation', () => {
     );
   });
 
+  it("get all scenes", async () => {
+    const res = await client.getScenes({ iTwinId: ITWIN_ID! });
+
+    expect(res).toBeDefined();
+    expect(res.scenes.length).toBeGreaterThan(0);
+  });
+
   it(`update scene`, async () => {
     const updatedScene = await client.patchScene({
       iTwinId: ITWIN_ID!,
@@ -144,7 +153,7 @@ describe('Scenes operation', () => {
     })
 
     expect(updatedScene.displayName).toBe("UpdatedTestScene");
-  })
+  });
 
   it("delete scene", async () => {
     await client.deleteScene({ iTwinId: ITWIN_ID!, sceneId });
@@ -161,8 +170,133 @@ describe('Scenes operation', () => {
   });
 })
 
-// describe('Scenes Objects operations', () => {
-// });
+let objectId: string;
+describe('Scenes Objects operations', () => {
+  it('create single object', async () => {
+    const res = await client.postObject({
+      iTwinId: ITWIN_ID!,
+      sceneId: SCENE_ID!,
+      object: {
+        kind: 'Layer',
+        version: '1.0.0',
+        data: { 
+          displayName: 'TestLayer1',
+          visible: true,
+        },
+      },
+    });
+
+    expect(res.object).toEqual(
+      expect.objectContaining({
+        kind: "Layer",
+        version: "1.0.0",
+        data: {
+          displayName: "TestLayer1",
+          visible: true,
+        },
+      })
+    );
+
+    objectId = res.object.id;
+  });
+
+  it(`create multiple objects`, async () => {
+    const res = await client.postObjects({
+      iTwinId: ITWIN_ID!,
+      sceneId: SCENE_ID!,
+      objects: [
+        {
+          kind: 'Layer',
+          version: '1.0.0',
+          data: {
+            displayName: 'TestLayer2',
+            visible: true,
+          },
+        },
+        {
+          kind: 'RepositoryResource',
+          version: '1.0.0',
+          iTwinId: ITWIN_ID!,
+          data: {
+            visible: true,
+            id: IMODEL_ID!,
+            class: 'iModels',
+            repositoryId: 'iModels',
+          },
+        },
+      ],
+    });
+    
+    expect(res.objects).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          kind: "Layer",
+          version: "1.0.0",
+          data: {
+            displayName: "TestLayer2",
+            visible: true,
+          },
+        }),
+        expect.objectContaining({
+          kind: "RepositoryResource",
+          version: "1.0.0",
+          iTwinId: ITWIN_ID!,
+          data: {
+            visible: true,
+            id: IMODEL_ID!,
+            class: "iModels",
+            repositoryId: "iModels",
+          },
+        }),
+      ])
+    );
+  });
+
+  it(`patch object`, async () => {
+    const res = await client.patchObject({
+      iTwinId: ITWIN_ID!,
+      sceneId: SCENE_ID!,
+      objectId,
+      object: {
+        displayName: "UpdatedTestLayer1",
+      },
+    });
+
+    expect(res.object).toEqual(
+      expect.objectContaining({
+        id: objectId,
+        displayName: "UpdatedTestLayer1",
+        kind: "Layer",
+        version: "1.0.0",
+        data: {
+          displayName: "TestLayer1",
+          visible: true,
+        },
+      })
+    );
+  });
+
+  
+
+  // it("get scene objects", async () => {
+  //   const res = await client.getSceneObjects({ iTwinId: ITWIN_ID!, sceneId: SCENE_ID! });
+
+  //   expect(res.objects.length).toBeGreaterThan(0);
+  //   expect(res.objects[0]).toEqual(
+  //     expect.objectContaining({
+  //       kind: "Layer",
+  //       version: "1.0.0",
+  //       data: {
+  //         displayName: "TestLayer",
+  //         visible: true,
+  //       },
+  //     })
+  //   );
+  // });
+
+
+
+});
 
 
 // @naron: there should be tests for exceptions/errors as well

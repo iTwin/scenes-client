@@ -30,9 +30,10 @@ export async function callApi<T>({
     ...additionalHeaders,
   };
   // @naron: todelete
-  console.log(`${url}${endpoint} - headers:`, headers);
+  console.log(`sent: ${url}${endpoint} - headers:`, headers);
+  console.log(`body:`, fetchOptions?.body);
   const response = await fetch(`${url}${endpoint}`, { ...fetchOptions, headers });
-  console.log(`${url}${endpoint} - response:`, response);
+  console.log(`response: ${url}${endpoint} - response:`, response);
   return postProcess(response);
 }
 

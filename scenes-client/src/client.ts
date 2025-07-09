@@ -10,15 +10,16 @@ import {
   patchScene,
   deleteScene,
   postObject,
+  postObjects,
   patchObject,
   deleteObject,
   deleteObjects,
+  patchObjects,
 } from "./scenesApi.js";
 
 import type {
   Scene,
   SceneObject,
-  CreateObjectDto,
   UpdateObjectDto,
 } from "./scenes.js";
 
@@ -26,6 +27,12 @@ import {
   SceneCreateDto,
   SceneUpdateDTO,
   SceneListResponse,
+  SceneObjectCreateDto,
+  SceneDataCreateDto,
+  SceneObjectResponse,
+  SceneObjectListResponse,
+  SceneObjectUpdateDTO,
+  SceneObjectUpdateWithIdDTO,
  } from "./types/index.js";
 
 import type { UrlPrefix } from "./Fetch.js";
@@ -37,7 +44,6 @@ export class SceneClient {
   private urlPrefix: UrlPrefix;
   private baseUrl?: string;
 
-  // @naron: should I accept a url prefix here? and should it be default to ""?
   constructor({ getAccessToken, urlPrefix = "", baseUrl }: { getAccessToken: AccessTokenFn; urlPrefix?: UrlPrefix; baseUrl?: string; }) {
     this.getAccessToken = getAccessToken;
     this.urlPrefix = urlPrefix;
@@ -94,7 +100,7 @@ export class SceneClient {
     });
   }
 
-  async postObject(params: { iTwinId: string; sceneId: string; object: CreateObjectDto }): Promise<SceneObject> {
+  async postObject(params: { iTwinId: string; sceneId: string; object: SceneObjectCreateDto }): Promise<SceneObjectResponse> {
     return postObject({
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,
@@ -105,12 +111,34 @@ export class SceneClient {
     });
   }
 
-  async patchObject(params: { iTwinId: string; sceneId: string; objectId: string; object: UpdateObjectDto }): Promise<SceneObject> {
+  async postObjects(params: { iTwinId: string; sceneId: string; objects: SceneObjectCreateDto[] }): Promise<SceneObjectListResponse> {
+    return postObjects({
+      iTwinId: params.iTwinId,
+      sceneId: params.sceneId,
+      objects: params.objects,
+      getAccessToken: this.getAccessToken,
+      urlPrefix: this.urlPrefix,
+      baseUrl: this.baseUrl,
+    });
+  }
+
+  async patchObject(params: { iTwinId: string; sceneId: string; objectId: string; object: SceneObjectUpdateDTO }): Promise<SceneObjectResponse> {
     return patchObject({
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,
       objectId: params.objectId,
       object: params.object,
+      getAccessToken: this.getAccessToken,
+      urlPrefix: this.urlPrefix,
+      baseUrl: this.baseUrl,
+    });
+  }
+
+  async patchObjects(params: { iTwinId: string; sceneId: string; objects: SceneObjectUpdateWithIdDTO[] }): Promise<SceneObjectListResponse> {
+    return patchObjects({
+      iTwinId: params.iTwinId,
+      sceneId: params.sceneId,
+      objects: params.objects,
       getAccessToken: this.getAccessToken,
       urlPrefix: this.urlPrefix,
       baseUrl: this.baseUrl,

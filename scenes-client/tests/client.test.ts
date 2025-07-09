@@ -22,7 +22,7 @@ describe("Scenes Client", () => {
     await client.getScenes({ iTwinId: "itw-1" });
 
     verifyFetch(fetchMock, {
-      url: `${makeBaseUrl(urlPrefix)}/v1/iTwins/itw-1/scenes`,
+      url: `${makeBaseUrl(urlPrefix)}/v1/scenes?iTwinId=itw-1&$top=100&$skip=0`,
       headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
     });
   });
@@ -32,7 +32,7 @@ describe("Scenes Client", () => {
     const client = new SceneClient({ getAccessToken, urlPrefix });
     await client.getScene({ iTwinId: "itw-1", sceneId: "scene-1" });
     verifyFetch(fetchMock, {
-      url: `${makeBaseUrl(urlPrefix)}/v1/iTwins/itw-1/scenes/scene-1?orderBy=order`,
+      url: `${makeBaseUrl(urlPrefix)}/v1/scenes/scene-1?iTwinId=itw-1`,
       headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
     });
   });
@@ -49,7 +49,7 @@ describe("Scenes Client", () => {
     });
 
     verifyFetch(fetchMock, {
-      url: `${makeBaseUrl(urlPrefix)}/v1/iTwins/itw-1/scenes`,
+      url: `${makeBaseUrl(urlPrefix)}/v1/scenes?iTwinId=itw-1`,
       headers: { 
         "Content-Type": "application/json",
         Accept: "application/vnd.bentley.itwin-platform.v1+json"
@@ -69,7 +69,6 @@ describe("Scenes Client", () => {
       iTwinId: "itw-1",
       sceneId: "scene-1",
       object: {
-        iTwinId: "itw-1",
         kind: "TestObject",
         version: "1.0.0",
         data: { test: "data" },
@@ -77,18 +76,61 @@ describe("Scenes Client", () => {
     });
     
     verifyFetch(fetchMock, {
-      url: `${makeBaseUrl(urlPrefix)}/v1/iTwins/itw-1/scenes/scene-1/objects`,
+      url: `${makeBaseUrl(urlPrefix)}/v1/scenes/scene-1/objects?iTwinId=itw-1`,
       headers: { 
         "Content-Type": "application/json",
         Accept: "application/vnd.bentley.itwin-platform.v1+json"
        },
       method: "POST",
       body: JSON.stringify({
-        iTwinId: "itw-1",
         kind: "TestObject",
         version: "1.0.0",
         data: { test: "data" },
       }),
+    });
+  });
+
+  it("postObjects()", async () => {
+    fetchMock.mockImplementation(() => createSuccessfulResponse({ objects: [] }));
+    const client = new SceneClient({ getAccessToken, urlPrefix });
+    await client.postObjects({
+      iTwinId: "itw-1",
+      sceneId: "scene-1",
+      objects: [
+        {
+          kind: "TestObject1",
+          version: "1.0.0",
+          data: { test: "data1" },
+        },
+        {
+          iTwinId: "itw-1",
+          kind: "TestObject2",
+          version: "1.0.0",
+          data: { test: "data2" },
+        },
+      ],
+    });
+
+    verifyFetch(fetchMock, {
+      url: `${makeBaseUrl(urlPrefix)}/v1/scenes/scene-1/objects?iTwinId=itw-1`,
+      headers: { 
+        "Content-Type": "application/json",
+        Accept: "application/vnd.bentley.itwin-platform.v1+json"
+      },
+      method: "POST",
+      body: JSON.stringify([
+        {
+          kind: "TestObject1",
+          version: "1.0.0",
+          data: { test: "data1" },
+        },
+        {
+          iTwinId: "itw-1",
+          kind: "TestObject2",
+          version: "1.0.0",
+          data: { test: "data2" },
+        },
+      ]),
     });
   });
 
@@ -102,7 +144,7 @@ describe("Scenes Client", () => {
     });
 
     verifyFetch(fetchMock, {
-      url: `${makeBaseUrl(urlPrefix)}/v1/iTwins/itw-1/scenes/scene-1`,
+      url: `${makeBaseUrl(urlPrefix)}/v1/scenes/scene-1?iTwinId=itw-1`,
       headers: { 
         "Content-Type": "application/json",
         Accept: "application/vnd.bentley.itwin-platform.v1+json"
@@ -120,32 +162,74 @@ describe("Scenes Client", () => {
       sceneId: "scene-1",
       objectId: "object-1",
       object: {
-        kind: "UpdatedObject",
+        displayName: "UpdatedObject",
         data: { updated: "data" },
       },
     })
 
     verifyFetch(fetchMock, {
-      url: `${makeBaseUrl(urlPrefix)}/v1/iTwins/itw-1/scenes/scene-1/objects/object-1`,
+      url: `${makeBaseUrl(urlPrefix)}/v1/scenes/scene-1/objects/object-1?iTwinId=itw-1`,
       headers: { 
         "Content-Type": "application/json",
         Accept: "application/vnd.bentley.itwin-platform.v1+json"
       },
       method: "PATCH",
       body: JSON.stringify({
-        kind: "UpdatedObject",
+        displayName: "UpdatedObject",
         data: { updated: "data" },
       }),
     });
   });
   
+  it("patchObjects()", async () => {
+    fetchMock.mockImplementation(() => createSuccessfulResponse({ objects: [] }));
+    const client = new SceneClient({ getAccessToken, urlPrefix });
+    await client.patchObjects({
+      iTwinId: "itw-1",
+      sceneId: "scene-1",
+      objects: [
+        {
+          id: "object-1",
+          displayName: "UpdatedObject1",
+          data: { updated: "data1" },
+        },
+        {
+          id: "object-2",
+          displayName: "UpdatedObject2",
+          data: { updated: "data2" },
+        },
+      ],
+    });
+
+    verifyFetch(fetchMock, {
+      url: `${makeBaseUrl(urlPrefix)}/v1/scenes/scene-1/objects?iTwinId=itw-1`,
+      headers: { 
+        "Content-Type": "application/json",
+        Accept: "application/vnd.bentley.itwin-platform.v1+json"
+      },
+      method: "PATCH",
+      body: JSON.stringify([
+        {
+          id: "object-1",
+          displayName: "UpdatedObject1",
+          data: { updated: "data1" },
+        },
+        {
+          id: "object-2",
+          displayName: "UpdatedObject2",
+          data: { updated: "data2" },
+        },
+      ]),
+    });
+  });
+
   it("deleteScene()", async () => {
     fetchMock.mockImplementation(() => createSuccessfulResponse({}));
     const client = new SceneClient({ getAccessToken, urlPrefix });
     await client.deleteScene({ iTwinId: "itw-1", sceneId: "scene-1" });
 
     verifyFetch(fetchMock, {
-      url: `${makeBaseUrl(urlPrefix)}/v1/iTwins/itw-1/scenes/scene-1`,
+      url: `${makeBaseUrl(urlPrefix)}/v1/scenes/scene-1?iTwinId=itw-1`,
       headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
       method: "DELETE",
     });
@@ -157,7 +241,7 @@ describe("Scenes Client", () => {
     await client.deleteObject({ iTwinId: "itw-1", sceneId: "scene-1", objectId: "object-1" });
 
     verifyFetch(fetchMock, {
-      url: `${makeBaseUrl(urlPrefix)}/v1/iTwins/itw-1/scenes/scene-1/objects/object-1`,
+      url: `${makeBaseUrl(urlPrefix)}/v1/scenes/scene-1/objects/object-1?iTwinId=itw-1`,
       headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
       method: "DELETE",
     });
@@ -169,7 +253,7 @@ describe("Scenes Client", () => {
     await client.deleteObjects({ iTwinId: "itw-1", sceneId: "scene-1", objectIds: ["object-1", "object-2"] });
 
     verifyFetch(fetchMock, {
-      url: `${makeBaseUrl(urlPrefix)}/v1/iTwins/itw-1/scenes/scene-1/objects?ids=object-1,object-2`,
+      url: `${makeBaseUrl(urlPrefix)}/v1/scenes/scene-1/objects?iTwinId=itw-1&ids=object-1,object-2`,
       headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
       method: "DELETE",
     });
