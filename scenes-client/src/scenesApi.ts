@@ -201,6 +201,66 @@ export async function postObjects({
   });
 }
 
+export async function getObject({
+  sceneId,
+  iTwinId,
+  objectId,
+  getAccessToken,
+  urlPrefix,
+  baseUrl,
+}: { sceneId: string; iTwinId: string; objectId: string, baseUrl?: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<SceneObjectResponse> {
+  return callScenesApi<SceneObjectResponse>({
+    endpoint: `v1/scenes/${sceneId}/objects/${objectId}?iTwinId=${iTwinId}`,
+    getAccessToken,
+    urlPrefix,
+    baseUrl,
+    postProcess: async (response) => {
+      const responseJson = await response.json();
+      if (!response.ok) {
+        const err = responseJson.error as ScenesErrorResponse;
+        throw new ScenesApiError(err, response.status);
+      }
+      if (!("object" in responseJson) || typeof responseJson.object !== "object")
+      {
+        throw new Error(`Error fetching scene object: unexpected response format`);
+      }
+      return responseJson;
+    },
+    additionalHeaders: {
+      Accept: "application/vnd.bentley.itwin-platform.v1+json",
+    },
+  });
+}
+
+export async function getObjects({
+  sceneId,
+  iTwinId,
+  getAccessToken,
+  urlPrefix,
+  baseUrl,
+}: { sceneId: string; iTwinId: string; baseUrl?: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<SceneObjectListResponse> {
+  return callScenesApi<SceneObjectListResponse>({
+    endpoint: `v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}`,
+    getAccessToken,
+    urlPrefix,
+    baseUrl,
+    postProcess: async (response) => {
+      const responseJson = await response.json();
+      if (!response.ok) {
+        const err = responseJson.error as ScenesErrorResponse;
+        throw new ScenesApiError(err, response.status);
+      }
+      if (!("objects" in responseJson) || !Array.isArray(responseJson.objects)) {
+        throw new Error(`Error fetching scene objects: unexpected response format`);
+      }
+      return responseJson;
+    },
+    additionalHeaders: {
+      Accept: "application/vnd.bentley.itwin-platform.v1+json",
+    },
+  });
+}
+
 export async function patchScene({
   iTwinId,
   sceneId,

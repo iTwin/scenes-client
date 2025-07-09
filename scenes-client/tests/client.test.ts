@@ -134,6 +134,27 @@ describe("Scenes Client", () => {
     });
   });
 
+  it("getObject()", async () => {
+    fetchMock.mockImplementation(() => createSuccessfulResponse({ object: {} }));
+    const client = new SceneClient({ getAccessToken, urlPrefix });
+    await client.getObject({ iTwinId: "itw-1", sceneId: "scene-1", objectId: "object-1" });
+
+    verifyFetch(fetchMock, {
+      url: `${makeBaseUrl(urlPrefix)}/v1/scenes/scene-1/objects/object-1?iTwinId=itw-1`,
+      headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
+    });
+  });
+
+  it("getObjects()", async () => {
+    fetchMock.mockImplementation(() => createSuccessfulResponse({ objects: [] }));
+    const client = new SceneClient({ getAccessToken, urlPrefix });
+    await client.getObjects({ iTwinId: "itw-1", sceneId: "scene-1" });
+    verifyFetch(fetchMock, {
+      url: `${makeBaseUrl(urlPrefix)}/v1/scenes/scene-1/objects?iTwinId=itw-1`,
+      headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
+    });
+  });
+
   it("patchScene()", async () => {
     fetchMock.mockImplementation(() => createSuccessfulResponse({ scene: {} }));
     const client = new SceneClient({ getAccessToken, urlPrefix });

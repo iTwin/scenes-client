@@ -11,10 +11,12 @@ import {
   deleteScene,
   postObject,
   postObjects,
+  getObject,
   patchObject,
   deleteObject,
   deleteObjects,
   patchObjects,
+  getObjects,
 } from "./scenesApi.js";
 
 import { 
@@ -110,6 +112,27 @@ export class SceneClient {
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,
       objects: params.objects,
+      getAccessToken: this.getAccessToken,
+      urlPrefix: this.urlPrefix,
+      baseUrl: this.baseUrl,
+    });
+  }
+
+  async getObject(params: { iTwinId: string; sceneId: string; objectId: string }): Promise<SceneObjectResponse> {
+    return getObject({
+      sceneId: params.sceneId,
+      iTwinId: params.iTwinId,
+      objectId: params.objectId,
+      getAccessToken: this.getAccessToken,
+      urlPrefix: this.urlPrefix,
+      baseUrl: this.baseUrl,
+    });
+  }
+
+  async getObjects(params: { iTwinId: string; sceneId: string; }): Promise<SceneObjectListResponse> {
+    return getObjects({
+      iTwinId: params.iTwinId,
+      sceneId: params.sceneId,
       getAccessToken: this.getAccessToken,
       urlPrefix: this.urlPrefix,
       baseUrl: this.baseUrl,

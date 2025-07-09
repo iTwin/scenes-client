@@ -171,6 +171,7 @@ describe('Scenes operation', () => {
 })
 
 let objectId: string;
+let objectId2: string;
 describe('Scenes Objects operations', () => {
   it('create single object', async () => {
     const res = await client.postObject({
@@ -250,6 +251,8 @@ describe('Scenes Objects operations', () => {
         }),
       ])
     );
+
+    objectId2 = res.objects[0].id;
   });
 
   it(`patch object`, async () => {
@@ -276,25 +279,88 @@ describe('Scenes Objects operations', () => {
     );
   });
 
+  it(`patch multiple objects`, async () => {
+    const res = await client.patchObjects({
+      iTwinId: ITWIN_ID!,
+      sceneId: SCENE_ID!,
+      objects: [
+        {
+          id: objectId,
+          displayName: "UpdatedTestLayer1Again",
+        },
+        {
+          id: objectId2,
+          displayName: "UpdatedTestLayer2",
+        },
+      ],
+    });
 
-  
+    expect(res.objects).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: objectId,
+          displayName: "UpdatedTestLayer1Again",
+        }),
+        expect.objectContaining({
+          id: objectId2,
+          displayName: "UpdatedTestLayer2",
+        }),
+      ])
+    );
+  });
 
-  // it("get scene objects", async () => {
-  //   const res = await client.getSceneObjects({ iTwinId: ITWIN_ID!, sceneId: SCENE_ID! });
+  it(`get object`, async() => {
+    const res = await client.getObject({
+      iTwinId: ITWIN_ID!,
+      sceneId: SCENE_ID!,
+      objectId,
+    });
 
-  //   expect(res.objects.length).toBeGreaterThan(0);
-  //   expect(res.objects[0]).toEqual(
-  //     expect.objectContaining({
-  //       kind: "Layer",
-  //       version: "1.0.0",
-  //       data: {
-  //         displayName: "TestLayer",
-  //         visible: true,
-  //       },
-  //     })
-  //   );
-  // });
+    expect(res.object).toEqual(
+      expect.objectContaining({
+        id: objectId,
+        displayName: "UpdatedTestLayer1Again",
+        kind: "Layer",
+        version: "1.0.0",
+        data: {
+          displayName: "TestLayer1",
+          visible: true,
+        },
+      })
+    );
+  })
 
+  it(`get all objects`, async () => {
+    const res = await client.getObjects({ iTwinId: ITWIN_ID!, sceneId: SCENE_ID! });
+
+    expect(res.objects.length).toBeGreaterThan(0);
+  });
+
+  it(`delete object`, async () => {
+    await client.deleteObject({ iTwinId: ITWIN_ID!, sceneId: SCENE_ID!, objectId });
+
+    try {
+      await client.getObject({ iTwinId: ITWIN_ID!, sceneId: SCENE_ID!, objectId });
+    } catch (error) {
+      expect(error).toBeInstanceOf(ScenesApiError);
+      expect((error as ScenesApiError).status).toBe(404);
+      expect((error as ScenesApiError).code).toBe('SceneObjectNotFound');
+      expect((error as ScenesApiError).target).toBe('sceneObject');
+    }
+  });
+
+  it(`delete multiple objects`, async () => {
+    await client.deleteObjects({ iTwinId: ITWIN_ID!, sceneId: SCENE_ID!, objectIds: [objectId2] });
+
+    try {
+      await client.getObject({ iTwinId: ITWIN_ID!, sceneId: SCENE_ID!, objectId: objectId2 });
+    } catch (error) {
+      expect(error).toBeInstanceOf(ScenesApiError);
+      expect((error as ScenesApiError).status).toBe(404);
+      expect((error as ScenesApiError).code).toBe('SceneObjectNotFound');
+      expect((error as ScenesApiError).target).toBe('sceneObject');
+    }
+  });
 
 
 });
