@@ -22,7 +22,6 @@ import {
   SceneUpdateDTO,
   SceneListResponse,
   SceneObjectCreateDto,
-  SceneDataCreateDto,
   SceneObjectResponse,
   SceneObjectListResponse,
   SceneObjectUpdateDTO,

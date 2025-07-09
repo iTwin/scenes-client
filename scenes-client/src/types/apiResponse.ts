@@ -1,5 +1,5 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
-import { Scene, SceneMinimal, SceneObject } from "../scenes";
+import { Scene, SceneMinimal, SceneObject } from "./scenes";
 
 /** Generic href link */
 export interface Link {

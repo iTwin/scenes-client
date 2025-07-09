@@ -6,7 +6,7 @@
 import { callApi, RequestArgs } from "./Fetch";
 import type {
     Scene,
-  } from "./scenes.js";
+  } from "./types/scenes.js";
 
 import { 
   SceneCreateDto,
