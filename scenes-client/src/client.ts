@@ -19,8 +19,6 @@ import {
 
 import type {
   Scene,
-  SceneObject,
-  UpdateObjectDto,
 } from "./scenes.js";
 
 import { 

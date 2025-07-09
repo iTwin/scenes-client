@@ -79,17 +79,3 @@ export interface Scene extends SceneMinimal {
   /** Scene informational objects */
   sceneData: SceneData;
 }
-
-
-// /** @alpha */
-// export type CreateSceneDto = Partial<Omit<Scene, "iTwinId">> & Pick<Scene, "displayName">;
-
-// /** @alpha */
-// export type UpdateSceneDto = Partial<Omit<Scene, "iTwinId">>;
-/** @alpha */
-
-// @naron: replace these 2 as well
-// export type CreateObjectDto = Partial<SceneObject> & Pick<SceneObject, "version" | "kind" | "iTwinId" | "data">;
-
-/** @alpha */
-export type UpdateObjectDto = Partial<Omit<SceneObject, "id" | "version">>;

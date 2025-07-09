@@ -6,8 +6,6 @@
 import { callApi, RequestArgs } from "./Fetch";
 import type {
     Scene,
-    SceneObject,
-    UpdateObjectDto,
   } from "./scenes.js";
 
 import { 
