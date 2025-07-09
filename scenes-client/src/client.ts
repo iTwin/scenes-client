@@ -17,10 +17,6 @@ import {
   patchObjects,
 } from "./scenesApi.js";
 
-import type {
-  Scene,
-} from "./scenes.js";
-
 import { 
   SceneCreateDto,
   SceneUpdateDTO,
@@ -31,6 +27,7 @@ import {
   SceneObjectListResponse,
   SceneObjectUpdateDTO,
   SceneObjectUpdateWithIdDTO,
+  SceneResponse,
  } from "./types/index.js";
 
 import type { UrlPrefix } from "./Fetch.js";
@@ -57,7 +54,7 @@ export class SceneClient {
     });
   }
 
-  async getScene(params: { iTwinId: string; sceneId: string }): Promise<Scene> {
+  async getScene(params: { iTwinId: string; sceneId: string }): Promise<SceneResponse> {
     return await getScene({
       id: params.sceneId,
       iTwinId: params.iTwinId,
@@ -67,7 +64,7 @@ export class SceneClient {
     });
   }
 
-  async postScene(params: { iTwinId: string; scene: SceneCreateDto }): Promise<Scene> {
+  async postScene(params: { iTwinId: string; scene: SceneCreateDto }): Promise<SceneResponse> {
     return postScene({
       iTwinId: params.iTwinId,
       scene: params.scene,
@@ -77,7 +74,7 @@ export class SceneClient {
     });
   }
 
-  async patchScene(params: { iTwinId: string; sceneId: string; scene: SceneUpdateDTO }): Promise<Scene> {
+  async patchScene(params: { iTwinId: string; sceneId: string; scene: SceneUpdateDTO }): Promise<SceneResponse> {
     return patchScene({
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,

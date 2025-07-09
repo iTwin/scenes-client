@@ -19,7 +19,8 @@ import {
   SceneObjectResponse,
   SceneObjectListResponse,
   SceneObjectUpdateDTO,
-  SceneObjectUpdateWithIdDTO
+  SceneObjectUpdateWithIdDTO,
+  SceneResponse
  } from "./types/index.js";
 
 // @naron: better organize the methods here
@@ -72,8 +73,8 @@ export async function getScene({
   getAccessToken,
   urlPrefix,
   baseUrl,
-}: { id: string; iTwinId: string; baseUrl?: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<Scene> {
-  return callScenesApi<Scene>({
+}: { id: string; iTwinId: string; baseUrl?: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<SceneResponse> {
+  return callScenesApi<SceneResponse>({
     endpoint: `v1/scenes/${id}?iTwinId=${iTwinId}`,
     getAccessToken,
     postProcess: async (response) => {
@@ -85,7 +86,7 @@ export async function getScene({
       if (!("scene" in responseJson) || typeof responseJson.scene !== "object") {
         throw new Error(`Error fetching scene: unexpected response format`);
       }
-      return responseJson.scene;
+      return responseJson;
     },
     urlPrefix,
     baseUrl,
@@ -101,8 +102,8 @@ export async function postScene({
   getAccessToken,
   urlPrefix,
   baseUrl,
-}: { iTwinId: string; scene: SceneCreateDto; baseUrl?: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<Scene> {
-  return callScenesApi({
+}: { iTwinId: string; scene: SceneCreateDto; baseUrl?: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<SceneResponse> {
+  return callScenesApi<SceneResponse>({
     endpoint: `v1/scenes?iTwinId=${iTwinId}`,
     getAccessToken,
     urlPrefix,
@@ -116,7 +117,7 @@ export async function postScene({
       if (!("scene" in responseJson) || typeof responseJson.scene !== "object") {
         throw new Error(`Error creating scene: unexpected response format`);
       }
-      return responseJson.scene; //@naron: these are returning scense but should be the actual resposne with ApiResponse types
+      return responseJson; //@naron: these are returning scense but should be the actual resposne with ApiResponse types
     },
     fetchOptions: {
       method: "POST",
@@ -207,8 +208,8 @@ export async function patchScene({
   getAccessToken,
   urlPrefix,
   baseUrl,
-}: { sceneId: string; iTwinId: string; scene: SceneUpdateDTO; baseUrl?: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<Scene> {
-  return callScenesApi({
+}: { sceneId: string; iTwinId: string; scene: SceneUpdateDTO; baseUrl?: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<SceneResponse> {
+  return callScenesApi<SceneResponse>({
     endpoint: `v1/scenes/${sceneId}?iTwinId=${iTwinId}`,
     getAccessToken,
     urlPrefix,
@@ -222,7 +223,7 @@ export async function patchScene({
       if (!("scene" in responseJson) || typeof responseJson.scene !== "object") {
         throw new Error(`Error updating scene: unexpected response format`);
       }
-      return responseJson.scene;
+      return responseJson;
     },
     fetchOptions: {
       method: "PATCH",

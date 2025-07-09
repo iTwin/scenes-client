@@ -39,7 +39,7 @@ const client = new SceneClient({ getAccessToken, urlPrefix: "", baseUrl: HOST_UR
 let sceneId: string
 describe('Scenes operation', () => {
   it('create scene', async () => {
-    const scene = await client.postScene({
+    const res = await client.postScene({
       iTwinId: ITWIN_ID!,
       scene: {
         displayName: 'TestScene',
@@ -70,7 +70,7 @@ describe('Scenes operation', () => {
     })
 
     // @naron: feel like this could be better optimized reusing the objects
-    expect(scene).toEqual(
+    expect(res.scene).toEqual(
       expect.objectContaining({
         displayName: "TestScene",
         iTwinId: ITWIN_ID!,
@@ -100,21 +100,21 @@ describe('Scenes operation', () => {
       })
     );
 
-    sceneId = scene.id;
+    sceneId = res.scene.id;
     expect(sceneId).toBeDefined();
   });
 
   it("get scene by id", async () => {
     // Use the ID saved from the createScene test
-    const scene = await client.getScene({iTwinId: ITWIN_ID!, sceneId});
+    const res = await client.getScene({iTwinId: ITWIN_ID!, sceneId});
   
     // Basic identity checks
-    expect(scene.id).toBe(sceneId);
-    expect(scene.displayName).toBe("TestScene");
-    expect(scene.iTwinId).toBe(ITWIN_ID);
+    expect(res.scene.id).toBe(sceneId);
+    expect(res.scene.displayName).toBe("TestScene");
+    expect(res.scene.iTwinId).toBe(ITWIN_ID);
   
     // Verify the sceneData.objects array contains both objects
-    expect(scene.sceneData.objects).toEqual(
+    expect(res.scene.sceneData.objects).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
           kind: "Layer",
@@ -144,7 +144,7 @@ describe('Scenes operation', () => {
   });
 
   it(`update scene`, async () => {
-    const updatedScene = await client.patchScene({
+    const res = await client.patchScene({
       iTwinId: ITWIN_ID!,
       sceneId,
       scene: {
@@ -152,7 +152,7 @@ describe('Scenes operation', () => {
       },
     })
 
-    expect(updatedScene.displayName).toBe("UpdatedTestScene");
+    expect(res.scene.displayName).toBe("UpdatedTestScene");
   });
 
   it("delete scene", async () => {
@@ -275,6 +275,7 @@ describe('Scenes Objects operations', () => {
       })
     );
   });
+
 
   
 
