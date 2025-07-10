@@ -1,11 +1,7 @@
-# Scenes
+# @itwin/scenes-client
 
-TODO: packages, setup, and commands
+## About
 
-## Issues
-
-You can submit feature requests or report bugs by creating an [issue](https://github.com/iTwin/scenes-client/issues).
-
----
+This package hosts client-side code and TypeScript types for interacting with scenes API
 
 Copyright © Bentley Systems, Incorporated. All rights reserved. See [LICENSE.md](./LICENSE.md) for license terms and full copyright notice.

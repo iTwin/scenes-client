@@ -14,7 +14,7 @@ import {
   SceneObjectUpdateDTO,
   SceneObjectUpdateWithIdDTO,
   SceneResponse,
-} from "./types/index";
+} from "./models/index";
 
 function* batched<T>(items: T[], batchSize: number) {
   for (let i = 0; i < items.length; i += batchSize) {
@@ -27,18 +27,17 @@ export async function getScenes({
   getAccessToken,
   urlPrefix,
   baseUrl,
-}: { iTwinId: string } & AuthArgs): Promise<SceneListResponse> {
+}: { iTwinId: string; } & AuthArgs): Promise<SceneListResponse> {
   return callApi<SceneListResponse>({
-    endpoint: `v1/scenes?iTwinId=${iTwinId}&$top=100&$skip=0`, //@naron: top/skip should be params?
+    endpoint: `v1/scenes?iTwinId=${iTwinId}&$top=100&$skip=0`,
     getAccessToken,
     postProcess: async (response) => {
       const responseJson = await response.json();
       if (!response.ok) {
-        const err = responseJson.error as ScenesErrorResponse; //@naron: directly cast?
+        const err = responseJson.error as ScenesErrorResponse;
         throw new ScenesApiError(err, responseJson.status);
       }
       if (!("scenes" in responseJson) || !Array.isArray(responseJson.scenes)) {
-        //@naron: is this runtime check necessary? if necessary, should it be a type guard?
         throw new Error("Error fetching scenes: unexpected response format");
       }
       return responseJson;
@@ -57,7 +56,7 @@ export async function getScene({
   getAccessToken,
   urlPrefix,
   baseUrl,
-}: { id: string; iTwinId: string } & AuthArgs): Promise<SceneResponse> {
+}: { id: string; iTwinId: string; } & AuthArgs): Promise<SceneResponse> {
   return callApi<SceneResponse>({
     endpoint: `v1/scenes/${id}?iTwinId=${iTwinId}`,
     getAccessToken,
@@ -125,7 +124,6 @@ export async function postScene({
   });
 }
 
-//@naron: probably object related ones can go to a different file?
 export async function postObject({
   sceneId,
   iTwinId,
@@ -482,7 +480,7 @@ export async function deleteObject({
     getAccessToken,
     urlPrefix,
     baseUrl,
-    postProcess: async () => {},
+    postProcess: async () => { },
     fetchOptions: {
       method: "DELETE",
     },
@@ -512,7 +510,7 @@ export async function deleteObjects({
         getAccessToken,
         urlPrefix,
         baseUrl,
-        postProcess: async () => {},
+        postProcess: async () => { },
         fetchOptions: {
           method: "DELETE",
         },

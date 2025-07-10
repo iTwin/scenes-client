@@ -30,4 +30,7 @@
   "[json][jsonc]": {
     "editor.defaultFormatter": "vscode.json-language-features",
   },
+
+  "vitest.configFile": "${workspaceFolder}/vitest.config.ts",
+  "vitest.envFile": "${workspaceFolder}/tests/.env"
 }

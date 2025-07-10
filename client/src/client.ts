@@ -27,7 +27,7 @@ import {
   SceneObjectUpdateDTO,
   SceneObjectUpdateWithIdDTO,
   SceneResponse,
-} from "./types/index";
+} from "./models/index";
 
 type AccessTokenFn = () => Promise<string>;
 
@@ -52,7 +52,7 @@ export class SceneClient {
     this.baseUrl = baseUrl;
   }
 
-  async getScenes(params: { iTwinId: string }): Promise<SceneListResponse> {
+  async getScenes(params: { iTwinId: string; }): Promise<SceneListResponse> {
     return getScenes({
       iTwinId: params.iTwinId,
       getAccessToken: this.getAccessToken,

@@ -2,7 +2,7 @@
 import "dotenv/config";
 import { describe, it, expect } from "vitest";
 import { SceneClient } from "../client/src/client";
-import { ScenesApiError } from "../client/src/types";
+import { ScenesApiError } from "../client/src/models";
 
 function requireEnv(key: keyof NodeJS.ProcessEnv): string {
   const v = process.env[key];
@@ -12,7 +12,6 @@ function requireEnv(key: keyof NodeJS.ProcessEnv): string {
   return v;
 }
 
-// @naron: could use a config file but maybe this is fine?
 const HOST_URL = requireEnv("HOST_URL");
 const ISSUER_URL = requireEnv("ISSUER_URL");
 const OIDC_SCOPES = requireEnv("OIDC_SCOPES");
@@ -22,7 +21,6 @@ const ITWIN_ID = requireEnv("ITWIN_ID");
 const IMODEL_ID = requireEnv("IMODEL_ID");
 const SCENE_ID = requireEnv("SCENE_ID");
 
-// @naron: not necessary now but we could cache the access token
 const getAccessToken = async (): Promise<string> => {
   const params = new URLSearchParams({
     grant_type: "client_credentials",
@@ -81,7 +79,6 @@ describe("Scenes operation", () => {
       },
     });
 
-    // @naron: feel like this could be better optimized reusing the objects
     expect(res.scene).toEqual(
       expect.objectContaining({
         displayName: "TestScene",
@@ -392,5 +389,3 @@ describe("Scenes Objects operations", () => {
     }
   });
 });
-
-// @naron: there should be tests for exceptions/errors as well?
