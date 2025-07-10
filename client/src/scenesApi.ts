@@ -29,7 +29,7 @@ export async function getScenes({
   baseUrl,
 }: { iTwinId: string; } & AuthArgs): Promise<SceneListResponse> {
   return callApi<SceneListResponse>({
-    endpoint: `v1/scenes?iTwinId=${iTwinId}&$top=100&$skip=0`,
+    endpoint: `/v1/scenes?iTwinId=${iTwinId}&$top=100&$skip=0`,
     getAccessToken,
     postProcess: async (response) => {
       const responseJson = await response.json();
@@ -58,7 +58,7 @@ export async function getScene({
   baseUrl,
 }: { id: string; iTwinId: string; } & AuthArgs): Promise<SceneResponse> {
   return callApi<SceneResponse>({
-    endpoint: `v1/scenes/${id}?iTwinId=${iTwinId}`,
+    endpoint: `/v1/scenes/${id}?iTwinId=${iTwinId}`,
     getAccessToken,
     postProcess: async (response) => {
       const responseJson = await response.json();
@@ -93,7 +93,7 @@ export async function postScene({
   scene: SceneCreateDto;
 } & AuthArgs): Promise<SceneResponse> {
   return callApi<SceneResponse>({
-    endpoint: `v1/scenes?iTwinId=${iTwinId}`,
+    endpoint: `/v1/scenes?iTwinId=${iTwinId}`,
     getAccessToken,
     urlPrefix,
     baseUrl,
@@ -137,7 +137,7 @@ export async function postObject({
   object: SceneObjectCreateDto;
 } & AuthArgs): Promise<SceneObjectResponse> {
   return callApi({
-    endpoint: `v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}`,
+    endpoint: `/v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}`,
     getAccessToken,
     urlPrefix,
     baseUrl,
@@ -183,7 +183,7 @@ export async function postObjects({
   objects: SceneObjectCreateDto[];
 } & AuthArgs): Promise<SceneObjectListResponse> {
   return callApi({
-    endpoint: `v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}`,
+    endpoint: `/v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}`,
     getAccessToken,
     urlPrefix,
     baseUrl,
@@ -229,7 +229,7 @@ export async function getObject({
   objectId: string;
 } & AuthArgs): Promise<SceneObjectResponse> {
   return callApi<SceneObjectResponse>({
-    endpoint: `v1/scenes/${sceneId}/objects/${objectId}?iTwinId=${iTwinId}`,
+    endpoint: `/v1/scenes/${sceneId}/objects/${objectId}?iTwinId=${iTwinId}`,
     getAccessToken,
     urlPrefix,
     baseUrl,
@@ -266,7 +266,7 @@ export async function getObjects({
   iTwinId: string;
 } & AuthArgs): Promise<SceneObjectListResponse> {
   return callApi<SceneObjectListResponse>({
-    endpoint: `v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}`,
+    endpoint: `/v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}`,
     getAccessToken,
     urlPrefix,
     baseUrl,
@@ -305,7 +305,7 @@ export async function patchScene({
   scene: SceneUpdateDTO;
 } & AuthArgs): Promise<SceneResponse> {
   return callApi<SceneResponse>({
-    endpoint: `v1/scenes/${sceneId}?iTwinId=${iTwinId}`,
+    endpoint: `/v1/scenes/${sceneId}?iTwinId=${iTwinId}`,
     getAccessToken,
     urlPrefix,
     baseUrl,
@@ -351,7 +351,7 @@ export async function patchObject({
   object: SceneObjectUpdateDTO;
 } & AuthArgs): Promise<SceneObjectResponse> {
   return callApi({
-    endpoint: `v1/scenes/${sceneId}/objects/${objectId}?iTwinId=${iTwinId}`,
+    endpoint: `/v1/scenes/${sceneId}/objects/${objectId}?iTwinId=${iTwinId}`,
     getAccessToken,
     urlPrefix,
     baseUrl,
@@ -397,7 +397,7 @@ export async function patchObjects({
   objects: SceneObjectUpdateWithIdDTO[];
 } & AuthArgs): Promise<SceneObjectListResponse> {
   return callApi({
-    endpoint: `v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}`,
+    endpoint: `/v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}`,
     getAccessToken,
     urlPrefix,
     baseUrl,
@@ -443,7 +443,7 @@ export async function deleteScene({
   iTwinId: string;
 } & AuthArgs): Promise<void> {
   return callApi({
-    endpoint: `v1/scenes/${sceneId}?iTwinId=${iTwinId}`,
+    endpoint: `/v1/scenes/${sceneId}?iTwinId=${iTwinId}`,
     getAccessToken,
     urlPrefix,
     baseUrl,
@@ -476,7 +476,7 @@ export async function deleteObject({
   objectId: string;
 } & AuthArgs): Promise<void> {
   return callApi({
-    endpoint: `v1/scenes/${sceneId}/objects/${objectId}?iTwinId=${iTwinId}`,
+    endpoint: `/v1/scenes/${sceneId}/objects/${objectId}?iTwinId=${iTwinId}`,
     getAccessToken,
     urlPrefix,
     baseUrl,
@@ -506,7 +506,7 @@ export async function deleteObjects({
   for (const batch of batched(objectIds, 20)) {
     promises.push(
       callApi({
-        endpoint: `v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}&ids=${batch.join(",")}`,
+        endpoint: `/v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}&ids=${batch.join(",")}`,
         getAccessToken,
         urlPrefix,
         baseUrl,

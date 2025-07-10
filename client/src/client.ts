@@ -31,7 +31,7 @@ import {
 
 type AccessTokenFn = () => Promise<string>;
 
-const DEFAULT_BASE_URL = "https://itwinscenes-eus.bentley.com/";
+const DEFAULT_BASE_URL = "https://itwinscenes-eus.bentley.com";
 
 export class SceneClient {
   private getAccessToken: AccessTokenFn;
