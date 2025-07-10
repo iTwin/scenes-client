@@ -1,41 +1,24 @@
-/*---------------------------------------------------------------------------------------------
- * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
- * See LICENSE.md in the project root for license terms and full copyright notice.
- *--------------------------------------------------------------------------------------------*/
+// Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 
-import { callApi, RequestArgs } from "./Fetch";
-import type {
-    Scene,
-  } from "./types/scenes.js";
+import { callApi, AuthArgs } from "./Fetch";
 
-import { 
+import {
   SceneCreateDto,
   SceneUpdateDTO,
   SceneListResponse,
   ScenesApiError,
   ScenesErrorResponse,
   SceneObjectCreateDto,
-  SceneDataCreateDto,
   SceneObjectResponse,
   SceneObjectListResponse,
   SceneObjectUpdateDTO,
   SceneObjectUpdateWithIdDTO,
-  SceneResponse
- } from "./types/index.js";
-
-// @naron: better organize the methods here
-const DEFAULT_BASE_URL = "https://itwinscenes-eus.bentley.com/";
-
-async function callScenesApi<T>({
-  baseUrl = DEFAULT_BASE_URL,
-  ...args
-}: Omit<RequestArgs<T>, "baseUrl"> & { baseUrl?: string }): Promise<T> {
-  return callApi<T>({ ...args, baseUrl });
-}
+  SceneResponse,
+} from "./types/index";
 
 function* batched<T>(items: T[], batchSize: number) {
   for (let i = 0; i < items.length; i += batchSize) {
-      yield items.slice(i, i + batchSize);
+    yield items.slice(i, i + batchSize);
   }
 }
 
@@ -44,18 +27,19 @@ export async function getScenes({
   getAccessToken,
   urlPrefix,
   baseUrl,
-}: { iTwinId: string; baseUrl?: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<SceneListResponse> {
-  return callScenesApi<SceneListResponse>({
+}: { iTwinId: string } & AuthArgs): Promise<SceneListResponse> {
+  return callApi<SceneListResponse>({
     endpoint: `v1/scenes?iTwinId=${iTwinId}&$top=100&$skip=0`, //@naron: top/skip should be params?
     getAccessToken,
     postProcess: async (response) => {
       const responseJson = await response.json();
-      if(!response.ok){
+      if (!response.ok) {
         const err = responseJson.error as ScenesErrorResponse; //@naron: directly cast?
-        throw new ScenesApiError(err, responseJson.status)
+        throw new ScenesApiError(err, responseJson.status);
       }
-      if (!("scenes" in responseJson) || !Array.isArray(responseJson.scenes)) { //@naron: is this runtime check necessary? if necessary, should it be a type guard?
-        throw new Error(`Error fetching scenes: unexpected response format`);
+      if (!("scenes" in responseJson) || !Array.isArray(responseJson.scenes)) {
+        //@naron: is this runtime check necessary? if necessary, should it be a type guard?
+        throw new Error("Error fetching scenes: unexpected response format");
       }
       return responseJson;
     },
@@ -73,8 +57,8 @@ export async function getScene({
   getAccessToken,
   urlPrefix,
   baseUrl,
-}: { id: string; iTwinId: string; baseUrl?: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<SceneResponse> {
-  return callScenesApi<SceneResponse>({
+}: { id: string; iTwinId: string } & AuthArgs): Promise<SceneResponse> {
+  return callApi<SceneResponse>({
     endpoint: `v1/scenes/${id}?iTwinId=${iTwinId}`,
     getAccessToken,
     postProcess: async (response) => {
@@ -83,8 +67,11 @@ export async function getScene({
         const err = responseJson.error as ScenesErrorResponse;
         throw new ScenesApiError(err, response.status);
       }
-      if (!("scene" in responseJson) || typeof responseJson.scene !== "object") {
-        throw new Error(`Error fetching scene: unexpected response format`);
+      if (
+        !("scene" in responseJson) ||
+        typeof responseJson.scene !== "object"
+      ) {
+        throw new Error("Error fetching scene: unexpected response format");
       }
       return responseJson;
     },
@@ -102,8 +89,11 @@ export async function postScene({
   getAccessToken,
   urlPrefix,
   baseUrl,
-}: { iTwinId: string; scene: SceneCreateDto; baseUrl?: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<SceneResponse> {
-  return callScenesApi<SceneResponse>({
+}: {
+  iTwinId: string;
+  scene: SceneCreateDto;
+} & AuthArgs): Promise<SceneResponse> {
+  return callApi<SceneResponse>({
     endpoint: `v1/scenes?iTwinId=${iTwinId}`,
     getAccessToken,
     urlPrefix,
@@ -114,14 +104,19 @@ export async function postScene({
         const err = responseJson.error as ScenesErrorResponse;
         throw new ScenesApiError(err, response.status);
       }
-      if (!("scene" in responseJson) || typeof responseJson.scene !== "object") {
-        throw new Error(`Error creating scene: unexpected response format`);
+      if (
+        !("scene" in responseJson) ||
+        typeof responseJson.scene !== "object"
+      ) {
+        throw new Error("Error creating scene: unexpected response format");
       }
-      return responseJson; //@naron: these are returning scense but should be the actual resposne with ApiResponse types
+      return responseJson;
     },
     fetchOptions: {
       method: "POST",
-      body: JSON.stringify(scene, (_, value) => (value === undefined ? null : value)),
+      body: JSON.stringify(scene, (_, value) =>
+        value === undefined ? null : value,
+      ),
     },
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -138,8 +133,12 @@ export async function postObject({
   getAccessToken,
   urlPrefix,
   baseUrl,
-}: { sceneId: string; iTwinId: string; object: SceneObjectCreateDto; baseUrl?: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<SceneObjectResponse> {
-  return callScenesApi({
+}: {
+  sceneId: string;
+  iTwinId: string;
+  object: SceneObjectCreateDto;
+} & AuthArgs): Promise<SceneObjectResponse> {
+  return callApi({
     endpoint: `v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}`,
     getAccessToken,
     urlPrefix,
@@ -150,14 +149,21 @@ export async function postObject({
         const err = responseJson.error as ScenesErrorResponse;
         throw new ScenesApiError(err, response.status);
       }
-      if (!("object" in responseJson) || typeof responseJson.object !== "object") {
-        throw new Error(`Error creating scene object: unexpected response format`);
+      if (
+        !("object" in responseJson) ||
+        typeof responseJson.object !== "object"
+      ) {
+        throw new Error(
+          "Error creating scene object: unexpected response format",
+        );
       }
       return responseJson;
     },
     fetchOptions: {
       method: "POST",
-      body: JSON.stringify(object, (_, value) => (value === undefined ? null : value)),
+      body: JSON.stringify(object, (_, value) =>
+        value === undefined ? null : value,
+      ),
     },
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -173,8 +179,12 @@ export async function postObjects({
   getAccessToken,
   urlPrefix,
   baseUrl,
-}: { sceneId: string; iTwinId: string; objects: SceneObjectCreateDto[]; baseUrl?: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<SceneObjectListResponse> {
-  return callScenesApi({
+}: {
+  sceneId: string;
+  iTwinId: string;
+  objects: SceneObjectCreateDto[];
+} & AuthArgs): Promise<SceneObjectListResponse> {
+  return callApi({
     endpoint: `v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}`,
     getAccessToken,
     urlPrefix,
@@ -185,14 +195,21 @@ export async function postObjects({
         const err = responseJson.error as ScenesErrorResponse;
         throw new ScenesApiError(err, response.status);
       }
-      if (!("objects" in responseJson) || !Array.isArray(responseJson.objects)) {
-        throw new Error(`Error creating scene objects: unexpected response format`);
+      if (
+        !("objects" in responseJson) ||
+        !Array.isArray(responseJson.objects)
+      ) {
+        throw new Error(
+          "Error creating scene objects: unexpected response format",
+        );
       }
       return responseJson;
     },
     fetchOptions: {
       method: "POST",
-      body: JSON.stringify(objects, (_, value) => (value === undefined ? null : value)),
+      body: JSON.stringify(objects, (_, value) =>
+        value === undefined ? null : value,
+      ),
     },
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -208,8 +225,12 @@ export async function getObject({
   getAccessToken,
   urlPrefix,
   baseUrl,
-}: { sceneId: string; iTwinId: string; objectId: string, baseUrl?: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<SceneObjectResponse> {
-  return callScenesApi<SceneObjectResponse>({
+}: {
+  sceneId: string;
+  iTwinId: string;
+  objectId: string;
+} & AuthArgs): Promise<SceneObjectResponse> {
+  return callApi<SceneObjectResponse>({
     endpoint: `v1/scenes/${sceneId}/objects/${objectId}?iTwinId=${iTwinId}`,
     getAccessToken,
     urlPrefix,
@@ -220,9 +241,13 @@ export async function getObject({
         const err = responseJson.error as ScenesErrorResponse;
         throw new ScenesApiError(err, response.status);
       }
-      if (!("object" in responseJson) || typeof responseJson.object !== "object")
-      {
-        throw new Error(`Error fetching scene object: unexpected response format`);
+      if (
+        !("object" in responseJson) ||
+        typeof responseJson.object !== "object"
+      ) {
+        throw new Error(
+          "Error fetching scene object: unexpected response format",
+        );
       }
       return responseJson;
     },
@@ -238,8 +263,11 @@ export async function getObjects({
   getAccessToken,
   urlPrefix,
   baseUrl,
-}: { sceneId: string; iTwinId: string; baseUrl?: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<SceneObjectListResponse> {
-  return callScenesApi<SceneObjectListResponse>({
+}: {
+  sceneId: string;
+  iTwinId: string;
+} & AuthArgs): Promise<SceneObjectListResponse> {
+  return callApi<SceneObjectListResponse>({
     endpoint: `v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}`,
     getAccessToken,
     urlPrefix,
@@ -250,8 +278,13 @@ export async function getObjects({
         const err = responseJson.error as ScenesErrorResponse;
         throw new ScenesApiError(err, response.status);
       }
-      if (!("objects" in responseJson) || !Array.isArray(responseJson.objects)) {
-        throw new Error(`Error fetching scene objects: unexpected response format`);
+      if (
+        !("objects" in responseJson) ||
+        !Array.isArray(responseJson.objects)
+      ) {
+        throw new Error(
+          "Error fetching scene objects: unexpected response format",
+        );
       }
       return responseJson;
     },
@@ -268,8 +301,12 @@ export async function patchScene({
   getAccessToken,
   urlPrefix,
   baseUrl,
-}: { sceneId: string; iTwinId: string; scene: SceneUpdateDTO; baseUrl?: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<SceneResponse> {
-  return callScenesApi<SceneResponse>({
+}: {
+  sceneId: string;
+  iTwinId: string;
+  scene: SceneUpdateDTO;
+} & AuthArgs): Promise<SceneResponse> {
+  return callApi<SceneResponse>({
     endpoint: `v1/scenes/${sceneId}?iTwinId=${iTwinId}`,
     getAccessToken,
     urlPrefix,
@@ -280,14 +317,19 @@ export async function patchScene({
         const err = responseJson.error as ScenesErrorResponse;
         throw new ScenesApiError(err, response.status);
       }
-      if (!("scene" in responseJson) || typeof responseJson.scene !== "object") {
-        throw new Error(`Error updating scene: unexpected response format`);
+      if (
+        !("scene" in responseJson) ||
+        typeof responseJson.scene !== "object"
+      ) {
+        throw new Error("Error updating scene: unexpected response format");
       }
       return responseJson;
     },
     fetchOptions: {
       method: "PATCH",
-      body: JSON.stringify(scene, (_, value) => (value === undefined ? null : value)),
+      body: JSON.stringify(scene, (_, value) =>
+        value === undefined ? null : value,
+      ),
     },
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -304,8 +346,13 @@ export async function patchObject({
   getAccessToken,
   urlPrefix,
   baseUrl,
-}: { sceneId: string; iTwinId: string; objectId: string; object: SceneObjectUpdateDTO; baseUrl?: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<SceneObjectResponse> {
-  return callScenesApi({
+}: {
+  sceneId: string;
+  iTwinId: string;
+  objectId: string;
+  object: SceneObjectUpdateDTO;
+} & AuthArgs): Promise<SceneObjectResponse> {
+  return callApi({
     endpoint: `v1/scenes/${sceneId}/objects/${objectId}?iTwinId=${iTwinId}`,
     getAccessToken,
     urlPrefix,
@@ -316,14 +363,21 @@ export async function patchObject({
         const err = responseJson.error as ScenesErrorResponse;
         throw new ScenesApiError(err, response.status);
       }
-      if (!("object" in responseJson) || typeof responseJson.object !== "object") {
-        throw new Error(`Error updating scene object: unexpected response format`);
+      if (
+        !("object" in responseJson) ||
+        typeof responseJson.object !== "object"
+      ) {
+        throw new Error(
+          "Error updating scene object: unexpected response format",
+        );
       }
       return responseJson;
     },
     fetchOptions: {
       method: "PATCH",
-      body: JSON.stringify(object, (_, value) => (value === undefined ? null : value)),
+      body: JSON.stringify(object, (_, value) =>
+        value === undefined ? null : value,
+      ),
     },
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -339,8 +393,12 @@ export async function patchObjects({
   getAccessToken,
   urlPrefix,
   baseUrl,
-}: { sceneId: string; iTwinId: string; objects: SceneObjectUpdateWithIdDTO[]; baseUrl?: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<SceneObjectListResponse> {
-  return callScenesApi({
+}: {
+  sceneId: string;
+  iTwinId: string;
+  objects: SceneObjectUpdateWithIdDTO[];
+} & AuthArgs): Promise<SceneObjectListResponse> {
+  return callApi({
     endpoint: `v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}`,
     getAccessToken,
     urlPrefix,
@@ -353,14 +411,21 @@ export async function patchObjects({
       }
 
       // @naron: this is repetitive, can be a utility function
-      if (!("objects" in responseJson) || !Array.isArray(responseJson.objects)) {
-        throw new Error(`Error updating scene objects: unexpected response format`);
+      if (
+        !("objects" in responseJson) ||
+        !Array.isArray(responseJson.objects)
+      ) {
+        throw new Error(
+          "Error updating scene objects: unexpected response format",
+        );
       }
       return responseJson;
     },
     fetchOptions: {
       method: "PATCH",
-      body: JSON.stringify(objects, (_, value) => (value === undefined ? null : value)),
+      body: JSON.stringify(objects, (_, value) =>
+        value === undefined ? null : value,
+      ),
     },
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -369,27 +434,36 @@ export async function patchObjects({
   });
 }
 
-
-export async function deleteScene({ sceneId, iTwinId, getAccessToken, urlPrefix, baseUrl }: {
-  sceneId: string; iTwinId: string; baseUrl?: string
-} & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<void> {
-  return callScenesApi({
+export async function deleteScene({
+  sceneId,
+  iTwinId,
+  getAccessToken,
+  urlPrefix,
+  baseUrl,
+}: {
+  sceneId: string;
+  iTwinId: string;
+} & AuthArgs): Promise<void> {
+  return callApi({
     endpoint: `v1/scenes/${sceneId}?iTwinId=${iTwinId}`,
     getAccessToken,
     urlPrefix,
     baseUrl,
     fetchOptions: { method: "DELETE" },
-    additionalHeaders: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
-    postProcess: async response => {
+    additionalHeaders: {
+      Accept: "application/vnd.bentley.itwin-platform.v1+json",
+    },
+    postProcess: async (response) => {
       if (!response.ok) {
-        const err = await response.json().catch(() => ({} as ScenesErrorResponse));
+        const err = await response
+          .json()
+          .catch(() => ({}) as ScenesErrorResponse);
         throw new ScenesApiError(err, response.status);
       }
       return;
     },
   });
 }
-
 
 export async function deleteObject({
   sceneId,
@@ -398,8 +472,12 @@ export async function deleteObject({
   getAccessToken,
   urlPrefix,
   baseUrl,
-}: { sceneId: string; iTwinId: string; objectId: string; baseUrl?: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<void> {
-  return callScenesApi({
+}: {
+  sceneId: string;
+  iTwinId: string;
+  objectId: string;
+} & AuthArgs): Promise<void> {
+  return callApi({
     endpoint: `v1/scenes/${sceneId}/objects/${objectId}?iTwinId=${iTwinId}`,
     getAccessToken,
     urlPrefix,
@@ -421,11 +499,15 @@ export async function deleteObjects({
   getAccessToken,
   urlPrefix,
   baseUrl,
-}: { sceneId: string; iTwinId: string; objectIds: string[]; baseUrl?: string } & Pick<RequestArgs<any>, "getAccessToken" | "urlPrefix">): Promise<void> {
+}: {
+  sceneId: string;
+  iTwinId: string;
+  objectIds: string[];
+} & AuthArgs): Promise<void> {
   const promises: Promise<void>[] = [];
   for (const batch of batched(objectIds, 20)) {
     promises.push(
-      callScenesApi({
+      callApi({
         endpoint: `v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}&ids=${batch.join(",")}`,
         getAccessToken,
         urlPrefix,

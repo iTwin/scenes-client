@@ -1,7 +1,4 @@
-/*---------------------------------------------------------------------------------------------
- * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
- * See LICENSE.md in the project root for license terms and full copyright notice.
- *--------------------------------------------------------------------------------------------*/
+// Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 
 /**
  * Minimal scene object response used in SceneData
@@ -40,7 +37,6 @@ export interface SceneObject extends SceneObjectMinimal {
   /** Time the scene object was last modified as an ISO8601 string, `"YYYY-MM-DDTHH:mm:ss.sssZ"` */
   lastModified: Date;
 }
-
 
 /**
  * SceneData response object

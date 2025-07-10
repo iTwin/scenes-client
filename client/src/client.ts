@@ -1,8 +1,6 @@
-/*---------------------------------------------------------------------------------------------
- * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
- * See LICENSE.md in the project root for license terms and full copyright notice.
- *--------------------------------------------------------------------------------------------*/
+// Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 
+import type { UrlPrefix } from "./Fetch.js";
 import {
   getScene,
   getScenes,
@@ -17,9 +15,9 @@ import {
   deleteObjects,
   patchObjects,
   getObjects,
-} from "./scenesApi.js";
+} from "./scenesApi";
 
-import { 
+import {
   SceneCreateDto,
   SceneUpdateDTO,
   SceneListResponse,
@@ -29,18 +27,26 @@ import {
   SceneObjectUpdateDTO,
   SceneObjectUpdateWithIdDTO,
   SceneResponse,
- } from "./types/index.js";
-
-import type { UrlPrefix } from "./Fetch.js";
+} from "./types/index";
 
 type AccessTokenFn = () => Promise<string>;
+
+const DEFAULT_BASE_URL = "https://itwinscenes-eus.bentley.com/";
 
 export class SceneClient {
   private getAccessToken: AccessTokenFn;
   private urlPrefix: UrlPrefix;
-  private baseUrl?: string;
+  private baseUrl: string;
 
-  constructor({ getAccessToken, urlPrefix = "", baseUrl }: { getAccessToken: AccessTokenFn; urlPrefix?: UrlPrefix; baseUrl?: string; }) {
+  constructor({
+    getAccessToken,
+    urlPrefix = "",
+    baseUrl = DEFAULT_BASE_URL,
+  }: {
+    getAccessToken: AccessTokenFn;
+    urlPrefix?: UrlPrefix;
+    baseUrl?: string;
+  }) {
     this.getAccessToken = getAccessToken;
     this.urlPrefix = urlPrefix;
     this.baseUrl = baseUrl;
@@ -55,8 +61,11 @@ export class SceneClient {
     });
   }
 
-  async getScene(params: { iTwinId: string; sceneId: string }): Promise<SceneResponse> {
-    return await getScene({
+  async getScene(params: {
+    iTwinId: string;
+    sceneId: string;
+  }): Promise<SceneResponse> {
+    return getScene({
       id: params.sceneId,
       iTwinId: params.iTwinId,
       getAccessToken: this.getAccessToken,
@@ -65,7 +74,10 @@ export class SceneClient {
     });
   }
 
-  async postScene(params: { iTwinId: string; scene: SceneCreateDto }): Promise<SceneResponse> {
+  async postScene(params: {
+    iTwinId: string;
+    scene: SceneCreateDto;
+  }): Promise<SceneResponse> {
     return postScene({
       iTwinId: params.iTwinId,
       scene: params.scene,
@@ -75,7 +87,11 @@ export class SceneClient {
     });
   }
 
-  async patchScene(params: { iTwinId: string; sceneId: string; scene: SceneUpdateDTO }): Promise<SceneResponse> {
+  async patchScene(params: {
+    iTwinId: string;
+    sceneId: string;
+    scene: SceneUpdateDTO;
+  }): Promise<SceneResponse> {
     return patchScene({
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,
@@ -86,7 +102,10 @@ export class SceneClient {
     });
   }
 
-  async deleteScene(params: { iTwinId: string; sceneId: string }): Promise<void> {
+  async deleteScene(params: {
+    iTwinId: string;
+    sceneId: string;
+  }): Promise<void> {
     return deleteScene({
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,
@@ -96,7 +115,11 @@ export class SceneClient {
     });
   }
 
-  async postObject(params: { iTwinId: string; sceneId: string; object: SceneObjectCreateDto }): Promise<SceneObjectResponse> {
+  async postObject(params: {
+    iTwinId: string;
+    sceneId: string;
+    object: SceneObjectCreateDto;
+  }): Promise<SceneObjectResponse> {
     return postObject({
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,
@@ -107,7 +130,11 @@ export class SceneClient {
     });
   }
 
-  async postObjects(params: { iTwinId: string; sceneId: string; objects: SceneObjectCreateDto[] }): Promise<SceneObjectListResponse> {
+  async postObjects(params: {
+    iTwinId: string;
+    sceneId: string;
+    objects: SceneObjectCreateDto[];
+  }): Promise<SceneObjectListResponse> {
     return postObjects({
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,
@@ -118,7 +145,11 @@ export class SceneClient {
     });
   }
 
-  async getObject(params: { iTwinId: string; sceneId: string; objectId: string }): Promise<SceneObjectResponse> {
+  async getObject(params: {
+    iTwinId: string;
+    sceneId: string;
+    objectId: string;
+  }): Promise<SceneObjectResponse> {
     return getObject({
       sceneId: params.sceneId,
       iTwinId: params.iTwinId,
@@ -129,7 +160,10 @@ export class SceneClient {
     });
   }
 
-  async getObjects(params: { iTwinId: string; sceneId: string; }): Promise<SceneObjectListResponse> {
+  async getObjects(params: {
+    iTwinId: string;
+    sceneId: string;
+  }): Promise<SceneObjectListResponse> {
     return getObjects({
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,
@@ -139,7 +173,12 @@ export class SceneClient {
     });
   }
 
-  async patchObject(params: { iTwinId: string; sceneId: string; objectId: string; object: SceneObjectUpdateDTO }): Promise<SceneObjectResponse> {
+  async patchObject(params: {
+    iTwinId: string;
+    sceneId: string;
+    objectId: string;
+    object: SceneObjectUpdateDTO;
+  }): Promise<SceneObjectResponse> {
     return patchObject({
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,
@@ -151,7 +190,11 @@ export class SceneClient {
     });
   }
 
-  async patchObjects(params: { iTwinId: string; sceneId: string; objects: SceneObjectUpdateWithIdDTO[] }): Promise<SceneObjectListResponse> {
+  async patchObjects(params: {
+    iTwinId: string;
+    sceneId: string;
+    objects: SceneObjectUpdateWithIdDTO[];
+  }): Promise<SceneObjectListResponse> {
     return patchObjects({
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,
@@ -162,7 +205,11 @@ export class SceneClient {
     });
   }
 
-  async deleteObject(params: { iTwinId: string; sceneId: string; objectId: string }): Promise<void> {
+  async deleteObject(params: {
+    iTwinId: string;
+    sceneId: string;
+    objectId: string;
+  }): Promise<void> {
     return deleteObject({
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,
@@ -173,7 +220,11 @@ export class SceneClient {
     });
   }
 
-  async deleteObjects(params: { iTwinId: string; sceneId: string; objectIds: string[] }): Promise<void> {
+  async deleteObjects(params: {
+    iTwinId: string;
+    sceneId: string;
+    objectIds: string[];
+  }): Promise<void> {
     return deleteObjects({
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,
