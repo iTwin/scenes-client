@@ -4,7 +4,7 @@
   "description": "Central repository for Scenes API object schemas",
   "main": "index.js",
   "scripts": {
-    "test": "vitest",
+    "test": "dotenv -e tests/.env -- pnpm vitest",
     "lint": "eslint --ext .js,.ts,.tsx ."
   },
   "keywords": [],
@@ -17,6 +17,7 @@
     "@typescript-eslint/eslint-plugin": "^8.36.0",
     "@typescript-eslint/parser": "^8.36.0",
     "dotenv": "^17.0.1",
+    "dotenv-cli": "^8.0.0",
     "eslint": "^9.30.1",
     "eslint-config-prettier": "^10.1.5",
     "eslint-define-config": "^2.1.0",
