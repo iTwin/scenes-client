@@ -1,0 +1,40 @@
+{
+  "$id": "/schemas/CameraAnimation.1.0.0",
+  "description": "Camera animation is defined by a series of 3D views with a timestamp. Interpolation of camera position is done by the application itself.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "description": "Timestamps sequence in seconds.",
+      "type": "array",
+      "items": {
+        "type": "number",
+        "minimum": 0.0
+      }
+    },
+    "output": {
+      "description": "Series of 3D views (and optional settings/schedules) for the animation.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "camera": {
+            "$ref": "/schemas/View3d.1.0.0",
+            "description": "3D view information"
+          },
+          "settings": {
+            "$ref": "/schemas/UnrealAtmosphericStyling.1.0.0",
+            "description": "(Optional) settings to animate"
+          },
+          "schedule": {
+            "$ref": "/schemas/ScheduleSimulation.1.0.0",
+            "description": "(Optional) 4D schedule to animate"
+          }
+        },
+        "required": [ "camera" ]
+      }
+    }
+  },
+  "required": [ "input", "output" ]
+}
