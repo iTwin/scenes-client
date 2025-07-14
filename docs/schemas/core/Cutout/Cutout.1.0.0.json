@@ -1,0 +1,55 @@
+{
+  "$id": "/schemas/Cutout.1.0.0",
+  "description": "A polygon-defined area projected along the Z-axis on 3D tiles, used to exclude specific regions from rendering. It's primarily used to prevent visual conflicts between overlapping data layers.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "polygon": {
+      "type": "array",
+      "items": {
+        "$ref": "/schemas/CommonTypes#/definitions/vector3d"
+      },
+      "description": "The points describing the polygon."
+    },
+    "transformFromClip": {
+      "$ref": "/schemas/CommonTypes#/definitions/transform",
+      "description": "Transform from local to world."
+    },
+    "transformToClip": {
+      "$ref": "/schemas/CommonTypes#/definitions/transform",
+      "description": "Transform from world to local."
+    },
+    "zHigh": {
+      "type": "number",
+      "description": "Upper bound on Z."
+    },
+    "zLow": {
+      "type": "number",
+      "description": "Lower bound on Z."
+    },
+    "invisible": {
+      "type": "boolean",
+      "description": "True if this shape is invisible."
+    },
+    "mask": {
+      "type": "boolean",
+      "description": "True if this shape is a masking set."
+    },
+    "clipPlanes": {
+      "description": "The union of convex regions.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "convexSets": {
+          "description": "Collection of convex clip plane sets.",
+          "type": "array",
+          "items": {
+            "$ref": "/schemas/CommonTypes#/definitions/clipPlaneSet"
+          }
+        }
+      },
+      "required": [ "convexSets" ]
+    }
+  },
+  "required": [ "polygon", "invisible", "mask" ]
+}

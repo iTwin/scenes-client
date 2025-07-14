@@ -1,0 +1,17 @@
+{
+  "$id": "/schemas/ScheduleSimulation.1.0.0",
+  "description": "4D scheduling simulation for a specific iModel.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "timelineId": {
+      "description": "The Id of a RenderTimeline element containing a RenderSchedule.Script used to animate the schedule of a specific iModel",
+      "$ref": "/schemas/CommonTypes#/definitions/id64"
+    },
+    "timePoint": {
+      "description": "The point in time expressed in seconds in the Unix epoch",
+      "type": "number"
+    }
+  },
+  "required": [ "timelineId", "timePoint" ]
+}

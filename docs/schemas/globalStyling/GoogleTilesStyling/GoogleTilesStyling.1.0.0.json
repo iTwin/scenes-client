@@ -1,0 +1,22 @@
+{
+  "$id": "/schemas/GoogleTilesStyling.1.0.0",
+  "description": "Global setting to control styling options for Google tiles, such as rendering quality.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "quality": {
+      "description": "Quality of Google tiles rendering",
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "adjustment": {
+      "description": "Matrix or vector used for adjusting the positioning of the tiles",
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    }
+  },
+  "required": [ "quality" ]
+}
