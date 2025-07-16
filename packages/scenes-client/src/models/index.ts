@@ -6,3 +6,4 @@ export * from "./sceneCreate.dto";
 export * from "./sceneUpdate.dto";
 export * from "./error";
 export * from "./apiResponse";
+export * from "./scenes"

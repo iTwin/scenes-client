@@ -1,9 +1,7 @@
-import json from "@eslint/json";
 import prettierConfig from "eslint-config-prettier";
 import headerPlugin from "eslint-plugin-header";
 import importPlugin from "eslint-plugin-import";
 import prettierPlugin from "eslint-plugin-prettier";
-import globals from "globals";
 import tseslint from "typescript-eslint";
 headerPlugin.rules.header.meta.schema = false; // this makes header plugin compatible with eslint 9
 

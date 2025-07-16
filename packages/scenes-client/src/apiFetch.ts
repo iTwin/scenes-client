@@ -7,7 +7,7 @@ export interface RequestArgs<T> {
   fetchOptions?: Omit<RequestInit, "headers">;
 }
 
-export type AuthArgs = {
+export interface AuthArgs {
   getAccessToken: () => Promise<string>;
   baseUrl: string;
 };
@@ -25,8 +25,6 @@ export async function callApi<T>({
     Accept: "application/json",
     ...additionalHeaders,
   };
-  console.log(`Calling API: ${baseUrl}${endpoint}`);
-  console.log("Headers:", headers);
   const response = await fetch(`${baseUrl}${endpoint}`, {
     ...fetchOptions,
     headers,

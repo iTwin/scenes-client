@@ -32,21 +32,38 @@ type AccessTokenFn = () => Promise<string>;
 
 const DEFAULT_BASE_URL = "https://itwinscenes-eus.bentley.com";
 
+type ITwinParams = { iTwinId: string; };
+type SceneParams = ITwinParams & { sceneId: string; };
+type ObjectParams = SceneParams & { objectId: string; };
+
+export type GetScenesParams = ITwinParams;
+export type GetSceneParams = SceneParams;
+export type PostSceneParams = ITwinParams & { scene: SceneCreateDto; };
+export type PatchSceneParams = SceneParams & { scene: SceneUpdateDTO; };
+export type DeleteSceneParams = SceneParams;
+
+export type GetObjectParams = ObjectParams;
+export type GetObjectsParams = SceneParams;
+export type PostObjectParams = SceneParams & { object: SceneObjectCreateDto; };
+export type PostObjectsParams = SceneParams & { objects: SceneObjectCreateDto[]; };
+export type PatchObjectParams = ObjectParams & { object: SceneObjectUpdateDTO; };
+export type PatchObjectsParams = SceneParams & { objects: SceneObjectUpdateWithIdDTO[]; };
+export type DeleteObjectParams = ObjectParams;
+export type DeleteObjectsParams = SceneParams & { objectIds: string[]; };
+
 export class SceneClient {
-  private getAccessToken: AccessTokenFn;
-  private baseUrl: string;
+  private readonly getAccessToken: AccessTokenFn;
+  private readonly baseUrl: string;
+
   /**
    * Create a new SceneClient instance.
    * @param getAccessToken – Async function to retrieve an access token.
    * @param baseUrl – Optional base URL for the API. Defaults to production.
    */
-  constructor({
-    getAccessToken,
-    baseUrl = DEFAULT_BASE_URL,
-  }: {
-    getAccessToken: AccessTokenFn;
-    baseUrl?: string;
-  }) {
+  constructor(
+    getAccessToken: AccessTokenFn,
+    baseUrl: string = DEFAULT_BASE_URL,
+  ) {
     this.getAccessToken = getAccessToken;
     this.baseUrl = baseUrl;
   }
@@ -56,7 +73,7 @@ export class SceneClient {
    * @param params.iTwinId – The iTwin’s unique identifier.
    * @returns List of scenes.
    */
-  async getScenes(params: { iTwinId: string; }): Promise<SceneListResponse> {
+  async getScenes(params: GetScenesParams): Promise<SceneListResponse> {
     return getScenes({
       iTwinId: params.iTwinId,
       getAccessToken: this.getAccessToken,
@@ -70,10 +87,7 @@ export class SceneClient {
    * @param params.sceneId – The scene’s unique identifier.
    * @returns Scene details.
    */
-  async getScene(params: {
-    iTwinId: string;
-    sceneId: string;
-  }): Promise<SceneResponse> {
+  async getScene(params: GetSceneParams): Promise<SceneResponse> {
     return getScene({
       id: params.sceneId,
       iTwinId: params.iTwinId,
@@ -88,10 +102,7 @@ export class SceneClient {
    * @param params.scene – SceneCreateDto object to create.
    * @returns Created scene details.
    */
-  async postScene(params: {
-    iTwinId: string;
-    scene: SceneCreateDto;
-  }): Promise<SceneResponse> {
+  async postScene(params: PostSceneParams): Promise<SceneResponse> {
     return postScene({
       iTwinId: params.iTwinId,
       scene: params.scene,
@@ -107,11 +118,7 @@ export class SceneClient {
    * @param params.scene – SceneUpdateDTO object with updated fields.
    * @returns Updated scene details.
    */
-  async patchScene(params: {
-    iTwinId: string;
-    sceneId: string;
-    scene: SceneUpdateDTO;
-  }): Promise<SceneResponse> {
+  async patchScene(params: PatchSceneParams): Promise<SceneResponse> {
     return patchScene({
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,
@@ -126,11 +133,40 @@ export class SceneClient {
    * @param params.iTwinId – The iTwin’s unique identifier.
    * @param params.sceneId – The scene’s unique identifier.
    */
-  async deleteScene(params: {
-    iTwinId: string;
-    sceneId: string;
-  }): Promise<void> {
+  async deleteScene(params: DeleteSceneParams): Promise<void> {
     return deleteScene({
+      iTwinId: params.iTwinId,
+      sceneId: params.sceneId,
+      getAccessToken: this.getAccessToken,
+      baseUrl: this.baseUrl,
+    });
+  }
+
+  /**
+   * Fetch a single scene object by its ID.
+   * @param params.iTwinId – The iTwin’s unique identifier.
+   * @param params.sceneId – The scene’s unique identifier.
+   * @param params.objectId – The object’s unique identifier.
+   * @returns Scene object details.
+   */
+  async getObject(params: GetObjectParams): Promise<SceneObjectResponse> {
+    return getObject({
+      sceneId: params.sceneId,
+      iTwinId: params.iTwinId,
+      objectId: params.objectId,
+      getAccessToken: this.getAccessToken,
+      baseUrl: this.baseUrl,
+    });
+  }
+
+  /**
+   * Fetch all objects for a given scene.
+   * @param params.iTwinId – The iTwin’s unique identifier.
+   * @param params.sceneId – The scene’s unique identifier.
+   * @returns List of scene objects.
+   */
+  async getObjects(params: GetObjectsParams): Promise<SceneObjectListResponse> {
+    return getObjects({
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,
       getAccessToken: this.getAccessToken,
@@ -145,11 +181,7 @@ export class SceneClient {
    * @param params.object – SceneObjectCreateDto object to create.
    * @returns Created scene object details.
    */
-  async postObject(params: {
-    iTwinId: string;
-    sceneId: string;
-    object: SceneObjectCreateDto;
-  }): Promise<SceneObjectResponse> {
+  async postObject(params: PostObjectParams): Promise<SceneObjectResponse> {
     return postObject({
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,
@@ -166,54 +198,11 @@ export class SceneClient {
    * @param params.objects – Array of SceneObjectCreateDto to create.
    * @returns Created scene objects details.
    */
-  async postObjects(params: {
-    iTwinId: string;
-    sceneId: string;
-    objects: SceneObjectCreateDto[];
-  }): Promise<SceneObjectListResponse> {
+  async postObjects(params: PostObjectsParams): Promise<SceneObjectListResponse> {
     return postObjects({
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,
       objects: params.objects,
-      getAccessToken: this.getAccessToken,
-      baseUrl: this.baseUrl,
-    });
-  }
-
-  /**
-   * Fetch a single scene object by its ID.
-   * @param params.iTwinId – The iTwin’s unique identifier.
-   * @param params.sceneId – The scene’s unique identifier.
-   * @param params.objectId – The object’s unique identifier.
-   * @returns Scene object details.
-   */
-  async getObject(params: {
-    iTwinId: string;
-    sceneId: string;
-    objectId: string;
-  }): Promise<SceneObjectResponse> {
-    return getObject({
-      sceneId: params.sceneId,
-      iTwinId: params.iTwinId,
-      objectId: params.objectId,
-      getAccessToken: this.getAccessToken,
-      baseUrl: this.baseUrl,
-    });
-  }
-
-  /**
-   * Fetch all objects for a given scene.
-   * @param params.iTwinId – The iTwin’s unique identifier.
-   * @param params.sceneId – The scene’s unique identifier.
-   * @returns List of scene objects.
-   */
-  async getObjects(params: {
-    iTwinId: string;
-    sceneId: string;
-  }): Promise<SceneObjectListResponse> {
-    return getObjects({
-      iTwinId: params.iTwinId,
-      sceneId: params.sceneId,
       getAccessToken: this.getAccessToken,
       baseUrl: this.baseUrl,
     });
@@ -227,12 +216,7 @@ export class SceneClient {
    * @param params.object – SceneObjectUpdateDTO object with updated fields.
    * @returns Updated scene object details.
    */
-  async patchObject(params: {
-    iTwinId: string;
-    sceneId: string;
-    objectId: string;
-    object: SceneObjectUpdateDTO;
-  }): Promise<SceneObjectResponse> {
+  async patchObject(params: PatchObjectParams): Promise<SceneObjectResponse> {
     return patchObject({
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,
@@ -250,11 +234,7 @@ export class SceneClient {
    * @param params.objects – Array of SceneObjectUpdateWithIdDTO to update.
    * @returns Updated scene objects details.
    */
-  async patchObjects(params: {
-    iTwinId: string;
-    sceneId: string;
-    objects: SceneObjectUpdateWithIdDTO[];
-  }): Promise<SceneObjectListResponse> {
+  async patchObjects(params: PatchObjectsParams): Promise<SceneObjectListResponse> {
     return patchObjects({
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,
@@ -270,11 +250,7 @@ export class SceneClient {
    * @param params.sceneId – The scene’s unique identifier.
    * @param params.objectId – The object’s unique identifier.
    */
-  async deleteObject(params: {
-    iTwinId: string;
-    sceneId: string;
-    objectId: string;
-  }): Promise<void> {
+  async deleteObject(params: DeleteObjectParams): Promise<void> {
     return deleteObject({
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,
@@ -290,11 +266,7 @@ export class SceneClient {
    * @param params.sceneId – The scene’s unique identifier.
    * @param params.objectIds – Array of object IDs to delete.
    */
-  async deleteObjects(params: {
-    iTwinId: string;
-    sceneId: string;
-    objectIds: string[];
-  }): Promise<void> {
+  async deleteObjects(params: DeleteObjectsParams): Promise<void> {
     return deleteObjects({
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,

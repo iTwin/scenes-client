@@ -1,8 +1,7 @@
-// vitest.config.ts
 import { defineConfig } from 'vitest/config';
-import dotenv from 'dotenv';
+// import dotenv from 'dotenv';
 
-dotenv.config({ path: './tests/.env' });
+// dotenv.config({ path: './tests/.env' });
 
 export default defineConfig({
   envDir: './tests',

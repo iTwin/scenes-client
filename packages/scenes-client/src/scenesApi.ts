@@ -1,6 +1,6 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 
-import { callApi, AuthArgs } from "./Fetch";
+import { callApi, AuthArgs } from "./apiFetch.ts";
 
 import {
   SceneCreateDto,

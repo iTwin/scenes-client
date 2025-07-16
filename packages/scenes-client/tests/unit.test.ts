@@ -23,7 +23,7 @@ describe("Scenes Client", () => {
     fetchMock.mockImplementation(() =>
       createSuccessfulResponse({ scenes: [] }),
     );
-    const client = new SceneClient({ getAccessToken });
+    const client = new SceneClient(getAccessToken);
     await client.getScenes({ iTwinId: "itw-1" });
 
     verifyFetch(fetchMock, {
@@ -34,7 +34,7 @@ describe("Scenes Client", () => {
 
   it("getScene()", async () => {
     fetchMock.mockImplementation(() => createSuccessfulResponse({ scene: {} }));
-    const client = new SceneClient({ getAccessToken });
+    const client = new SceneClient(getAccessToken);
     await client.getScene({ iTwinId: "itw-1", sceneId: "scene-1" });
     verifyFetch(fetchMock, {
       url: `${BASE_DOMAIN}/v1/scenes/scene-1?iTwinId=itw-1`,
@@ -44,7 +44,7 @@ describe("Scenes Client", () => {
 
   it("postScene()", async () => {
     fetchMock.mockImplementation(() => createSuccessfulResponse({ scene: {} }));
-    const client = new SceneClient({ getAccessToken });
+    const client = new SceneClient(getAccessToken);
     await client.postScene({
       iTwinId: "itw-1",
       scene: {
@@ -71,7 +71,7 @@ describe("Scenes Client", () => {
     fetchMock.mockImplementation(() =>
       createSuccessfulResponse({ object: {} }),
     );
-    const client = new SceneClient({ getAccessToken });
+    const client = new SceneClient(getAccessToken);
     await client.postObject({
       iTwinId: "itw-1",
       sceneId: "scene-1",
@@ -101,7 +101,7 @@ describe("Scenes Client", () => {
     fetchMock.mockImplementation(() =>
       createSuccessfulResponse({ objects: [] }),
     );
-    const client = new SceneClient({ getAccessToken });
+    const client = new SceneClient(getAccessToken);
     await client.postObjects({
       iTwinId: "itw-1",
       sceneId: "scene-1",
@@ -147,7 +147,7 @@ describe("Scenes Client", () => {
     fetchMock.mockImplementation(() =>
       createSuccessfulResponse({ object: {} }),
     );
-    const client = new SceneClient({ getAccessToken });
+    const client = new SceneClient(getAccessToken);
     await client.getObject({
       iTwinId: "itw-1",
       sceneId: "scene-1",
@@ -164,7 +164,7 @@ describe("Scenes Client", () => {
     fetchMock.mockImplementation(() =>
       createSuccessfulResponse({ objects: [] }),
     );
-    const client = new SceneClient({ getAccessToken });
+    const client = new SceneClient(getAccessToken);
     await client.getObjects({ iTwinId: "itw-1", sceneId: "scene-1" });
     verifyFetch(fetchMock, {
       url: `${BASE_DOMAIN}/v1/scenes/scene-1/objects?iTwinId=itw-1`,
@@ -174,7 +174,7 @@ describe("Scenes Client", () => {
 
   it("patchScene()", async () => {
     fetchMock.mockImplementation(() => createSuccessfulResponse({ scene: {} }));
-    const client = new SceneClient({ getAccessToken });
+    const client = new SceneClient(getAccessToken);
     await client.patchScene({
       iTwinId: "itw-1",
       sceneId: "scene-1",
@@ -196,7 +196,7 @@ describe("Scenes Client", () => {
     fetchMock.mockImplementation(() =>
       createSuccessfulResponse({ object: {} }),
     );
-    const client = new SceneClient({ getAccessToken });
+    const client = new SceneClient(getAccessToken);
     await client.patchObject({
       iTwinId: "itw-1",
       sceneId: "scene-1",
@@ -225,7 +225,7 @@ describe("Scenes Client", () => {
     fetchMock.mockImplementation(() =>
       createSuccessfulResponse({ objects: [] }),
     );
-    const client = new SceneClient({ getAccessToken });
+    const client = new SceneClient(getAccessToken);
     await client.patchObjects({
       iTwinId: "itw-1",
       sceneId: "scene-1",
@@ -267,7 +267,7 @@ describe("Scenes Client", () => {
 
   it("deleteScene()", async () => {
     fetchMock.mockImplementation(() => createSuccessfulResponse({}));
-    const client = new SceneClient({ getAccessToken });
+    const client = new SceneClient(getAccessToken);
     await client.deleteScene({ iTwinId: "itw-1", sceneId: "scene-1" });
 
     verifyFetch(fetchMock, {
@@ -279,7 +279,7 @@ describe("Scenes Client", () => {
 
   it("deleteObject()", async () => {
     fetchMock.mockImplementation(() => createSuccessfulResponse({}));
-    const client = new SceneClient({ getAccessToken });
+    const client = new SceneClient(getAccessToken);
     await client.deleteObject({
       iTwinId: "itw-1",
       sceneId: "scene-1",
@@ -295,7 +295,7 @@ describe("Scenes Client", () => {
 
   it("deleteObjects()", async () => {
     fetchMock.mockImplementation(() => createSuccessfulResponse({}));
-    const client = new SceneClient({ getAccessToken });
+    const client = new SceneClient(getAccessToken);
     await client.deleteObjects({
       iTwinId: "itw-1",
       sceneId: "scene-1",

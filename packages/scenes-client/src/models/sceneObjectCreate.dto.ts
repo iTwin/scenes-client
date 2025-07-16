@@ -1,6 +1,6 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 
-export type SceneObjectCreateDto = {
+export interface SceneObjectCreateDto {
   /** Optional identifier for the scene object (UUID) */
   id?: string;
 
@@ -29,7 +29,7 @@ export type SceneObjectCreateDto = {
   data: Record<string, unknown>;
 };
 
-export type SceneDataCreateDto = {
+export interface SceneDataCreateDto {
   /** Array of scene objects */
   objects: SceneObjectCreateDto[];
 };

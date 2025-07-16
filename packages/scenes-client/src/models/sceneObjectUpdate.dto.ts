@@ -1,6 +1,6 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 
-export type SceneObjectUpdateDTO = {
+export interface SceneObjectUpdateDTO {
   /** Display name for the scene object */
   displayName?: string;
   /** Number for the scene object's order in lists */
@@ -13,7 +13,7 @@ export type SceneObjectUpdateDTO = {
   data?: object;
 };
 
-export type SceneObjectUpdateWithIdDTO = SceneObjectUpdateDTO & {
+export interface SceneObjectUpdateWithIdDTO extends SceneObjectUpdateDTO {
   /** Id of the scene object to update (UUID) */
   id: string;
 };

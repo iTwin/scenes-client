@@ -2,7 +2,7 @@
 
 import { SceneDataCreateDto } from "./sceneObjectCreate.dto";
 
-export type SceneCreateDto = {
+export interface SceneCreateDto {
   /** Optional identifier for the scene object (UUID) */
   id?: string;
 
