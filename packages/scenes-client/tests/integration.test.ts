@@ -1,8 +1,8 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 import "dotenv/config";
 import { describe, it, expect } from "vitest";
-import { SceneClient } from "../client/src/client";
-import { ScenesApiError } from "../client/src/models";
+import { SceneClient } from "../src/client";
+import { ScenesApiError } from "../src/models";
 
 function requireEnv(key: keyof NodeJS.ProcessEnv): string {
   const v = process.env[key];
@@ -42,7 +42,6 @@ const getAccessToken = async (): Promise<string> => {
 
 const client = new SceneClient({
   getAccessToken,
-  urlPrefix: "",
   baseUrl: HOST_URL,
 });
 

@@ -1,7 +1,7 @@
 {
-  "name": "scenes-schemas",
-  "version": "1.0.0",
-  "description": "Central repository for Scenes API object schemas",
+  "name": "@itwin/scenes-client",
+  "version": "0.0.1",
+  "description": "Client-side code for managing scenes",
   "main": "index.js",
   "scripts": {
     "test": "dotenv -e tests/.env -- pnpm vitest",
@@ -9,7 +9,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "type": "module",
   "devDependencies": {
     "@eslint/json": "^0.12.0",

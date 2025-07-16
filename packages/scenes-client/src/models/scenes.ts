@@ -33,9 +33,9 @@ export interface SceneObject extends SceneObjectMinimal {
   /** Id of the user who created the scene object */
   createdById: string;
   /** Time the scene was object created as an ISO8601 string, `"YYYY-MM-DDTHH:mm:ss.sssZ"` */
-  creationTime: Date;
+  creationTime: string;
   /** Time the scene object was last modified as an ISO8601 string, `"YYYY-MM-DDTHH:mm:ss.sssZ"` */
-  lastModified: Date;
+  lastModified: string;
 }
 
 /**
@@ -61,9 +61,9 @@ export interface SceneMinimal {
   /** Id of the user who created the scene */
   createdById: string;
   /** Time the scene was created as an ISO8601 string, `"YYYY-MM-DDTHH:mm:ss.sssZ"` */
-  creationTime: Date;
+  creationTime: string;
   /** Time the scene was last modified as an ISO8601 string, `"YYYY-MM-DDTHH:mm:ss.sssZ"` */
-  lastModified: Date;
+  lastModified: string;
 }
 
 /**

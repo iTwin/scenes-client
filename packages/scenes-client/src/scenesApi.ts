@@ -25,7 +25,6 @@ function* batched<T>(items: T[], batchSize: number) {
 export async function getScenes({
   iTwinId,
   getAccessToken,
-  urlPrefix,
   baseUrl,
 }: { iTwinId: string; } & AuthArgs): Promise<SceneListResponse> {
   return callApi<SceneListResponse>({
@@ -42,7 +41,6 @@ export async function getScenes({
       }
       return responseJson;
     },
-    urlPrefix,
     baseUrl,
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -54,7 +52,6 @@ export async function getScene({
   id,
   iTwinId,
   getAccessToken,
-  urlPrefix,
   baseUrl,
 }: { id: string; iTwinId: string; } & AuthArgs): Promise<SceneResponse> {
   return callApi<SceneResponse>({
@@ -74,7 +71,6 @@ export async function getScene({
       }
       return responseJson;
     },
-    urlPrefix,
     baseUrl,
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -86,7 +82,6 @@ export async function postScene({
   scene,
   iTwinId,
   getAccessToken,
-  urlPrefix,
   baseUrl,
 }: {
   iTwinId: string;
@@ -95,7 +90,6 @@ export async function postScene({
   return callApi<SceneResponse>({
     endpoint: `/v1/scenes?iTwinId=${iTwinId}`,
     getAccessToken,
-    urlPrefix,
     baseUrl,
     postProcess: async (response) => {
       const responseJson = await response.json();
@@ -129,7 +123,6 @@ export async function postObject({
   iTwinId,
   object,
   getAccessToken,
-  urlPrefix,
   baseUrl,
 }: {
   sceneId: string;
@@ -139,7 +132,6 @@ export async function postObject({
   return callApi({
     endpoint: `/v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}`,
     getAccessToken,
-    urlPrefix,
     baseUrl,
     postProcess: async (response) => {
       const responseJson = await response.json();
@@ -175,7 +167,6 @@ export async function postObjects({
   iTwinId,
   objects,
   getAccessToken,
-  urlPrefix,
   baseUrl,
 }: {
   sceneId: string;
@@ -185,7 +176,6 @@ export async function postObjects({
   return callApi({
     endpoint: `/v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}`,
     getAccessToken,
-    urlPrefix,
     baseUrl,
     postProcess: async (response) => {
       const responseJson = await response.json();
@@ -221,7 +211,6 @@ export async function getObject({
   iTwinId,
   objectId,
   getAccessToken,
-  urlPrefix,
   baseUrl,
 }: {
   sceneId: string;
@@ -231,7 +220,6 @@ export async function getObject({
   return callApi<SceneObjectResponse>({
     endpoint: `/v1/scenes/${sceneId}/objects/${objectId}?iTwinId=${iTwinId}`,
     getAccessToken,
-    urlPrefix,
     baseUrl,
     postProcess: async (response) => {
       const responseJson = await response.json();
@@ -259,7 +247,6 @@ export async function getObjects({
   sceneId,
   iTwinId,
   getAccessToken,
-  urlPrefix,
   baseUrl,
 }: {
   sceneId: string;
@@ -268,7 +255,6 @@ export async function getObjects({
   return callApi<SceneObjectListResponse>({
     endpoint: `/v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}`,
     getAccessToken,
-    urlPrefix,
     baseUrl,
     postProcess: async (response) => {
       const responseJson = await response.json();
@@ -297,7 +283,6 @@ export async function patchScene({
   sceneId,
   scene,
   getAccessToken,
-  urlPrefix,
   baseUrl,
 }: {
   sceneId: string;
@@ -307,7 +292,6 @@ export async function patchScene({
   return callApi<SceneResponse>({
     endpoint: `/v1/scenes/${sceneId}?iTwinId=${iTwinId}`,
     getAccessToken,
-    urlPrefix,
     baseUrl,
     postProcess: async (response) => {
       const responseJson = await response.json();
@@ -342,7 +326,6 @@ export async function patchObject({
   objectId,
   object,
   getAccessToken,
-  urlPrefix,
   baseUrl,
 }: {
   sceneId: string;
@@ -353,7 +336,6 @@ export async function patchObject({
   return callApi({
     endpoint: `/v1/scenes/${sceneId}/objects/${objectId}?iTwinId=${iTwinId}`,
     getAccessToken,
-    urlPrefix,
     baseUrl,
     postProcess: async (response) => {
       const responseJson = await response.json();
@@ -389,7 +371,6 @@ export async function patchObjects({
   iTwinId,
   objects,
   getAccessToken,
-  urlPrefix,
   baseUrl,
 }: {
   sceneId: string;
@@ -399,7 +380,6 @@ export async function patchObjects({
   return callApi({
     endpoint: `/v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}`,
     getAccessToken,
-    urlPrefix,
     baseUrl,
     postProcess: async (response) => {
       const responseJson = await response.json();
@@ -436,7 +416,6 @@ export async function deleteScene({
   sceneId,
   iTwinId,
   getAccessToken,
-  urlPrefix,
   baseUrl,
 }: {
   sceneId: string;
@@ -445,7 +424,6 @@ export async function deleteScene({
   return callApi({
     endpoint: `/v1/scenes/${sceneId}?iTwinId=${iTwinId}`,
     getAccessToken,
-    urlPrefix,
     baseUrl,
     fetchOptions: { method: "DELETE" },
     additionalHeaders: {
@@ -468,7 +446,6 @@ export async function deleteObject({
   iTwinId,
   objectId,
   getAccessToken,
-  urlPrefix,
   baseUrl,
 }: {
   sceneId: string;
@@ -478,7 +455,6 @@ export async function deleteObject({
   return callApi({
     endpoint: `/v1/scenes/${sceneId}/objects/${objectId}?iTwinId=${iTwinId}`,
     getAccessToken,
-    urlPrefix,
     baseUrl,
     postProcess: async () => { },
     fetchOptions: {
@@ -495,7 +471,6 @@ export async function deleteObjects({
   iTwinId,
   objectIds,
   getAccessToken,
-  urlPrefix,
   baseUrl,
 }: {
   sceneId: string;
@@ -508,7 +483,6 @@ export async function deleteObjects({
       callApi({
         endpoint: `/v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}&ids=${batch.join(",")}`,
         getAccessToken,
-        urlPrefix,
         baseUrl,
         postProcess: async () => { },
         fetchOptions: {

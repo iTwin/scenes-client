@@ -21,7 +21,7 @@ export interface SceneResponse {
 
 /** Scene list response model following APIM structure */
 export interface SceneListResponse {
-  scenes: Scene[] | SceneMinimal[]; // TODO: change to only minimal
+  scenes: SceneMinimal[];
   _links: PagingLinks;
 }
 

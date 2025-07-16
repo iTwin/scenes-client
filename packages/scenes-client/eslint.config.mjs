@@ -11,10 +11,6 @@ export default tseslint.config(
   {
     files: ["client/**/*.ts", "tests/**/*.ts"],
     languageOptions: {
-      globals: {
-        ...globals.node,
-        ...globals.jest,
-      },
       parser: tseslint.parser,
       sourceType: "module",
       parserOptions: {
