@@ -75,3 +75,64 @@ export interface Scene extends SceneMinimal {
   /** Scene informational objects */
   sceneData: SceneData;
 }
+
+// type guards for runtime type checking
+export function isObject(v: unknown): v is Record<string, unknown> {
+  return v !== null && typeof v === "object";
+}
+
+export function isSceneObjectMinimal(v: any): v is SceneObjectMinimal {
+  return (
+    isObject(v) &&
+    typeof v.id === "string" &&
+    typeof v.kind === "string" &&
+    typeof v.version === "string" &&
+    isObject(v.data) &&
+    (v.displayName === undefined || typeof v.displayName === "string") &&
+    (v.order === undefined || typeof v.order === "number") &&
+    (v.parentId === undefined || typeof v.parentId === "string") &&
+    (v.relatedId === undefined || typeof v.relatedId === "string") &&
+    (v.iTwinId === undefined || typeof v.iTwinId === "string")
+  );
+}
+
+export function isSceneObject(v: unknown): v is SceneObject {
+  return (
+    isObject(v) &&
+    isSceneObjectMinimal(v) &&
+    typeof v.sceneId === "string" &&
+    typeof v.createdById === "string" &&
+    typeof v.creationTime === "string" &&
+    typeof v.lastModified === "string"
+  );
+}
+
+export function isSceneData(v: unknown): v is SceneData {
+  return (
+    isObject(v) &&
+    Array.isArray(v.objects) &&
+    v.objects.every(isSceneObjectMinimal)
+  );
+}
+
+export function isSceneMinimal(v: unknown): v is SceneMinimal {
+  return (
+    isObject(v) &&
+    typeof v.id === "string" &&
+    typeof v.displayName === "string" &&
+    typeof v.iTwinId === "string" &&
+    (v.parentId === undefined || typeof v.parentId === "string") &&
+    typeof v.createdById === "string" &&
+    typeof v.creationTime === "string" &&
+    typeof v.lastModified === "string"
+  );
+}
+
+export function isScene(v: unknown): v is Scene {
+  return (
+    isObject(v) &&
+    isSceneMinimal(v) &&
+    (v.isPartial === undefined || typeof v.isPartial === "boolean") &&
+    isSceneData(v.sceneData)
+  );
+}

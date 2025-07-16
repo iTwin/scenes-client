@@ -10,6 +10,14 @@ import {
   vi,
 } from "vitest";
 import { SceneClient } from "../src/client";
+import {
+  PagingLinks,
+  SceneListResponse,
+  SceneObjectListResponse,
+  SceneObjectResponse,
+  SceneResponse,
+
+ } from "../src/models/index";
 
 const BASE_DOMAIN = "https://itwinscenes-eus.bentley.com";
 
@@ -21,7 +29,7 @@ describe("Scenes Client", () => {
 
   it("getScenes()", async () => {
     fetchMock.mockImplementation(() =>
-      createSuccessfulResponse({ scenes: [] }),
+      createSuccessfulResponse(exampleSceneListResponse),
     );
     const client = new SceneClient(getAccessToken);
     await client.getScenes({ iTwinId: "itw-1" });
@@ -33,7 +41,7 @@ describe("Scenes Client", () => {
   });
 
   it("getScene()", async () => {
-    fetchMock.mockImplementation(() => createSuccessfulResponse({ scene: {} }));
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleSceneResponse));
     const client = new SceneClient(getAccessToken);
     await client.getScene({ iTwinId: "itw-1", sceneId: "scene-1" });
     verifyFetch(fetchMock, {
@@ -43,7 +51,7 @@ describe("Scenes Client", () => {
   });
 
   it("postScene()", async () => {
-    fetchMock.mockImplementation(() => createSuccessfulResponse({ scene: {} }));
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleSceneResponse));
     const client = new SceneClient(getAccessToken);
     await client.postScene({
       iTwinId: "itw-1",
@@ -69,7 +77,7 @@ describe("Scenes Client", () => {
 
   it("postObject()", async () => {
     fetchMock.mockImplementation(() =>
-      createSuccessfulResponse({ object: {} }),
+      createSuccessfulResponse(exampleSceneObjectResponse),
     );
     const client = new SceneClient(getAccessToken);
     await client.postObject({
@@ -99,7 +107,7 @@ describe("Scenes Client", () => {
 
   it("postObjects()", async () => {
     fetchMock.mockImplementation(() =>
-      createSuccessfulResponse({ objects: [] }),
+      createSuccessfulResponse(exampleSceneObjectListResponse),
     );
     const client = new SceneClient(getAccessToken);
     await client.postObjects({
@@ -145,7 +153,7 @@ describe("Scenes Client", () => {
 
   it("getObject()", async () => {
     fetchMock.mockImplementation(() =>
-      createSuccessfulResponse({ object: {} }),
+      createSuccessfulResponse(exampleSceneObjectResponse),
     );
     const client = new SceneClient(getAccessToken);
     await client.getObject({
@@ -173,7 +181,7 @@ describe("Scenes Client", () => {
   });
 
   it("patchScene()", async () => {
-    fetchMock.mockImplementation(() => createSuccessfulResponse({ scene: {} }));
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleSceneResponse));
     const client = new SceneClient(getAccessToken);
     await client.patchScene({
       iTwinId: "itw-1",
@@ -194,7 +202,7 @@ describe("Scenes Client", () => {
 
   it("patchObject()", async () => {
     fetchMock.mockImplementation(() =>
-      createSuccessfulResponse({ object: {} }),
+      createSuccessfulResponse(exampleSceneObjectResponse),
     );
     const client = new SceneClient(getAccessToken);
     await client.patchObject({
@@ -339,3 +347,75 @@ function verifyFetch(mock: ReturnType<typeof vi.fn>, args: VerifyFetchArgs) {
     ...(args.body !== undefined ? { body: args.body } : {}),
   });
 }
+
+// mock responses
+const links: PagingLinks = {
+  self: { href: "/scenes?page=1" }
+};
+const exampleSceneResponse: SceneResponse = {
+  scene: {
+    id: "scene-1",
+    displayName: "Example Scene",
+    iTwinId: "itwin-1",
+    createdById: "user-1",
+    creationTime: "2025-07-16T15:00:00.000Z",
+    lastModified: "2025-07-16T15:00:00.000Z",
+    sceneData: {
+      objects: [
+        {
+          id: "obj-1",
+          kind: "MyKind",
+          version: "1.0.0",
+          data: {}
+        }
+      ]
+    }
+  }
+};
+
+const exampleSceneListResponse: SceneListResponse = {
+  scenes: [
+    {
+      id: "scene-1",
+      displayName: "Example Scene",
+      iTwinId: "itwin-1",
+      createdById: "user-1",
+      creationTime: "2025-07-16T15:00:00.000Z",
+      lastModified: "2025-07-16T15:00:00.000Z"
+    }
+  ],
+  _links: links
+};
+
+const exampleSceneObjectResponse: SceneObjectResponse = {
+  object: {
+    id: "obj-1",
+    kind: "MyKind",
+    version: "1.0.0",
+    data: {},
+    sceneId: "scene-1",
+    createdById: "user-1",
+    creationTime: "2025-07-16T15:00:00.000Z",
+    lastModified: "2025-07-16T15:00:00.000Z"
+  }
+};
+
+const exampleSceneObjectListResponse: SceneObjectListResponse = {
+  objects: [
+    {
+      id: "obj-1",
+      kind: "MyKind",
+      version: "1.0.0",
+      data: {},
+      displayName: "Object 1",
+      order: 1,
+      parentId: "parent-1",
+      relatedId: "related-1",
+      iTwinId: "itwin-1",
+      createdById: "user-1",
+      creationTime: "2025-07-16T15:00:00.000Z",
+      lastModified: "2025-07-16T15:00:00.000Z"
+    }
+  ],
+  _links: links
+};
