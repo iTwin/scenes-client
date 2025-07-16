@@ -1,6 +1,6 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 
-import { callApi, AuthArgs } from "./apiFetch.ts";
+import { callApi, AuthArgs } from "./apiFetch";
 
 import {
   SceneCreateDto,
@@ -14,6 +14,10 @@ import {
   SceneObjectUpdateDTO,
   SceneObjectUpdateWithIdDTO,
   SceneResponse,
+  isSceneListResponse,
+  isSceneResponse,
+  isSceneObjectResponse,
+  isSceneObjectListResponse,
 } from "./models/index";
 
 function* batched<T>(items: T[], batchSize: number) {
@@ -36,7 +40,7 @@ export async function getScenes({
         const err = responseJson.error as ScenesErrorResponse;
         throw new ScenesApiError(err, responseJson.status);
       }
-      if (!("scenes" in responseJson) || !Array.isArray(responseJson.scenes)) {
+      if (!isSceneListResponse(responseJson)) {
         throw new Error("Error fetching scenes: unexpected response format");
       }
       return responseJson;
@@ -63,10 +67,7 @@ export async function getScene({
         const err = responseJson.error as ScenesErrorResponse;
         throw new ScenesApiError(err, response.status);
       }
-      if (
-        !("scene" in responseJson) ||
-        typeof responseJson.scene !== "object"
-      ) {
+      if (!isSceneResponse(responseJson)) {
         throw new Error("Error fetching scene: unexpected response format");
       }
       return responseJson;
@@ -97,10 +98,7 @@ export async function postScene({
         const err = responseJson.error as ScenesErrorResponse;
         throw new ScenesApiError(err, response.status);
       }
-      if (
-        !("scene" in responseJson) ||
-        typeof responseJson.scene !== "object"
-      ) {
+      if (!isSceneResponse(responseJson)) {
         throw new Error("Error creating scene: unexpected response format");
       }
       return responseJson;
@@ -139,10 +137,7 @@ export async function postObject({
         const err = responseJson.error as ScenesErrorResponse;
         throw new ScenesApiError(err, response.status);
       }
-      if (
-        !("object" in responseJson) ||
-        typeof responseJson.object !== "object"
-      ) {
+      if (!isSceneObjectResponse(responseJson)) {
         throw new Error(
           "Error creating scene object: unexpected response format",
         );
@@ -183,10 +178,7 @@ export async function postObjects({
         const err = responseJson.error as ScenesErrorResponse;
         throw new ScenesApiError(err, response.status);
       }
-      if (
-        !("objects" in responseJson) ||
-        !Array.isArray(responseJson.objects)
-      ) {
+      if (!isSceneObjectListResponse(responseJson)) {
         throw new Error(
           "Error creating scene objects: unexpected response format",
         );
@@ -227,10 +219,7 @@ export async function getObject({
         const err = responseJson.error as ScenesErrorResponse;
         throw new ScenesApiError(err, response.status);
       }
-      if (
-        !("object" in responseJson) ||
-        typeof responseJson.object !== "object"
-      ) {
+      if (!isSceneObjectResponse(responseJson)) {
         throw new Error(
           "Error fetching scene object: unexpected response format",
         );
@@ -262,10 +251,7 @@ export async function getObjects({
         const err = responseJson.error as ScenesErrorResponse;
         throw new ScenesApiError(err, response.status);
       }
-      if (
-        !("objects" in responseJson) ||
-        !Array.isArray(responseJson.objects)
-      ) {
+      if (!isSceneObjectListResponse(responseJson)) {
         throw new Error(
           "Error fetching scene objects: unexpected response format",
         );
@@ -299,10 +285,7 @@ export async function patchScene({
         const err = responseJson.error as ScenesErrorResponse;
         throw new ScenesApiError(err, response.status);
       }
-      if (
-        !("scene" in responseJson) ||
-        typeof responseJson.scene !== "object"
-      ) {
+      if (!isSceneResponse(responseJson)) {
         throw new Error("Error updating scene: unexpected response format");
       }
       return responseJson;
@@ -343,10 +326,7 @@ export async function patchObject({
         const err = responseJson.error as ScenesErrorResponse;
         throw new ScenesApiError(err, response.status);
       }
-      if (
-        !("object" in responseJson) ||
-        typeof responseJson.object !== "object"
-      ) {
+      if (!isSceneObjectResponse(responseJson)) {
         throw new Error(
           "Error updating scene object: unexpected response format",
         );
@@ -387,12 +367,7 @@ export async function patchObjects({
         const err = responseJson.error as ScenesErrorResponse;
         throw new ScenesApiError(err, response.status);
       }
-
-      // @naron: this is repetitive, can be a utility function
-      if (
-        !("objects" in responseJson) ||
-        !Array.isArray(responseJson.objects)
-      ) {
+      if (!isSceneObjectListResponse(responseJson)) {
         throw new Error(
           "Error updating scene objects: unexpected response format",
         );
