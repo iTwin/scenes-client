@@ -38,7 +38,7 @@
           "$ref": "/schemas/CommonTypes#/definitions/dateTime"
         },
         "weather": {
-          "description": "TODO",
+          "description": "Controls the density or presence of atmospheric clouds (0: no clouds, 1: fully overcast)",
           "type": "number",
           "minimum": 0.0,
           "maximum": 1.0
