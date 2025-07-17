@@ -10,7 +10,7 @@ export interface RequestArgs<T> {
 export interface AuthArgs {
   getAccessToken: () => Promise<string>;
   baseUrl: string;
-};
+}
 
 export async function callApi<T>({
   baseUrl,

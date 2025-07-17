@@ -8,9 +8,6 @@ importers:
 
   .:
     devDependencies:
-      '@eslint/json':
-        specifier: ^0.12.0
-        version: 0.12.0
       '@types/node':
         specifier: ^24.0.7
         version: 24.0.12
@@ -44,9 +41,6 @@ importers:
       eslint-plugin-prettier:
         specifier: ^5.5.1
         version: 5.5.1(eslint-config-prettier@10.1.5(eslint@9.30.1))(eslint@9.30.1)(prettier@3.6.2)
-      globals:
-        specifier: ^16.3.0
-        version: 16.3.0
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
@@ -233,14 +227,6 @@ packages:
     resolution: {integrity: sha1-PgmpDfuH4ABcdpR5HljpcHcnEoY=}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@eslint/core@0.12.0':
-    resolution: {integrity: sha1-X5YMPVdyi+n2xlvYSqaqYTB4eY4=}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-
-  '@eslint/core@0.13.0':
-    resolution: {integrity: sha1-vwLyCYRtO/mW+egAnbYt8nObRYw=}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-
   '@eslint/core@0.14.0':
     resolution: {integrity: sha1-MmKJOAlo6vfpbzZOHkz4863y0AM=}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
@@ -257,16 +243,8 @@ packages:
     resolution: {integrity: sha1-6+ndUqODRXhMSGMAF1ooxgE8CI0=}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@eslint/json@0.12.0':
-    resolution: {integrity: sha1-fRy3FS0B84N3A8FUpbOCM/QJOV4=}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-
   '@eslint/object-schema@2.1.6':
     resolution: {integrity: sha1-WDaatbWzyhF4gMD2wLDzL2lQ8k8=}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-
-  '@eslint/plugin-kit@0.2.8':
-    resolution: {integrity: sha1-R0iNj4FxtdRhPoMzE/POcI41Jfg=}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
   '@eslint/plugin-kit@0.3.3':
@@ -284,10 +262,6 @@ packages:
   '@humanwhocodes/module-importer@1.0.1':
     resolution: {integrity: sha1-r1smkaIrRL6EewyoFkHF+2rQFyw=}
     engines: {node: '>=12.22'}
-
-  '@humanwhocodes/momoa@3.3.8':
-    resolution: {integrity: sha1-sAYwv2ibb3WEGcAp4VpL4lwSF5s=}
-    engines: {node: '>=18'}
 
   '@humanwhocodes/retry@0.3.1':
     resolution: {integrity: sha1-xypcdqn7rzSI4jGxPcUsDae6tCo=}
@@ -959,10 +933,6 @@ packages:
 
   globals@14.0.0:
     resolution: {integrity: sha1-iY10E8Kbq89rr+Vvyt3thYrack4=}
-    engines: {node: '>=18'}
-
-  globals@16.3.0:
-    resolution: {integrity: sha1-ZhGOdl3a+eLYgPfhdlhUP5Px9mc=}
     engines: {node: '>=18'}
 
   globalthis@1.0.4:
@@ -1722,14 +1692,6 @@ snapshots:
 
   '@eslint/config-helpers@0.3.0': {}
 
-  '@eslint/core@0.12.0':
-    dependencies:
-      '@types/json-schema': 7.0.15
-
-  '@eslint/core@0.13.0':
-    dependencies:
-      '@types/json-schema': 7.0.15
-
   '@eslint/core@0.14.0':
     dependencies:
       '@types/json-schema': 7.0.15
@@ -1754,19 +1716,7 @@ snapshots:
 
   '@eslint/js@9.30.1': {}
 
-  '@eslint/json@0.12.0':
-    dependencies:
-      '@eslint/core': 0.12.0
-      '@eslint/plugin-kit': 0.2.8
-      '@humanwhocodes/momoa': 3.3.8
-      natural-compare: 1.4.0
-
   '@eslint/object-schema@2.1.6': {}
-
-  '@eslint/plugin-kit@0.2.8':
-    dependencies:
-      '@eslint/core': 0.13.0
-      levn: 0.4.1
 
   '@eslint/plugin-kit@0.3.3':
     dependencies:
@@ -1781,8 +1731,6 @@ snapshots:
       '@humanwhocodes/retry': 0.3.1
 
   '@humanwhocodes/module-importer@1.0.1': {}
-
-  '@humanwhocodes/momoa@3.3.8': {}
 
   '@humanwhocodes/retry@0.3.1': {}
 
@@ -2574,8 +2522,6 @@ snapshots:
       is-glob: 4.0.3
 
   globals@14.0.0: {}
-
-  globals@16.3.0: {}
 
   globalthis@1.0.4:
     dependencies:

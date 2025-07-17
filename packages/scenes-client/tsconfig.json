@@ -7,5 +7,5 @@
     "forceConsistentCasingInFileNames": true,            /* Ensure that casing is correct in imports. */
     "strict": true,                                      /* Enable all strict type-checking options. */
     },
-    "include": ["src/**/*.ts", "tests/**/*.ts", "vite-env.d.ts"]
+    "include": ["**/*.ts"]
 }

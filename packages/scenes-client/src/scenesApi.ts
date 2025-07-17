@@ -30,7 +30,7 @@ export async function getScenes({
   iTwinId,
   getAccessToken,
   baseUrl,
-}: { iTwinId: string; } & AuthArgs): Promise<SceneListResponse> {
+}: { iTwinId: string } & AuthArgs): Promise<SceneListResponse> {
   return callApi<SceneListResponse>({
     endpoint: `/v1/scenes?iTwinId=${iTwinId}&$top=100&$skip=0`,
     getAccessToken,
@@ -57,7 +57,7 @@ export async function getScene({
   iTwinId,
   getAccessToken,
   baseUrl,
-}: { id: string; iTwinId: string; } & AuthArgs): Promise<SceneResponse> {
+}: { id: string; iTwinId: string } & AuthArgs): Promise<SceneResponse> {
   return callApi<SceneResponse>({
     endpoint: `/v1/scenes/${id}?iTwinId=${iTwinId}`,
     getAccessToken,
@@ -431,7 +431,7 @@ export async function deleteObject({
     endpoint: `/v1/scenes/${sceneId}/objects/${objectId}?iTwinId=${iTwinId}`,
     getAccessToken,
     baseUrl,
-    postProcess: async () => { },
+    postProcess: async () => {},
     fetchOptions: {
       method: "DELETE",
     },
@@ -459,7 +459,7 @@ export async function deleteObjects({
         endpoint: `/v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}&ids=${batch.join(",")}`,
         getAccessToken,
         baseUrl,
-        postProcess: async () => { },
+        postProcess: async () => {},
         fetchOptions: {
           method: "DELETE",
         },

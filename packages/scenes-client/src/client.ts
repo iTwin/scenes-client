@@ -1,6 +1,17 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 
 import {
+  SceneCreateDto,
+  SceneUpdateDTO,
+  SceneListResponse,
+  SceneObjectCreateDto,
+  SceneObjectResponse,
+  SceneObjectListResponse,
+  SceneObjectUpdateDTO,
+  SceneObjectUpdateWithIdDTO,
+  SceneResponse,
+} from "./models/index";
+import {
   getScene,
   getScenes,
   postScene,
@@ -14,42 +25,34 @@ import {
   deleteObjects,
   patchObjects,
   getObjects,
-} from "./scenesApi.js";
-
-import {
-  SceneCreateDto,
-  SceneUpdateDTO,
-  SceneListResponse,
-  SceneObjectCreateDto,
-  SceneObjectResponse,
-  SceneObjectListResponse,
-  SceneObjectUpdateDTO,
-  SceneObjectUpdateWithIdDTO,
-  SceneResponse,
-} from "./models/index";
+} from "./scenesApi";
 
 type AccessTokenFn = () => Promise<string>;
 
 const DEFAULT_BASE_URL = "https://itwinscenes-eus.bentley.com";
 
-type ITwinParams = { iTwinId: string; };
-type SceneParams = ITwinParams & { sceneId: string; };
-type ObjectParams = SceneParams & { objectId: string; };
+type ITwinParams = { iTwinId: string };
+type SceneParams = ITwinParams & { sceneId: string };
+type ObjectParams = SceneParams & { objectId: string };
 
 export type GetScenesParams = ITwinParams;
 export type GetSceneParams = SceneParams;
-export type PostSceneParams = ITwinParams & { scene: SceneCreateDto; };
-export type PatchSceneParams = SceneParams & { scene: SceneUpdateDTO; };
+export type PostSceneParams = ITwinParams & { scene: SceneCreateDto };
+export type PatchSceneParams = SceneParams & { scene: SceneUpdateDTO };
 export type DeleteSceneParams = SceneParams;
 
 export type GetObjectParams = ObjectParams;
 export type GetObjectsParams = SceneParams;
-export type PostObjectParams = SceneParams & { object: SceneObjectCreateDto; };
-export type PostObjectsParams = SceneParams & { objects: SceneObjectCreateDto[]; };
-export type PatchObjectParams = ObjectParams & { object: SceneObjectUpdateDTO; };
-export type PatchObjectsParams = SceneParams & { objects: SceneObjectUpdateWithIdDTO[]; };
+export type PostObjectParams = SceneParams & { object: SceneObjectCreateDto };
+export type PostObjectsParams = SceneParams & {
+  objects: SceneObjectCreateDto[];
+};
+export type PatchObjectParams = ObjectParams & { object: SceneObjectUpdateDTO };
+export type PatchObjectsParams = SceneParams & {
+  objects: SceneObjectUpdateWithIdDTO[];
+};
 export type DeleteObjectParams = ObjectParams;
-export type DeleteObjectsParams = SceneParams & { objectIds: string[]; };
+export type DeleteObjectsParams = SceneParams & { objectIds: string[] };
 
 export class SceneClient {
   private readonly getAccessToken: AccessTokenFn;
@@ -198,7 +201,9 @@ export class SceneClient {
    * @param params.objects – Array of SceneObjectCreateDto to create.
    * @returns Created scene objects details.
    */
-  async postObjects(params: PostObjectsParams): Promise<SceneObjectListResponse> {
+  async postObjects(
+    params: PostObjectsParams,
+  ): Promise<SceneObjectListResponse> {
     return postObjects({
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,
@@ -234,7 +239,9 @@ export class SceneClient {
    * @param params.objects – Array of SceneObjectUpdateWithIdDTO to update.
    * @returns Updated scene objects details.
    */
-  async patchObjects(params: PatchObjectsParams): Promise<SceneObjectListResponse> {
+  async patchObjects(
+    params: PatchObjectsParams,
+  ): Promise<SceneObjectListResponse> {
     return patchObjects({
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,

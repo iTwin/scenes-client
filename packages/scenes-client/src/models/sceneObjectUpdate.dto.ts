@@ -11,9 +11,9 @@ export interface SceneObjectUpdateDTO {
   iTwinId?: string;
   /** Data for the scene object */
   data?: object;
-};
+}
 
 export interface SceneObjectUpdateWithIdDTO extends SceneObjectUpdateDTO {
   /** Id of the scene object to update (UUID) */
   id: string;
-};
+}

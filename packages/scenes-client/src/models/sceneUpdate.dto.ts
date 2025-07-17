@@ -5,4 +5,4 @@ export interface SceneUpdateDTO {
   displayName?: string;
   /** Optional parent Id for the scene (UUID) */
   parentId?: string;
-};
+}

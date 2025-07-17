@@ -14,4 +14,4 @@ export interface SceneCreateDto {
 
   /** Scene informational objects */
   sceneData?: SceneDataCreateDto;
-};
+}

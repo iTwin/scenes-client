@@ -7,7 +7,7 @@ headerPlugin.rules.header.meta.schema = false; // this makes header plugin compa
 
 export default tseslint.config(
   {
-    files: ["client/**/*.ts", "tests/**/*.ts"],
+    files: ['**/*.ts'],
     languageOptions: {
       parser: tseslint.parser,
       sourceType: "module",
@@ -40,5 +40,6 @@ export default tseslint.config(
       "@typescript-eslint/return-await": "warn",
       "@typescript-eslint/switch-exhaustiveness-check": "warn",
     },
+    ignores: ['vitest.config.ts']
   },
 );

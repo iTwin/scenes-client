@@ -27,9 +27,9 @@ export interface SceneObjectCreateDto {
 
   /** Arbitrary data that matches the object's JSON schema */
   data: Record<string, unknown>;
-};
+}
 
 export interface SceneDataCreateDto {
   /** Array of scene objects */
   objects: SceneObjectCreateDto[];
-};
+}

@@ -9,7 +9,7 @@ import {
   isSceneMinimal,
   isSceneObject,
   isSceneObjectMinimal,
- } from "./scenes";
+} from "./scenes";
 
 /** Generic href link */
 export interface Link {
@@ -47,11 +47,7 @@ export class SceneObjectListResponse {
 
 // type guards for runtime type checking
 export function isSceneResponse(v: unknown): v is SceneResponse {
-  return (
-    isObject(v) &&
-    "scene" in v &&
-    isScene(v.scene)
-  );
+  return isObject(v) && "scene" in v && isScene(v.scene);
 }
 
 export function isSceneListResponse(v: unknown): v is SceneListResponse {
@@ -65,20 +61,22 @@ export function isSceneListResponse(v: unknown): v is SceneListResponse {
     "self" in v._links &&
     isObject(v._links.self) &&
     typeof v._links.self.href === "string" &&
-    ("prev" in v._links ? isObject(v._links.prev) && typeof v._links.prev.href === "string" : true) &&
-    ("next" in v._links ? isObject(v._links.next) && typeof v._links.next.href === "string" : true)
+    ("prev" in v._links
+      ? isObject(v._links.prev) && typeof v._links.prev.href === "string"
+      : true) &&
+    ("next" in v._links
+      ? isObject(v._links.next) && typeof v._links.next.href === "string"
+      : true)
   );
 }
 
 export function isSceneObjectResponse(v: unknown): v is SceneObjectResponse {
-  return (
-    isObject(v) &&
-    "object" in v &&
-    isSceneObject(v.object)
-  );
+  return isObject(v) && "object" in v && isSceneObject(v.object);
 }
 
-export function isSceneObjectListResponse(v: unknown): v is SceneObjectListResponse {
+export function isSceneObjectListResponse(
+  v: unknown,
+): v is SceneObjectListResponse {
   return (
     isObject(v) &&
     "objects" in v &&

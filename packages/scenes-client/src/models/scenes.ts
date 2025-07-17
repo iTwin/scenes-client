@@ -81,7 +81,7 @@ export function isObject(v: unknown): v is Record<string, unknown> {
   return v !== null && typeof v === "object";
 }
 
-export function isSceneObjectMinimal(v: any): v is SceneObjectMinimal {
+export function isSceneObjectMinimal(v: unknown): v is SceneObjectMinimal {
   return (
     isObject(v) &&
     typeof v.id === "string" &&

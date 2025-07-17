@@ -1,8 +1,6 @@
-import { defineConfig } from 'vitest/config';
-// import dotenv from 'dotenv';
-
-// dotenv.config({ path: './tests/.env' });
+// Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-  envDir: './tests',
+  envDir: "./tests",
 });
