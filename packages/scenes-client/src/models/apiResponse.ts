@@ -9,7 +9,7 @@ import {
   isSceneMinimal,
   isSceneObject,
   isSceneObjectMinimal,
-} from "./scenes";
+} from "./scene/scenes";
 
 /** Generic href link */
 export interface Link {

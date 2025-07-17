@@ -1,6 +1,6 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 
-import { SceneDataCreateDto } from "./sceneObjectCreate.dto";
+import { SceneDataCreateDto } from "../object/sceneObjectCreate.dto";
 
 export interface SceneCreateDto {
   /** Optional identifier for the scene object (UUID) */

@@ -11,12 +11,16 @@ import {
   SceneObjectUpdateWithIdDTO,
   SceneResponse,
 } from "./models/index";
+
 import {
   getScene,
   getScenes,
   postScene,
   patchScene,
   deleteScene,
+} from "./api/scenesApi";
+
+import {
   postObject,
   postObjects,
   getObject,
@@ -25,34 +29,34 @@ import {
   deleteObjects,
   patchObjects,
   getObjects,
-} from "./scenesApi";
+} from "./api/scenesObjectApi"
 
 type AccessTokenFn = () => Promise<string>;
 
 const DEFAULT_BASE_URL = "https://itwinscenes-eus.bentley.com";
 
-type ITwinParams = { iTwinId: string };
-type SceneParams = ITwinParams & { sceneId: string };
-type ObjectParams = SceneParams & { objectId: string };
+type ITwinParams = { iTwinId: string; };
+type SceneParams = ITwinParams & { sceneId: string; };
+type ObjectParams = SceneParams & { objectId: string; };
 
 export type GetScenesParams = ITwinParams;
 export type GetSceneParams = SceneParams;
-export type PostSceneParams = ITwinParams & { scene: SceneCreateDto };
-export type PatchSceneParams = SceneParams & { scene: SceneUpdateDTO };
+export type PostSceneParams = ITwinParams & { scene: SceneCreateDto; };
+export type PatchSceneParams = SceneParams & { scene: SceneUpdateDTO; };
 export type DeleteSceneParams = SceneParams;
 
 export type GetObjectParams = ObjectParams;
 export type GetObjectsParams = SceneParams;
-export type PostObjectParams = SceneParams & { object: SceneObjectCreateDto };
+export type PostObjectParams = SceneParams & { object: SceneObjectCreateDto; };
 export type PostObjectsParams = SceneParams & {
   objects: SceneObjectCreateDto[];
 };
-export type PatchObjectParams = ObjectParams & { object: SceneObjectUpdateDTO };
+export type PatchObjectParams = ObjectParams & { object: SceneObjectUpdateDTO; };
 export type PatchObjectsParams = SceneParams & {
   objects: SceneObjectUpdateWithIdDTO[];
 };
 export type DeleteObjectParams = ObjectParams;
-export type DeleteObjectsParams = SceneParams & { objectIds: string[] };
+export type DeleteObjectsParams = SceneParams & { objectIds: string[]; };
 
 export class SceneClient {
   private readonly getAccessToken: AccessTokenFn;
