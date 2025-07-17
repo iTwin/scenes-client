@@ -11,6 +11,7 @@ import {
 } from "vitest";
 import { SceneClient } from "../src/client";
 import {
+  GET_SCENES_DEFAULTS,
   PagingLinks,
   SceneListResponse,
   SceneObjectListResponse,
@@ -26,15 +27,33 @@ describe("Scenes Client", () => {
   afterAll(() => vi.unstubAllGlobals());
   afterEach(() => fetchMock.mockReset());
 
-  it("getScenes()", async () => {
+  it("getScenesPaged()", async () => {
     fetchMock.mockImplementation(() =>
       createSuccessfulResponse(exampleSceneListResponse),
     );
     const client = new SceneClient(getAccessToken);
-    await client.getScenes({ iTwinId: "itw-1" });
+    const it = await client.getScenesPaged({ iTwinId:"itw-1" });
+    await it.next();
 
     verifyFetch(fetchMock, {
-      url: `${BASE_DOMAIN}/v1/scenes?iTwinId=itw-1&$top=100&$skip=0`,
+      url: `${BASE_DOMAIN}/v1/scenes?iTwinId=itw-1&$top=${GET_SCENES_DEFAULTS.top}&$skip=${GET_SCENES_DEFAULTS.skip}`,
+      headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
+    });
+  });
+
+  it("getScenesPaged() respects top & skip params", async () => {
+    fetchMock.mockImplementation(() =>
+      createSuccessfulResponse(exampleSceneListResponse),
+    );
+    const client = new SceneClient(getAccessToken);
+    const it = await client.getScenesPaged({
+      iTwinId: "itw-1",
+      top: 50,
+      skip: 25,
+    });
+    await it.next();
+    verifyFetch(fetchMock, {
+      url: `${BASE_DOMAIN}/v1/scenes?iTwinId=itw-1&$top=50&$skip=25`,
       headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
     });
   });

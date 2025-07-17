@@ -109,11 +109,21 @@ describe("Scenes operation", () => {
     );
   });
 
-  it("get all scenes", async () => {
-    const res = await client.getScenes({ iTwinId: ITWIN_ID });
+  it("get scenes", async () => {
+    const res = await client.getScenesPaged({ iTwinId: ITWIN_ID });
 
-    expect(res).toBeDefined();
-    expect(res.scenes.length).toBeGreaterThan(0);
+    let found = false;
+    for await (const page of res) {
+      expect(page.scenes.length).toBeGreaterThan(0);
+      const scene = page.scenes.find(s => s.id === sceneAId);
+      if (scene) {
+        expect(scene.displayName).toBe("TestSceneA");
+        found = true;
+        break;
+      }
+    }
+
+    expect(found).toBe(true);
   });
 
   it("update scene", async () => {

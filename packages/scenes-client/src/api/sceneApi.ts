@@ -11,31 +11,36 @@ import {
   SceneResponse,
   isSceneListResponse,
   isSceneResponse,
+  PagingLinks,
+  GetScenesOptions,
 } from "../models/index";
 
-export async function getScenes({
-  iTwinId,
-  getAccessToken,
-  baseUrl,
-}: { iTwinId: string; } & AuthArgs): Promise<SceneListResponse> {
-  return callApi<SceneListResponse>({
-    endpoint: `/v1/scenes?iTwinId=${iTwinId}&$top=100&$skip=0`,
-    getAccessToken,
-    postProcess: async (response) => {
-      const responseJson = await response.json();
-      if (!response.ok) {
-        const err = responseJson.error as ScenesErrorResponse;
-        throw new ScenesApiError(err, responseJson.status);
-      }
-      if (!isSceneListResponse(responseJson)) {
-        throw new Error("Error fetching scenes: unexpected response format");
-      }
-      return responseJson;
-    },
-    baseUrl,
-    additionalHeaders: {
-      Accept: "application/vnd.bentley.itwin-platform.v1+json",
-    },
+export function getScenesPaged(
+  args: { iTwinId: string; } & AuthArgs,
+  opts: Required<GetScenesOptions>,
+): AsyncIterableIterator<SceneListResponse> {
+  const { iTwinId, getAccessToken, baseUrl } = args;
+  const { top, delayMs, skip } = opts;
+  const initialUrl = `${baseUrl}/v1/scenes?iTwinId=${iTwinId}&$top=${top}&$skip=${skip}`;
+
+  return iteratePagedEndpoint<SceneListResponse>(initialUrl, delayMs, async (url) => {
+    return callApi<SceneListResponse>({
+      baseUrl: url,
+      getAccessToken: getAccessToken,
+      additionalHeaders: {
+        Accept: "application/vnd.bentley.itwin-platform.v1+json",
+      },
+      postProcess: async (response) => {
+        const json = await response.json();
+        if (!response.ok) {
+          throw new ScenesApiError(json.error as ScenesErrorResponse, response.status);
+        }
+        if (!isSceneListResponse(json)) {
+          throw new Error("Error fetching scenes: unexpected response format");
+        }
+        return json;
+      },
+    });
   });
 }
 
@@ -169,4 +174,20 @@ export async function deleteScene({
       return;
     },
   });
+}
+
+async function* iteratePagedEndpoint<T extends { _links: PagingLinks; }>(
+  initialUrl: string,
+  delayMs: number,
+  fetch: (url: string) => Promise<T>,
+): AsyncIterableIterator<T> {
+  let url: string | undefined = initialUrl;
+  while (url) {
+    const response = await fetch(url);
+    yield response;
+    url = response._links.next?.href;
+    if (url && delayMs > 0) {
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
+  }
 }

@@ -1,7 +1,7 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 
 export interface RequestArgs<T> {
-  endpoint: string;
+  endpoint?: string;
   postProcess: (response: Response) => Promise<T>;
   additionalHeaders?: Record<string, string>;
   fetchOptions?: Omit<RequestInit, "headers">;
@@ -16,7 +16,7 @@ export async function callApi<T>({
   baseUrl,
   getAccessToken,
   additionalHeaders,
-  endpoint,
+  endpoint = "",
   postProcess,
   fetchOptions,
 }: RequestArgs<T> & AuthArgs): Promise<T> {

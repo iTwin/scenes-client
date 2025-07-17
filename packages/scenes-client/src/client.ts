@@ -10,15 +10,17 @@ import {
   SceneObjectUpdateDTO,
   SceneObjectUpdateWithIdDTO,
   SceneResponse,
+  GetScenesOptions,
+  GET_SCENES_DEFAULTS
 } from "./models/index";
 
 import {
   getScene,
-  getScenes,
+  getScenesPaged,
   postScene,
   patchScene,
   deleteScene,
-} from "./api/scenesApi";
+} from "./api/sceneApi";
 
 import {
   postObject,
@@ -29,17 +31,19 @@ import {
   deleteObjects,
   patchObjects,
   getObjects,
-} from "./api/scenesObjectApi"
+} from "./api/sceneObjectApi"
 
 type AccessTokenFn = () => Promise<string>;
 
 const DEFAULT_BASE_URL = "https://itwinscenes-eus.bentley.com";
 
+// @naron: the api should reuse params here
 type ITwinParams = { iTwinId: string; };
 type SceneParams = ITwinParams & { sceneId: string; };
 type ObjectParams = SceneParams & { objectId: string; };
 
 export type GetScenesParams = ITwinParams;
+export type GetScenesPagedParams = ITwinParams & GetScenesOptions;
 export type GetSceneParams = SceneParams;
 export type PostSceneParams = ITwinParams & { scene: SceneCreateDto; };
 export type PatchSceneParams = SceneParams & { scene: SceneUpdateDTO; };
@@ -80,12 +84,18 @@ export class SceneClient {
    * @param params.iTwinId – The iTwin’s unique identifier.
    * @returns List of scenes.
    */
-  async getScenes(params: GetScenesParams): Promise<SceneListResponse> {
-    return getScenes({
+  async getScenesPaged(params: GetScenesPagedParams): Promise<AsyncIterableIterator<SceneListResponse>> {
+    const opts: Required<GetScenesOptions> = {
+      top:     params.top     ?? GET_SCENES_DEFAULTS.top,
+      skip:    params.skip    ?? GET_SCENES_DEFAULTS.skip,
+      delayMs: params.delayMs ?? GET_SCENES_DEFAULTS.delayMs,
+    };
+
+    return getScenesPaged({
       iTwinId: params.iTwinId,
       getAccessToken: this.getAccessToken,
       baseUrl: this.baseUrl,
-    });
+    }, opts);
   }
 
   /**
