@@ -1,0 +1,369 @@
+{
+  "$id": "/schemas/ITwinDisplayStyleOptions.1.0.0",
+  "description": "Global setting to control iModel styling when visualizing the scene in iTwin viewer applications.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "backgroundColor": {
+      "description": "Background color",
+      "$ref": "/schemas/CommonTypes#/definitions/colorDef"
+    },
+    "monochromeColor": {
+      "description": "Monochrome color",
+      "$ref": "/schemas/CommonTypes#/definitions/colorDef"
+    },
+    "monochromeMode": {
+      "description": "Monochrome mode. Flat = 0 and Scaled = 1",
+      "type": "integer",
+      "enum": [0, 1]
+    },
+    "iTwinViewFlags": {
+      "description": "JSON representation of the view flags for the iTwin",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "noConstruct": {
+          "description": "If true, don't display geometry of the Construction class",
+          "type": "boolean"
+        },
+        "noDim": {
+          "description": "If true, don't display geometry of the Dimension class",
+          "type": "boolean"
+        },
+        "noPattern": {
+          "description": "If true, don't display geometry of the Pattern class",
+          "type": "boolean"
+        },
+        "noWeight": {
+          "description": "If true, all lines are drawn with a width of 1 pixel",
+          "type": "boolean"
+        },
+        "noStyle": {
+          "description": "If true, don't apply LinePixels styles",
+          "type": "boolean"
+        },
+        "noTransp": {
+          "description": "If true, display transparency geometry as opaque",
+          "type": "boolean"
+        },
+        "noFill": {
+          "description": "If true, don't show filled planar regions, unless they use FillFlags.Always",
+          "type": "boolean"
+        },
+        "grid": {
+          "description": "If true, display a grid in the view",
+          "type": "boolean"
+        },
+        "acs": {
+          "description": "If true, display graphics representing the AuxCoordSystem",
+          "type": "boolean"
+        },
+        "noTexture": {
+          "description": "If true, don't apply RenderTextures to surfaces",
+          "type": "boolean"
+        },
+        "noMaterial": {
+          "description": "If true, don't apply RenderMaterials to surfaces",
+          "type": "boolean"
+        },
+        "noCameraLights": {
+          "description": "See ViewFlagProps for how this affects ViewFlags.lighting",
+          "type": "boolean"
+        },
+        "noSourceLights": {
+          "description": "See ViewFlagProps for how this affects ViewFlags.lighting",
+          "type": "boolean"
+        },
+        "noSolarLight": {
+          "description": "See ViewFlagProps for how this affects ViewFlags.lighting",
+          "type": "boolean"
+        },
+        "visEdges": {
+          "description": "If true, display the edges of surfaces",
+          "type": "boolean"
+        },
+        "hidEdges": {
+          "description": "If true, display the edges of surfaces, even if they are behind other geometry",
+          "type": "boolean"
+        },
+        "shadows": {
+          "description": "If true, display shadows",
+          "type": "boolean"
+        },
+        "clipVol": {
+          "description": "If true, apply the view's clipping volume. Has no effect on other types of clips like ModelClipGroups",
+          "type": "boolean"
+        },
+        "monochrome": {
+          "description": "If true, apply the view's monochromeColor and monochromeMode to produce a monochrome image",
+          "type": "boolean"
+        },
+        "renderMode": {
+          "description": "The basic rendering mode, which affects the behavior of other flags",
+          "enum": [0, 6, 4, 3],
+          "type": "integer"
+        },
+        "backgroundMap": {
+          "description": "Display a background map",
+          "type": "boolean"
+        },
+        "ambientOcclusion": {
+          "description": "If true, apply AmbientOcclusion",
+          "type": "boolean"
+        },
+        "thematicDisplay": {
+          "description": "If true, apply ThematicDisplay",
+          "type": "boolean"
+        },
+        "wiremesh": {
+          "description": "If true, overlay surfaces with wiremesh to reveal their triangulation",
+          "type": "boolean"
+        },
+        "forceSurfaceDiscard": {
+          "description": "Controls whether surface discard is always applied regardless of other ViewFlags",
+          "type": "boolean"
+        },
+        "noWhiteOnWhiteReversal": {
+          "description": "Disables the \"white-on-white reversal\" employed by some CAD applications",
+          "type": "boolean"
+        }
+      },
+      "required": []
+    },
+    "clipStyling": {
+      "description": "Describes symbology and behavior applied to a ClipVector when applied to a ViewState or ModelClipGroup",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "produceCutGeometry": {
+          "description": "If 'true', geometry will be produced at the clip planes in a 3d view.\n - Solids (closed volumes) will produce facets on the clip planes.\n - Other surfaces will produce line strings representing the edges of the surface at the clip planes.\nNote: Cut geometry will only be produced for element geometry - not for, e.g., terrain or reality models.",
+          "type": "boolean"
+        },
+        "colorizeIntersection": {
+          "description": "If 'true', intersection of geometry and clip planes will be colorized",
+          "type": "boolean"
+        },
+        "cutStyle": {
+          "description": "Controls aspects of how the cut geometry is displayed, if produceCutGeometry is `true`",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "viewflags": {
+              "description": "Selectively overrides some of the view's ViewFlags when drawing the section-cut graphics",
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "renderMode": {
+                  "description": "The basic rendering mode applied to the view. This modulates the behavior of some of the other flags.\n Default: 0 (Wireframe)",
+                  "enum": [0, 6, 4, 3],
+                  "type": "integer"
+                },
+                "dimensions": {
+                  "description": "Whether to display geometry of class GeometryClass.Dimension. Default: true",
+                  "type": "boolean"
+                },
+                "patterns": {
+                  "description": "Whether to display geometry of class GeometryClass.Pattern. Default: true",
+                  "type": "boolean"
+                },
+                "weights": {
+                  "description": "Whether to allow lines and edges to draw with width greater than one pixel. Default: true",
+                  "type": "boolean"
+                },
+                "styles": {
+                  "description": "Whether LinePixels are allowed to apply patterns to lines and edges. If false, they all draw as solid lines. Default: true",
+                  "type": "boolean"
+                },
+                "transparency": {
+                  "description": "Whether element transparency is applied. If false, transparent geometry is drawn opaque. Default: true",
+                  "type": "boolean"
+                },
+                "fill": {
+                  "description": "In RenderMode.Wireframe only, whether to display the interiors of planar regions with FillFlags.ByView. Default: true",
+                  "type": "boolean"
+                },
+                "textures": {
+                  "description": "In RenderMode.SmoothShade, whether to apply RenderTextures to surfaces. Default: true",
+                  "type": "boolean"
+                },
+                "materials": {
+                  "description": "In RenderMode.SmoothShade, whether to apply RenderMaterials to surfaces. Default: true",
+                  "type": "boolean"
+                },
+                "acsTriad": {
+                  "description": "Whether to display a graphical representation of the view's AuxCoordSystem. Default: false",
+                  "type": "boolean"
+                },
+                "grid": {
+                  "description": "Whether to display a grid. Default: false",
+                  "type": "boolean"
+                },
+                "visibleEdges": {
+                  "description": "In RenderMode.SmoothShade, whether to display the edges of surfaces. Default: false",
+                  "type": "boolean"
+                },
+                "hiddenEdges": {
+                  "description": "In any mode except RenderMode.Wireframe, whether to display the edges of surfaces occluded by other geometry. This has no effect unless visibleEdges is also true. Default: false",
+                  "type": "boolean"
+                },
+                "shadows": {
+                  "description": "In RenderMode.SmoothShade, whether to display solar shadows. This has no effect unless lighting is also true. Default: false",
+                  "type": "boolean"
+                },
+                "clipVolume": {
+                  "description": "Whether to apply the view's clip volume to the geometry in the scene. Default: true, except when using fromJSON",
+                  "type": "boolean"
+                },
+                "constructions": {
+                  "description": "Whether to display geometry of class GeometryClass.Construction. Default: false, except when using fromJSON",
+                  "type": "boolean"
+                },
+                "monochrome": {
+                  "description": "Whether to produce a monochrome image. Default: false",
+                  "type": "boolean"
+                },
+                "backgroundMap": {
+                  "description": "Whether to display background map imagery. Default: false",
+                  "type": "boolean"
+                },
+                "ambientOcclusion": {
+                  "description": "In RenderMode.SmoothShade, whether to apply AmbientOcclusion. Default: false",
+                  "type": "boolean"
+                },
+                "thematicDisplay": {
+                  "description": "Whether to apply ThematicDisplay. Default: false",
+                  "type": "boolean"
+                },
+                "wiremesh": {
+                  "description": "If true, overlay surfaces with wiremesh to reveal their triangulation",
+                  "type": "boolean"
+                },
+                "forceSurfaceDiscard": {
+                  "description": "Controls whether surface discard is always applied regardless of other ViewFlags.\nSurface shaders contain complicated logic to ensure that the edges of a surface always draw in front of the surface, and that planar surfaces sketched coincident with non-planar surfaces always draw in front of those non-planar surfaces.\nWhen this view flag is set to false (the default), then for 3d views if the render mode is wireframe (only edges are displayed) or smooth shader with visible edges turned off (only surfaces are displayed), that logic does not execute, potentially improving performance for no degradation in visual quality. In some scenarios - such as wireframe views containing many planar regions with interior fill, or smooth views containing many coincident planar and non-planar surfaces - enabling this view flag improves display quality by forcing that logic to execute.",
+                  "type": "boolean"
+                },
+                "whiteOnWhiteReversal": {
+                  "description": "Whether to apply white-on-white reversal. Some CAD applications use this to cause white geometry to be drawn as black if the view's background color is white. When enabled, the DisplayStyleSettings' WhiteOnWhiteReversalSettings control how white-on-white reversal is applied. Default: true",
+                  "type": "boolean"
+                },
+                "lighting": {
+                  "description": "In RenderMode.SmoothShade, whether to apply lighting to surfaces. Default: false, except when using fromJSON",
+                  "type": "boolean"
+                }
+              },
+              "required": []
+            },
+            "hiddenLine": {
+              "description": "If defined, overrides the settings the view uses to draw the edges of the section-cut graphics",
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "visible": {
+                  "description": "Describes how visible edges (those unobscured by other geometry) should be displayed",
+                  "$ref": "/schemas/CommonTypes#/definitions/hiddenLineStyle"
+                },
+                "hidden": {
+                  "description": "Describes how hidden edges (those obscured by other geometry) should be displayed",
+                  "$ref": "/schemas/CommonTypes#/definitions/hiddenLineStyle"
+                },
+                "transThreshold": {
+                  "description": "A value in the range [0.0, 1.0] specifying a threshold below which transparent surfaces should not be drawn.\n* A value of 0.0 indicates any surface that is not 100% opaque should not be drawn.\n* A value of 0.25 indicates any surface that is less than 25% opaque should not be drawn.\n* A value of 1.0 indicates that all surfaces should be drawn regardless of transparency.\n* @note values will be clamped to the range [0.0, 1.0].\n* @note Defaults to 1.0.",
+                  "type": "number",
+                  "minimum": 0.0,
+                  "maximum": 1.0
+                }
+              },
+              "required": []
+            },
+            "appearance": {
+              "description": "If defined, overrides aspects of the symbology of the section-cut graphics",
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "rgb": {
+                  "description": "Overrides the feature's color.\nIf [[lineRgb]] is `undefined`, this color also applies to linear geometry",
+                  "$ref": "/schemas/CommonTypes#/definitions/rgbColor"
+                },
+                "lineRgb": {
+                  "description": "If defined, overrides the color of linear geometry independently of rgb.\n* If `false`, linear geometry draws using its normal color; otherwise, it uses the specified color",
+                  "$ref": "/schemas/CommonTypes#/definitions/rgbColor"
+                },
+                "weight": {
+                  "description": "The width of lines and edges in pixels as an integer in [1, 31]",
+                  "type": "number",
+                  "minimum": 1,
+                  "maximum": 31
+                },
+                "transparency": {
+                  "description": "The transparency in the range [0, 1] where 0 indicates fully opaque and 1 indicates fully transparent.\n* If lineTransparency is `undefined`, this transparency also applies to linear geometry",
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "lineTransparency": {
+                  "description": "If defined, overrides the transparency of linear geometry independently of [[transparency]].\nIf `false`, linear geometry draws using its normal transparency; otherwise, it uses the specified transparency.",
+                  "type": "number"
+                },
+                "linePixels": {
+                  "description": "The pixel pattern applied to lines and edges",
+                  "$ref": "/schemas/CommonTypes#/definitions/linePixels"
+                },
+                "ignoresMaterial": {
+                  "description": "If true, don't apply the RenderMaterial to the feature's surfaces",
+                  "type": "boolean"
+                },
+                "nonLocatable": {
+                  "description": "If true, the feature will not be drawn when using readPixels, meaning Tools will not be able to interact with it",
+                  "type": "boolean"
+                },
+                "emphasized": {
+                  "description": "If true, the feature will be rendered using the Hilite.Settings defined by emphasisSettings to make it stand out",
+                  "type": "boolean"
+                }
+              },
+              "required": []
+            }
+          },
+          "required": []
+        },
+        "insideColor": {
+          "description": "If defined, geometry inside the clip planes will be drawn in this color",
+          "$ref": "/schemas/CommonTypes#/definitions/rgbColor"
+        },
+        "outsideColor": {
+          "description": "If defined, geometry outside of the clip planes will be drawn in this color instead of being clipped",
+          "$ref": "/schemas/CommonTypes#/definitions/rgbColor"
+        },
+        "intersectionStyle": {
+          "description": "Controls the style of the intersection of geometry and clip planes",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "color": {
+              "description": "Color to apply to intersection of geometry and clip planes, default white",
+              "$ref": "/schemas/CommonTypes#/definitions/rgbColor"
+            },
+            "width": {
+              "description": "Number of pixels to be considered intersecting the clip plane, default 1",
+              "type": "number"
+            }
+          },
+          "required": []
+        }
+      },
+      "required": []
+    },
+    "whiteOnWhiteReversal": {
+      "description": "Controls how white-on-white reversal is applied to make white geometry more visible in the view.\n By default, pure white geometry is displayed as black instead if the backgroundColor is also pure white.\n These settings are only applied if the display style's whiteOnWhiteReversal flag is enabled.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ignoreBackgroundColor": {
+          "description": "If true, white-on-white reversal is applied regardless of the background color. Default: false",
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "required": []
+}
