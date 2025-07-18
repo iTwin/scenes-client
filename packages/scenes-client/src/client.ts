@@ -11,7 +11,9 @@ import {
   SceneObjectUpdateWithIdDTO,
   SceneResponse,
   GetScenesOptions,
-  GET_SCENES_DEFAULTS
+  GET_SCENES_DEFAULTS,
+  GetObjectsOptions,
+  GET_OBJECTS_DEFAULTS
 } from "./models/index";
 
 import {
@@ -30,7 +32,7 @@ import {
   deleteObject,
   deleteObjects,
   patchObjects,
-  getObjects,
+  getObjectsPaged,
 } from "./api/sceneObjectApi"
 
 type AccessTokenFn = () => Promise<string>;
@@ -50,7 +52,7 @@ export type PatchSceneParams = SceneParams & { scene: SceneUpdateDTO; };
 export type DeleteSceneParams = SceneParams;
 
 export type GetObjectParams = ObjectParams;
-export type GetObjectsParams = SceneParams;
+export type GetObjectsPagedParams = SceneParams & GetObjectsOptions;
 export type PostObjectParams = SceneParams & { object: SceneObjectCreateDto; };
 export type PostObjectsParams = SceneParams & {
   objects: SceneObjectCreateDto[];
@@ -82,6 +84,9 @@ export class SceneClient {
   /**
    * Fetch a list of scenes for the given iTwinId.
    * @param params.iTwinId – The iTwin’s unique identifier.
+   * @param params.top – Maximum number of scenes to return (default: 100).
+   * @param params.skip – Number of scenes to skip (default: 0).
+   * @param params.delayMs – Delay in milliseconds between requests (default: 50). //@naron: to be changed?
    * @returns List of scenes.
    */
   async getScenesPaged(params: GetScenesPagedParams): Promise<AsyncIterableIterator<SceneListResponse>> {
@@ -191,18 +196,38 @@ export class SceneClient {
   }
 
   /**
-   * Fetch all objects for a given scene.
+   * Fetch multiple scene objects with pagination.
    * @param params.iTwinId – The iTwin’s unique identifier.
    * @param params.sceneId – The scene’s unique identifier.
-   * @returns List of scene objects.
+   * @param params.top – Maximum number of objects to return (default: 100).
+   * @param params.skip – Number of objects to skip (default: 0).
+   * @param params.delayMs – Delay in milliseconds between requests (default: 50).
+   * @param params.kind – Property to order objects by (default: OrderByProperties.KIND).
+   * @returns Async iterable of scene object list response.
    */
-  async getObjects(params: GetObjectsParams): Promise<SceneObjectListResponse> {
-    return getObjects({
-      iTwinId: params.iTwinId,
+  async getObjectsPaged(params: GetObjectsPagedParams): Promise<AsyncIterableIterator<SceneObjectListResponse>> {
+    const opts: Required<GetObjectsOptions> = {
+      top:     params.top     ?? GET_OBJECTS_DEFAULTS.top,
+      skip:    params.skip    ?? GET_OBJECTS_DEFAULTS.skip,
+      delayMs: params.delayMs ?? GET_OBJECTS_DEFAULTS.delayMs,
+      kind:    params.kind   ?? GET_OBJECTS_DEFAULTS.kind,
+    };
+
+    return getObjectsPaged({
       sceneId: params.sceneId,
+      iTwinId: params.iTwinId,
       getAccessToken: this.getAccessToken,
       baseUrl: this.baseUrl,
-    });
+    }, opts);
+  }
+
+  async getAllObjects(params: SceneParams): Promise<SceneObjectListResponse[]> {
+    const pages = await this.getObjectsPaged(params);
+    const all: SceneObjectListResponse[] = [];
+    for await (const page of pages) {
+      all.push(page);
+    }
+    return all;
   }
 
   /**

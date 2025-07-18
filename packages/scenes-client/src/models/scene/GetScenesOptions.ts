@@ -1,17 +1,17 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 
 export interface GetScenesOptions {
-  /** items per page (default 100) */
+  /** items per page */
   top?: number;
-  // @naron: are these default the right number? depending on frequent it can be called?
-  /** ms pause between pages (default 100) */
-  delayMs?: number;
-  /** number of items to skip (default 0) */
+  /** number of items to skip */
   skip?: number;
+  /** ms pause between pages */
+  delayMs?: number;
 }
 
+// @naron: are these default the right number? depending on frequent it can be called?
 export const GET_SCENES_DEFAULTS: Required<GetScenesOptions> = {
   top: 100,
-  delayMs: 0,
+  delayMs: 50,
   skip: 0,
 };

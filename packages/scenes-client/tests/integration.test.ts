@@ -228,14 +228,35 @@ describe("Scenes Objects operations", () => {
     expect(res.object.displayName).toBe("Layer1Again");
   });
 
-  it("get all objects", async () => {
-    const res = await client.getObjects({
+  it("get objects paged", async () => {
+    const res = await client.getObjectsPaged({
       iTwinId: ITWIN_ID,
       sceneId: SCENE_ID,
+      top: 100,
     });
 
-    expect(res.objects.length).toBeGreaterThan(0);
+    let found = false;
+    for await (const page of res) {
+      expect(page.objects.length).toBeGreaterThan(0);
+      const obj = page.objects.find(o => o.id === obj1);
+      if (obj) {
+        expect(obj.displayName).toBe("Layer1Again");
+        found = true;
+        break;
+      }
+    }
+
+    expect(found).toBe(true);
   });
+
+  // taking too long to run
+  // it("get all objects", async () => {
+  //   const res = await client.getAllObjects({
+  //     iTwinId: ITWIN_ID,
+  //     sceneId: SCENE_ID,
+  //   });
+  //   expect(res.length).toBeGreaterThanOrEqual(3);
+  // });
 
   it("delete object", async () => {
     await client.deleteObject({

@@ -10,8 +10,12 @@ import {
   SceneObjectUpdateWithIdDTO,
   isSceneObjectResponse,
   isSceneObjectListResponse,
+  GetObjectsOptions
 } from "../models/index";
 
+import { iteratePagedEndpoint } from "../utilities";
+
+//@naron: reorder these
 export async function postObject({
   sceneId,
   iTwinId,
@@ -128,37 +132,37 @@ export async function getObject({
   });
 }
 
-export async function getObjects({
-  sceneId,
-  iTwinId,
-  getAccessToken,
-  baseUrl,
-}: {
-  sceneId: string;
-  iTwinId: string;
-} & AuthArgs): Promise<SceneObjectListResponse> {
-  return callApi<SceneObjectListResponse>({
-    endpoint: `/v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}`,
-    getAccessToken,
-    baseUrl,
-    postProcess: async (response) => {
-      const responseJson = await response.json();
-      if (!response.ok) {
-        const err = responseJson.error as ScenesErrorResponse;
-        throw new ScenesApiError(err, response.status);
-      }
-      if (!isSceneObjectListResponse(responseJson)) {
-        throw new Error(
-          "Error fetching scene objects: unexpected response format",
-        );
-      }
-      return responseJson;
-    },
-    additionalHeaders: {
-      Accept: "application/vnd.bentley.itwin-platform.v1+json",
-    },
+export function getObjectsPaged(
+  args: { sceneId: string; iTwinId: string } & AuthArgs,
+  opts: Required<GetObjectsOptions>,
+) : AsyncIterableIterator<SceneObjectListResponse> {
+  const { sceneId, iTwinId, getAccessToken, baseUrl } = args;
+  const { top, skip, delayMs, kind } = opts;
+  const initialUrl = `${baseUrl}/v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}&$top=${top}&$skip=${skip}&orderBy=${kind}`;
+  
+  return iteratePagedEndpoint<SceneObjectListResponse>(initialUrl, delayMs, async (url) => {
+    return callApi<SceneObjectListResponse>({
+      baseUrl: url,
+      getAccessToken,
+      postProcess: async (response) => {
+        const responseJson = await response.json();
+        if (!response.ok) {
+          const err = responseJson.error as ScenesErrorResponse;
+          throw new ScenesApiError(err, response.status);
+        }
+        if (!isSceneObjectListResponse(responseJson)) {
+          throw new Error(
+            "Error fetching scene objects: unexpected response format",
+          );
+        }
+        return responseJson;
+      },
+      additionalHeaders: {
+        Accept: "application/vnd.bentley.itwin-platform.v1+json",
+      },
+    });
   });
-}
+};
 
 export async function patchObject({
   sceneId,

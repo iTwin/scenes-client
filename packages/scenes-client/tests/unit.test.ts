@@ -190,14 +190,16 @@ describe("Scenes Client", () => {
     });
   });
 
-  it("getObjects()", async () => {
+  it("getObjectsPaged()", async () => {
     fetchMock.mockImplementation(() =>
       createSuccessfulResponse({ objects: [] }),
     );
     const client = new SceneClient(getAccessToken);
-    await client.getObjects({ iTwinId: "itw-1", sceneId: "scene-1" });
+    const it = await client.getObjectsPaged({ iTwinId: "itw-1", sceneId: "scene-1" });
+    await it.next();
+
     verifyFetch(fetchMock, {
-      url: `${BASE_DOMAIN}/v1/scenes/scene-1/objects?iTwinId=itw-1`,
+      url: `${BASE_DOMAIN}/v1/scenes/scene-1/objects?iTwinId=itw-1&$top=100&$skip=0&orderBy=kind`,
       headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
     });
   });
