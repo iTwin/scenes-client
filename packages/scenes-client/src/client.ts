@@ -99,6 +99,20 @@ export class SceneClient {
   }
 
   /**
+   * Fetch all scenes for the given iTwinId.
+   * @param params.iTwinId – The iTwin’s unique identifier.
+   * @returns List of all scenes.
+   */
+  async getAllScenes(params: { iTwinId: string }): Promise<SceneListResponse[]> {
+    const pages = await this.getScenesPaged(params);
+    const all: SceneListResponse[] = [];
+    for await (const page of pages) {
+      all.push(page);
+    }
+    return all;
+  }
+
+  /**
    * Fetch a single scene by its ID.
    * @param params.iTwinId – The iTwin’s unique identifier.
    * @param params.sceneId – The scene’s unique identifier.

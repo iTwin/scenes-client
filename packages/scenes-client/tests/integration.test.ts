@@ -109,7 +109,7 @@ describe("Scenes operation", () => {
     );
   });
 
-  it("get scenes", async () => {
+  it("get scenes paged", async () => {
     const res = await client.getScenesPaged({ iTwinId: ITWIN_ID });
 
     let found = false;
@@ -125,6 +125,11 @@ describe("Scenes operation", () => {
 
     expect(found).toBe(true);
   });
+
+  it("get all scenes", async () => {
+    const res = await client.getAllScenes({ iTwinId: ITWIN_ID });
+    expect(res.length).toBeGreaterThanOrEqual(2);
+  })
 
   it("update scene", async () => {
     const upd = await client.patchScene({
