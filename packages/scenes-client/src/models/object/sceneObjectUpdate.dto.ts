@@ -13,7 +13,17 @@ export interface SceneObjectUpdateDTO {
   data?: object;
 }
 
-export interface SceneObjectUpdateWithIdDTO extends SceneObjectUpdateDTO {
+export interface SceneObjectUpdateById extends SceneObjectUpdateDTO {
   /** Id of the scene object to update (UUID) */
   id: string;
+}
+
+/**
+ * Bulk update of scene objects.
+ */
+export interface BulkSceneObjectUpdate {
+  /**
+   * Array of scene objects to patch (limit is BULK_OPERATION_LIMIT).
+   */
+  objects: SceneObjectUpdateById[];
 }

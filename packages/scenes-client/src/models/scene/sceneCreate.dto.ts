@@ -1,8 +1,17 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 
-import { SceneDataCreateDto } from "../object/sceneObjectCreate.dto";
+import { isObject } from "../../utilities";
+import {
+  isSceneObjectCreateDTO,
+  SceneObjectCreateDTO,
+} from "../object/sceneObjectCreate.dto";
 
-export interface SceneCreateDto {
+export interface SceneDataCreateDTO {
+  /** Array of scene objects */
+  objects: SceneObjectCreateDTO[];
+}
+
+export interface SceneCreateDTO {
   /** Optional identifier for the scene object (UUID) */
   id?: string;
 
@@ -13,5 +22,13 @@ export interface SceneCreateDto {
   parentId?: string;
 
   /** Scene informational objects */
-  sceneData?: SceneDataCreateDto;
+  sceneData?: SceneDataCreateDTO;
+}
+
+export function isSceneDataCreateDTO(v: unknown): v is SceneDataCreateDTO {
+  return (
+    isObject(v) &&
+    Array.isArray(v.objects) &&
+    v.objects.every((obj) => isSceneObjectCreateDTO(obj))
+  );
 }

@@ -1,15 +1,9 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 
-import {
-  Scene,
-  SceneMinimal,
-  SceneObject,
-  isScene,
-  isObject,
-  isSceneMinimal,
-  isSceneObject,
-  isSceneObjectMinimal,
-} from "./scene/scenes";
+import { isObject } from "../utilities";
+import { isSceneObjectDTO, SceneObjectDTO } from "./object/sceneObject.dto";
+import { isSceneMinimalDTO, SceneMinimalDTO } from "./scene/SceneMinimal.dto";
+import { isSceneDTO, SceneDTO } from "./scene/scene.dto";
 
 /** Generic href link */
 export interface Link {
@@ -25,53 +19,57 @@ export interface PagingLinks {
 
 /** Scene response model following APIM structure */
 export interface SceneResponse {
-  scene: Scene;
+  scene: SceneDTO;
 }
 
 /** Scene list response model following APIM structure */
 export interface SceneListResponse {
-  scenes: SceneMinimal[];
+  scenes: SceneMinimalDTO[];
   _links?: PagingLinks;
 }
 
 /** Scene object response model following APIM structure */
 export interface SceneObjectResponse {
-  object: SceneObject;
+  object: SceneObjectDTO;
 }
 
 /** Scene object list response model following APIM structure */
-export class SceneObjectListResponse {
-  objects: Array<Omit<SceneObject, "sceneId">> = [];
-  _links?: PagingLinks;
+export interface SceneObjectListResponse {
+  objects: SceneObjectDTO[];
+}
+
+export interface SceneObjectPagedResponse extends SceneObjectListResponse {
+  _links: PagingLinks;
 }
 
 // type guards for runtime type checking
+export function isLink(v: unknown): v is Link {
+  return isObject(v) && typeof v.href === "string";
+}
+
+export function isPagingLinks(v: unknown): v is PagingLinks {
+  return (
+    isObject(v) &&
+    isLink(v.self) &&
+    (v.prev === undefined || isLink(v.prev)) &&
+    (v.next === undefined || isLink(v.next))
+  );
+}
+
 export function isSceneResponse(v: unknown): v is SceneResponse {
-  return isObject(v) && "scene" in v && isScene(v.scene);
+  return isObject(v) && isSceneDTO(v.scene);
 }
 
 export function isSceneListResponse(v: unknown): v is SceneListResponse {
   return (
     isObject(v) &&
-    "scenes" in v &&
     Array.isArray(v.scenes) &&
-    v.scenes.every(isSceneMinimal) &&
-    "_links" in v &&
-    isObject(v._links) &&
-    "self" in v._links &&
-    isObject(v._links.self) &&
-    typeof v._links.self.href === "string" &&
-    ("prev" in v._links
-      ? isObject(v._links.prev) && typeof v._links.prev.href === "string"
-      : true) &&
-    ("next" in v._links
-      ? isObject(v._links.next) && typeof v._links.next.href === "string"
-      : true)
+    v.scenes.every((scene) => isSceneMinimalDTO(scene))
   );
 }
 
 export function isSceneObjectResponse(v: unknown): v is SceneObjectResponse {
-  return isObject(v) && "object" in v && isSceneObject(v.object);
+  return isObject(v) && isSceneObjectDTO(v.object);
 }
 
 export function isSceneObjectListResponse(
@@ -79,9 +77,13 @@ export function isSceneObjectListResponse(
 ): v is SceneObjectListResponse {
   return (
     isObject(v) &&
-    "objects" in v &&
     Array.isArray(v.objects) &&
-    v.objects.every(isSceneObjectMinimal) &&
-    ("_links" in v ? isObject(v._links) : true)
+    v.objects.every((obj) => isSceneObjectDTO(obj))
   );
+}
+
+export function isSceneObjectPagedResponse(
+  v: unknown,
+): v is SceneObjectPagedResponse {
+  return isObject(v) && isSceneObjectListResponse(v) && isPagingLinks(v._links);
 }

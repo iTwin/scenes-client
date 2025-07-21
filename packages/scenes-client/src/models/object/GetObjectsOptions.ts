@@ -1,4 +1,4 @@
-import { O } from "vitest/dist/chunks/reporters.d.BFLkQcL6.js";
+// Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 
 /**
  * Properties to optionally order scene objects by.
@@ -9,6 +9,9 @@ export enum OrderByProperties {
   KIND = "kind",
 }
 
+/**
+ * Options for retrieving scene objects.
+ */
 export interface GetObjectsOptions {
   /** items per page (default 100) */
   top?: number;

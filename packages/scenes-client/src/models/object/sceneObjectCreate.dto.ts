@@ -1,6 +1,7 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+import { isObject } from "../../utilities";
 
-export interface SceneObjectCreateDto {
+export interface SceneObjectCreateDTO {
   /** Optional identifier for the scene object (UUID) */
   id?: string;
 
@@ -29,7 +30,21 @@ export interface SceneObjectCreateDto {
   data: Record<string, unknown>;
 }
 
-export interface SceneDataCreateDto {
-  /** Array of scene objects */
-  objects: SceneObjectCreateDto[];
+export interface BulkSceneObjectCreateDTO {
+  objects: SceneObjectCreateDTO[];
+}
+
+export function isSceneObjectCreateDTO(v: unknown): v is SceneObjectCreateDTO {
+  return (
+    isObject(v) &&
+    (v.id === undefined || typeof v.id === "string") &&
+    (v.displayName === undefined || typeof v.displayName === "string") &&
+    (v.order === undefined || typeof v.order === "number") &&
+    typeof v.version === "string" &&
+    typeof v.kind === "string" &&
+    (v.parentId === undefined || typeof v.parentId === "string") &&
+    (v.iTwinId === undefined || typeof v.iTwinId === "string") &&
+    (v.relatedId === undefined || typeof v.relatedId === "string") &&
+    isObject(v.data)
+  );
 }

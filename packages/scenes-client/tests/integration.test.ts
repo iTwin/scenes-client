@@ -2,8 +2,8 @@
 import { describe, it, expect } from "vitest";
 import { SceneClient } from "../src/client";
 import {
-  SceneCreateDto,
-  SceneObjectCreateDto,
+  SceneCreateDTO,
+  SceneObjectCreateDTO,
   ScenesApiError,
 } from "../src/models";
 
@@ -26,12 +26,12 @@ const ITWIN_ID = requireMetaEnv("VITE_ITWIN_ID");
 const IMODEL_ID = requireMetaEnv("VITE_IMODEL_ID");
 const SCENE_ID = requireMetaEnv("VITE_SCENE_ID");
 
-const LAYER_OBJ: SceneObjectCreateDto = {
+const LAYER_OBJ: SceneObjectCreateDTO = {
   kind: "Layer",
   version: "1.0.0",
   data: { displayName: "TestLayer", visible: true },
 };
-const REPO_OBJ: SceneObjectCreateDto = {
+const REPO_OBJ: SceneObjectCreateDTO = {
   kind: "RepositoryResource",
   version: "1.0.0",
   iTwinId: ITWIN_ID,
@@ -43,7 +43,7 @@ const REPO_OBJ: SceneObjectCreateDto = {
   },
 };
 
-const TEST_SCENES: SceneCreateDto[] = [
+const TEST_SCENES: SceneCreateDTO[] = [
   { displayName: "TestSceneA", sceneData: { objects: [LAYER_OBJ, REPO_OBJ] } },
   { displayName: "TestSceneB", sceneData: { objects: [LAYER_OBJ, REPO_OBJ] } },
 ];
@@ -115,7 +115,7 @@ describe("Scenes operation", () => {
     let found = false;
     for await (const page of res) {
       expect(page.scenes.length).toBeGreaterThan(0);
-      const scene = page.scenes.find(s => s.id === sceneAId);
+      const scene = page.scenes.find((s) => s.id === sceneAId);
       if (scene) {
         expect(scene.displayName).toBe("TestSceneA");
         found = true;
@@ -129,7 +129,7 @@ describe("Scenes operation", () => {
   it("get all scenes", async () => {
     const res = await client.getAllScenes({ iTwinId: ITWIN_ID });
     expect(res.length).toBeGreaterThanOrEqual(2);
-  })
+  });
 
   it("update scene", async () => {
     const upd = await client.patchScene({
@@ -161,47 +161,42 @@ describe("Scenes operation", () => {
 });
 
 describe("Scenes Objects operations", () => {
-  let obj1: string, obj2: string, obj3: string;
-
-  it("create single object", async () => {
-    const res = await client.postObject({
-      iTwinId: ITWIN_ID,
-      sceneId: SCENE_ID,
-      object: LAYER_OBJ,
-    });
-
-    expect(res.object.kind).toBe("Layer");
-    obj1 = res.object.id;
-  });
+  let obj1: string, obj2: string;
 
   it("create multiple objects", async () => {
     const multi = await client.postObjects({
       iTwinId: ITWIN_ID,
       sceneId: SCENE_ID,
-      objects: [REPO_OBJ, LAYER_OBJ],
+      objects: [LAYER_OBJ, REPO_OBJ],
     });
+
     expect(multi.objects).toHaveLength(2);
-    const repo = multi.objects.find((o) => o.kind === "RepositoryResource");
-    if (!repo) {
-      throw new Error("Missing RepositoryResource");
-    }
-    obj2 = repo.id;
 
     const layer = multi.objects.find((o) => o.kind === "Layer");
     if (!layer) {
       throw new Error("Missing Layer object");
     }
-    obj3 = layer.id;
+    obj1 = layer.id;
+
+    const repo = multi.objects.find((o) => o.kind === "RepositoryResource");
+    if (!repo) {
+      throw new Error("Missing RepositoryResource");
+    }
+    obj2 = repo.id;
   });
 
   it("patches objects", async () => {
-    const p1 = await client.patchObject({
+    const p1 = await client.patchObjects({
       iTwinId: ITWIN_ID,
       sceneId: SCENE_ID,
-      objectId: obj1,
-      object: { displayName: "Layer1Up" },
+      objects: [
+        {
+          id: obj1,
+          displayName: "Layer1Up",
+        },
+      ],
     });
-    expect(p1.object.displayName).toBe("Layer1Up");
+    expect(p1.objects[0].displayName).toBe("Layer1Up");
 
     const pAll = await client.patchObjects({
       iTwinId: ITWIN_ID,
@@ -232,13 +227,12 @@ describe("Scenes Objects operations", () => {
     const res = await client.getObjectsPaged({
       iTwinId: ITWIN_ID,
       sceneId: SCENE_ID,
-      top: 100,
     });
 
     let found = false;
     for await (const page of res) {
       expect(page.objects.length).toBeGreaterThan(0);
-      const obj = page.objects.find(o => o.id === obj1);
+      const obj = page.objects.find((o) => o.id === obj1);
       if (obj) {
         expect(obj.displayName).toBe("Layer1Again");
         found = true;
@@ -259,23 +253,10 @@ describe("Scenes Objects operations", () => {
   // });
 
   it("delete object", async () => {
-    await client.deleteObject({
-      iTwinId: ITWIN_ID,
-      sceneId: SCENE_ID,
-      objectId: obj1,
-    });
-    await expect(
-      client.getObject({
-        iTwinId: ITWIN_ID,
-        sceneId: SCENE_ID,
-        objectId: obj1,
-      }),
-    ).rejects.toMatchObject({ code: "SceneObjectNotFound" } as ScenesApiError);
-
     await client.deleteObjects({
       iTwinId: ITWIN_ID,
       sceneId: SCENE_ID,
-      objectIds: [obj2, obj3],
+      objectIds: [obj1, obj2],
     });
     await expect(
       client.getObject({

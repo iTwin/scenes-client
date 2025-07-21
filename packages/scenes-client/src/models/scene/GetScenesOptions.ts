@@ -1,5 +1,8 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 
+/**
+ * Options for retrieving scenes.
+ */
 export interface GetScenesOptions {
   /** items per page */
   top?: number;
