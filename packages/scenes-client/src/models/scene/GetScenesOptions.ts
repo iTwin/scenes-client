@@ -12,7 +12,6 @@ export interface GetScenesOptions {
   delayMs?: number;
 }
 
-// @naron: are these default the right number? depending on frequent it can be called?
 export const GET_SCENES_DEFAULTS: Required<GetScenesOptions> = {
   top: 100,
   delayMs: 50,

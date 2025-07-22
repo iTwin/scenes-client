@@ -207,7 +207,7 @@ export class SceneClient {
       iTwinId: params.iTwinId,
       top: params.top ?? GET_OBJECTS_DEFAULTS.top,
       skip: params.skip ?? GET_OBJECTS_DEFAULTS.skip,
-      kind: params.kind ?? GET_OBJECTS_DEFAULTS.kind,
+      orderBy: params.orderBy ?? GET_OBJECTS_DEFAULTS.orderBy,
       getAccessToken: this.getAccessToken,
       baseUrl: this.baseUrl,
     });
@@ -231,7 +231,7 @@ export class SceneClient {
       top: params.top ?? GET_OBJECTS_DEFAULTS.top,
       skip: params.skip ?? GET_OBJECTS_DEFAULTS.skip,
       delayMs: params.delayMs ?? GET_OBJECTS_DEFAULTS.delayMs,
-      kind: params.kind ?? GET_OBJECTS_DEFAULTS.kind,
+      orderBy: params.orderBy ?? GET_OBJECTS_DEFAULTS.orderBy,
     };
 
     return getAllObjects(

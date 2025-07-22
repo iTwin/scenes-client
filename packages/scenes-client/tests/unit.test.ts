@@ -180,7 +180,7 @@ describe("Scene Object Operations", () => {
       sceneId: "scene-1",
       top: 24,
       skip: 77,
-      kind: OrderByProperties.NAME, // @naron: should we let user just pass string and check with that?
+      orderBy: OrderByProperties.NAME,
     });
     expect(objects).toEqual(exampleSceneObjectListResponse);
 

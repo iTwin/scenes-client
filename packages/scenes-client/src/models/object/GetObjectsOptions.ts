@@ -20,13 +20,12 @@ export interface GetObjectsOptions {
   /** ms pause between pages (default 0) */
   delayMs?: number;
   /** property to order by (default OrderByProperties.KIND) */
-  kind?: OrderByProperties;
+  orderBy?: OrderByProperties;
 }
 
-// @naron: are these default the right number? depending on frequent it can be called?
 export const GET_OBJECTS_DEFAULTS: Required<GetObjectsOptions> = {
   top: 100,
   delayMs: 0,
   skip: 0,
-  kind: OrderByProperties.KIND,
+  orderBy: OrderByProperties.KIND,
 };

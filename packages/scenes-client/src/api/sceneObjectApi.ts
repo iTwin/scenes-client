@@ -72,7 +72,7 @@ export async function getObjects({
   iTwinId,
   top,
   skip,
-  kind,
+  orderBy: kind,
   getAccessToken,
   baseUrl,
 }: GetObjectsParams & AuthArgs): Promise<SceneObjectListResponse> {
@@ -115,7 +115,7 @@ export function getAllObjects(
   opts: Required<GetObjectsOptions>,
 ): AsyncIterableIterator<SceneObjectPagedResponse> {
   const { sceneId, iTwinId, getAccessToken, baseUrl } = args;
-  const { top, skip, delayMs, kind } = opts;
+  const { top, skip, delayMs, orderBy: kind } = opts;
   const initialUrl = `${baseUrl}/v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}&$top=${top}&$skip=${skip}&orderBy=${kind}`;
 
   return iteratePagedEndpoint<SceneObjectPagedResponse>(
