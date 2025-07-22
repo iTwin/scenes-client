@@ -35,11 +35,17 @@ export async function getScene({
     postProcess: async (response) => {
       const responseJson = await response.json();
       if (!response.ok) {
-        throw new ScenesApiError(responseJson.error as ScenesErrorResponse, response.status);
+        throw new ScenesApiError(
+          responseJson.error as ScenesErrorResponse,
+          response.status,
+        );
       }
       if (!isSceneResponse(responseJson)) {
         throw new ScenesApiError(
-          { code: "InvalidResponse", message: "Error fetching scene: unexpected response format" },
+          {
+            code: "InvalidResponse",
+            message: "Error fetching scene: unexpected response format",
+          },
           response.status,
         );
       }
@@ -119,11 +125,17 @@ export function getAllScenes(
         postProcess: async (response) => {
           const json = await response.json();
           if (!response.ok) {
-            throw new ScenesApiError(json.error as ScenesErrorResponse, response.status);
+            throw new ScenesApiError(
+              json.error as ScenesErrorResponse,
+              response.status,
+            );
           }
           if (!isSceneListResponse(json)) {
             throw new ScenesApiError(
-              { code: "InvalidResponse", message: "Error fetching scenes: unexpected response format" },
+              {
+                code: "InvalidResponse",
+                message: "Error fetching scenes: unexpected response format",
+              },
               response.status,
             );
           }
@@ -153,11 +165,17 @@ export async function postScene({
     postProcess: async (response) => {
       const responseJson = await response.json();
       if (!response.ok) {
-        throw new ScenesApiError(responseJson.error as ScenesErrorResponse, response.status);
+        throw new ScenesApiError(
+          responseJson.error as ScenesErrorResponse,
+          response.status,
+        );
       }
       if (!isSceneResponse(responseJson)) {
         throw new ScenesApiError(
-          { code: "InvalidResponse", message: "Error creating scene: unexpected response format" },
+          {
+            code: "InvalidResponse",
+            message: "Error creating scene: unexpected response format",
+          },
           response.status,
         );
       }
@@ -196,11 +214,17 @@ export async function patchScene({
     postProcess: async (response) => {
       const responseJson = await response.json();
       if (!response.ok) {
-        throw new ScenesApiError(responseJson.error as ScenesErrorResponse, response.status);
+        throw new ScenesApiError(
+          responseJson.error as ScenesErrorResponse,
+          response.status,
+        );
       }
       if (!isSceneResponse(responseJson)) {
         throw new ScenesApiError(
-          { code: "InvalidResponse", message: "Error updating scene: unexpected response format" },
+          {
+            code: "InvalidResponse",
+            message: "Error updating scene: unexpected response format",
+          },
           response.status,
         );
       }

@@ -46,7 +46,11 @@ describe("Scenes Operations", () => {
       createSuccessfulResponse(exampleSceneListResponse),
     );
     const client = new SceneClient(getAccessToken);
-    const scenes = await client.getScenes({ iTwinId: "itw-1", top: 10, skip: 2 });
+    const scenes = await client.getScenes({
+      iTwinId: "itw-1",
+      top: 10,
+      skip: 2,
+    });
     expect(scenes).toEqual(exampleSceneListResponse);
 
     verifyFetch(fetchMock, {

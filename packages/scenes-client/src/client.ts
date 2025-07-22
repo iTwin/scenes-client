@@ -201,9 +201,7 @@ export class SceneClient {
    * @returns SceneObjectListResponse containing the objects in the scene.
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
-  async getObjects(
-    params: GetObjectsParams,
-  ): Promise<SceneObjectListResponse> {
+  async getObjects(params: GetObjectsParams): Promise<SceneObjectListResponse> {
     return getObjects({
       sceneId: params.sceneId,
       iTwinId: params.iTwinId,

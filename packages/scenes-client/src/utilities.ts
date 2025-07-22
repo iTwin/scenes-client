@@ -11,7 +11,7 @@ import { PagingLinks } from "./models/index";
  * @param fetch - Function to fetch and return a page of results from a URL.
  * @returns An async iterator yielding each page of results.
  */
-export async function* iteratePagedEndpoint<T extends { _links?: PagingLinks; }>(
+export async function* iteratePagedEndpoint<T extends { _links?: PagingLinks }>(
   initialUrl: string,
   delayMs: number,
   fetch: (url: string) => Promise<T>,

@@ -46,7 +46,10 @@ export async function getObject({
       }
       if (!isSceneObjectResponse(responseJson)) {
         throw new ScenesApiError(
-          { code: "InvalidResponse", message: "Error fetching scene object: unexpected response format" },
+          {
+            code: "InvalidResponse",
+            message: "Error fetching scene object: unexpected response format",
+          },
           response.status,
         );
       }
@@ -85,7 +88,10 @@ export async function getObjects({
       }
       if (!isSceneObjectListResponse(responseJson)) {
         throw new ScenesApiError(
-          { code: "InvalidResponse", message: "Error fetching scene objects: unexpected response format" },
+          {
+            code: "InvalidResponse",
+            message: "Error fetching scene objects: unexpected response format",
+          },
           response.status,
         );
       }
@@ -127,7 +133,11 @@ export function getAllObjects(
           }
           if (!isSceneObjectPagedResponse(responseJson)) {
             throw new ScenesApiError(
-              { code: "InvalidResponse", message: "Error fetching scene objects: unexpected response format" },
+              {
+                code: "InvalidResponse",
+                message:
+                  "Error fetching scene objects: unexpected response format",
+              },
               response.status,
             );
           }
@@ -169,7 +179,11 @@ export async function postObjects({
         }
         if (!isSceneObjectListResponse(responseJson)) {
           throw new ScenesApiError(
-            { code: "InvalidResponse", message: "Error creating scene objects: unexpected response format" },
+            {
+              code: "InvalidResponse",
+              message:
+                "Error creating scene objects: unexpected response format",
+            },
             response.status,
           );
         }
@@ -190,7 +204,7 @@ export async function postObjects({
   }
   // Combine all objects from batches into a single response
   return {
-    objects: results.flatMap(r => r.objects),
+    objects: results.flatMap((r) => r.objects),
   };
 }
 
@@ -222,7 +236,11 @@ export async function patchObjects({
         }
         if (!isSceneObjectListResponse(responseJson)) {
           throw new ScenesApiError(
-            { code: "InvalidResponse", message: "Error updating scene objects: unexpected response format" },
+            {
+              code: "InvalidResponse",
+              message:
+                "Error updating scene objects: unexpected response format",
+            },
             response.status,
           );
         }
@@ -243,7 +261,7 @@ export async function patchObjects({
   }
   // Combine all objects from batches into a single response
   return {
-    objects: results.flatMap(r => r.objects),
+    objects: results.flatMap((r) => r.objects),
   };
 }
 
@@ -265,7 +283,9 @@ export async function deleteObject({
     baseUrl,
     postProcess: async (response) => {
       if (!response.ok) {
-        const err = await response.json().catch(() => ({}) as ScenesErrorResponse);
+        const err = await response
+          .json()
+          .catch(() => ({}) as ScenesErrorResponse);
         throw new ScenesApiError(err, response.status);
       }
       return;
@@ -300,7 +320,9 @@ export async function deleteObjects({
         baseUrl,
         postProcess: async (response) => {
           if (!response.ok) {
-            const err = await response.json().catch(() => ({}) as ScenesErrorResponse);
+            const err = await response
+              .json()
+              .catch(() => ({}) as ScenesErrorResponse);
             throw new ScenesApiError(err, response.status);
           }
           return;
