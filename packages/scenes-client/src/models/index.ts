@@ -11,5 +11,6 @@ export * from "./scene/sceneCreate.dto";
 export * from "./scene/SceneMinimal.dto";
 export * from "./scene/sceneUpdate.dto";
 
+export * from "./apiParams";
 export * from "./apiResponse";
 export * from "./error";

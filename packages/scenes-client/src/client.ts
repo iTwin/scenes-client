@@ -51,9 +51,7 @@ export type DeleteSceneParams = SceneParams;
 
 export type GetObjectParams = ObjectParams;
 export type GetObjectsPagedParams = SceneParams & GetObjectsOptions;
-export type PostObjectParams = SceneParams & { object: SceneObjectCreateDTO };
 export type PostObjectsParams = SceneParams & BulkSceneObjectCreateDTO;
-export type PatchObjectParams = ObjectParams & { object: SceneObjectUpdateDTO };
 export type PatchObjectsParams = SceneParams & BulkSceneObjectUpdate;
 export type DeleteObjectParams = ObjectParams;
 export type DeleteObjectsParams = SceneParams & { objectIds: string[] };
@@ -126,7 +124,7 @@ export class SceneClient {
    */
   async getScene(params: GetSceneParams): Promise<SceneResponse> {
     return getScene({
-      id: params.sceneId,
+      sceneId: params.sceneId,
       iTwinId: params.iTwinId,
       getAccessToken: this.getAccessToken,
       baseUrl: this.baseUrl,

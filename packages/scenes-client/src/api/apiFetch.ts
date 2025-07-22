@@ -35,12 +35,6 @@ export async function callApi<T>({
     Accept: "application/json",
     ...additionalHeaders,
   };
-  console.log(`Calling API: ${baseUrl}${endpoint}`);
-  console.log(`Headers: ${JSON.stringify(headers)}`);
-  // log payload
-  if (fetchOptions?.body) {
-    console.log(`Payload: ${fetchOptions.body}`);
-  }
   const response = await fetch(`${baseUrl}${endpoint}`, {
     ...fetchOptions,
     headers,

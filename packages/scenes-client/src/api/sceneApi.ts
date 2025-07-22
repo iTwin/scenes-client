@@ -1,7 +1,5 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 import {
-  SceneCreateDTO,
-  SceneUpdateDTO,
   SceneListResponse,
   ScenesApiError,
   ScenesErrorResponse,
@@ -9,26 +7,26 @@ import {
   isSceneListResponse,
   isSceneResponse,
   GetScenesOptions,
+  GetSceneParams,
+  GetScenesPagedParams,
+  PostSceneParams,
+  PatchSceneParams,
+  DeleteSceneParams,
 } from "../models/index";
 import { iteratePagedEndpoint } from "../utilities";
 import { callApi, AuthArgs } from "./apiFetch";
 
 /**
  * Fetches a single scene by its ID.
- * @param param.id - The scene's unique identifier.
- * @param param.iTwinId - The iTwin’s unique identifier.
- * @param param.getAccessToken - Function to get the access token.
- * @param param.baseUrl - The base URL for the API.
- * @returns Promise containing the SceneResponse.
  */
 export async function getScene({
-  id,
+  sceneId,
   iTwinId,
   getAccessToken,
   baseUrl,
-}: { id: string; iTwinId: string } & AuthArgs): Promise<SceneResponse> {
+}: GetSceneParams & AuthArgs): Promise<SceneResponse> {
   return callApi<SceneResponse>({
-    endpoint: `/v1/scenes/${id}?iTwinId=${iTwinId}`,
+    endpoint: `/v1/scenes/${sceneId}?iTwinId=${iTwinId}`,
     getAccessToken,
     postProcess: async (response) => {
       const responseJson = await response.json();
@@ -50,16 +48,9 @@ export async function getScene({
 
 /**
  * Fetches scenes in a paginated manner.
- * @param args.iTwinId - The iTwin’s unique identifier.
- * @param args.getAccessToken - Function to get the access token.
- * @param args.baseUrl - The base URL for the API.
- * @param opts.top - Number of items to return per page.
- * @param opts.skip - Number of items to skip.
- * @param opts.delayMs - Delay in milliseconds between pages.
- * @returns AsyncIterableIterator of Scene's List Response.
  */
 export function getScenesPaged(
-  args: { iTwinId: string } & AuthArgs,
+  args: GetScenesPagedParams & AuthArgs,
   opts: Required<GetScenesOptions>,
 ): AsyncIterableIterator<SceneListResponse> {
   const { iTwinId, getAccessToken, baseUrl } = args;
@@ -98,21 +89,13 @@ export function getScenesPaged(
 
 /**
  * Creates a new scene.
- * @param param.scene - The scene to create in SceneCreateDto format.
- * @param param.iTwinId - The iTwin’s unique identifier.
- * @param param.getAccessToken - Function to get the access token.
- * @param param.baseUrl - The base URL for the API.
- * @returns Promise containing the Scene's Response.
  */
 export async function postScene({
-  scene,
   iTwinId,
+  scene,
   getAccessToken,
   baseUrl,
-}: {
-  scene: SceneCreateDTO;
-  iTwinId: string;
-} & AuthArgs): Promise<SceneResponse> {
+}: PostSceneParams & AuthArgs): Promise<SceneResponse> {
   return callApi<SceneResponse>({
     endpoint: `/v1/scenes?iTwinId=${iTwinId}`,
     getAccessToken,
@@ -143,12 +126,6 @@ export async function postScene({
 
 /**
  * Updates an existing scene.
- * @param param.iTwinId - The iTwin’s unique identifier.
- * @param param.sceneId - The scene’s unique identifier.
- * @param param.scene - The scene to update in SceneUpdateDTO format.
- * @param param.getAccessToken - Function to get the access token.
- * @param param.baseUrl - The base URL for the API.
- * @returns Promise containing the updated Scene's Response.
  */
 export async function patchScene({
   iTwinId,
@@ -156,11 +133,7 @@ export async function patchScene({
   scene,
   getAccessToken,
   baseUrl,
-}: {
-  sceneId: string;
-  iTwinId: string;
-  scene: SceneUpdateDTO;
-} & AuthArgs): Promise<SceneResponse> {
+}: PatchSceneParams & AuthArgs): Promise<SceneResponse> {
   return callApi<SceneResponse>({
     endpoint: `/v1/scenes/${sceneId}?iTwinId=${iTwinId}`,
     getAccessToken,
@@ -191,20 +164,13 @@ export async function patchScene({
 
 /**
  * Deletes a scene by its ID.
- * @param param.sceneId - The scene’s unique identifier.
- * @param param.iTwinId - The iTwin’s unique identifier.
- * @param param.getAccessToken - Function to get the access token.
- * @param param.baseUrl - The base URL for the API.
  */
 export async function deleteScene({
   sceneId,
   iTwinId,
   getAccessToken,
   baseUrl,
-}: {
-  sceneId: string;
-  iTwinId: string;
-} & AuthArgs): Promise<void> {
+}: DeleteSceneParams & AuthArgs): Promise<void> {
   return callApi({
     endpoint: `/v1/scenes/${sceneId}?iTwinId=${iTwinId}`,
     getAccessToken,

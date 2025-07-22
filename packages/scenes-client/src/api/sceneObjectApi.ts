@@ -3,7 +3,6 @@
 import {
   ScenesApiError,
   ScenesErrorResponse,
-  SceneObjectCreateDTO,
   SceneObjectResponse,
   SceneObjectListResponse,
   isSceneObjectResponse,
@@ -11,7 +10,12 @@ import {
   GetObjectsOptions,
   SceneObjectPagedResponse,
   isSceneObjectPagedResponse,
-  SceneObjectUpdateById,
+  GetObjectParams,
+  GetObjectsPagedParams,
+  PostObjectsParams,
+  PatchObjectsParams,
+  DeleteObjectParams,
+  DeleteObjectsParams,
 } from "../models/index";
 import { iteratePagedEndpoint, batched } from "../utilities";
 import { callApi, AuthArgs } from "./apiFetch";
@@ -22,11 +26,7 @@ export async function getObject({
   objectId,
   getAccessToken,
   baseUrl,
-}: {
-  sceneId: string;
-  iTwinId: string;
-  objectId: string;
-} & AuthArgs): Promise<SceneObjectResponse> {
+}: GetObjectParams & AuthArgs): Promise<SceneObjectResponse> {
   return callApi<SceneObjectResponse>({
     endpoint: `/v1/scenes/${sceneId}/objects/${objectId}?iTwinId=${iTwinId}`,
     getAccessToken,
@@ -51,7 +51,7 @@ export async function getObject({
 }
 
 export function getObjectsPaged(
-  args: { sceneId: string; iTwinId: string } & AuthArgs,
+  args: GetObjectsPagedParams & AuthArgs,
   opts: Required<GetObjectsOptions>,
 ): AsyncIterableIterator<SceneObjectPagedResponse> {
   const { sceneId, iTwinId, getAccessToken, baseUrl } = args;
@@ -92,11 +92,7 @@ export async function postObjects({
   objects,
   getAccessToken,
   baseUrl,
-}: {
-  sceneId: string;
-  iTwinId: string;
-  objects: SceneObjectCreateDTO[];
-} & AuthArgs): Promise<SceneObjectListResponse> {
+}: PostObjectsParams & AuthArgs): Promise<SceneObjectListResponse> {
   return callApi({
     endpoint: `/v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}`,
     getAccessToken,
@@ -133,11 +129,7 @@ export async function patchObjects({
   objects,
   getAccessToken,
   baseUrl,
-}: {
-  sceneId: string;
-  iTwinId: string;
-  objects: SceneObjectUpdateById[];
-} & AuthArgs): Promise<SceneObjectListResponse> {
+}: PatchObjectsParams & AuthArgs): Promise<SceneObjectListResponse> {
   return callApi({
     endpoint: `/v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}`,
     getAccessToken,
@@ -174,16 +166,12 @@ export async function deleteObject({
   objectId,
   getAccessToken,
   baseUrl,
-}: {
-  sceneId: string;
-  iTwinId: string;
-  objectId: string;
-} & AuthArgs): Promise<void> {
+}: DeleteObjectParams & AuthArgs): Promise<void> {
   return callApi({
     endpoint: `/v1/scenes/${sceneId}/objects/${objectId}?iTwinId=${iTwinId}`,
     getAccessToken,
     baseUrl,
-    postProcess: async () => {},
+    postProcess: async () => { },
     fetchOptions: {
       method: "DELETE",
     },
@@ -199,11 +187,7 @@ export async function deleteObjects({
   objectIds,
   getAccessToken,
   baseUrl,
-}: {
-  sceneId: string;
-  iTwinId: string;
-  objectIds: string[];
-} & AuthArgs): Promise<void> {
+}: DeleteObjectsParams & AuthArgs): Promise<void> {
   const promises: Promise<void>[] = [];
   for (const batch of batched(objectIds, 20)) {
     promises.push(
@@ -211,7 +195,7 @@ export async function deleteObjects({
         endpoint: `/v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}&ids=${batch.join(",")}`,
         getAccessToken,
         baseUrl,
-        postProcess: async () => {},
+        postProcess: async () => { },
         fetchOptions: {
           method: "DELETE",
         },
