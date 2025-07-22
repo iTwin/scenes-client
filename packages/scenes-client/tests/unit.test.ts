@@ -34,7 +34,11 @@ describe("Scenes Operations", () => {
       createSuccessfulResponse(exampleSceneResponse),
     );
     const client = new SceneClient(getAccessToken);
-    await client.getScene({ iTwinId: "itw-1", sceneId: "scene-1", orderBy: OrderByProperties.NAME });
+    await client.getScene({
+      iTwinId: "itw-1",
+      sceneId: "scene-1",
+      orderBy: OrderByProperties.NAME,
+    });
     verifyFetch(fetchMock, {
       url: `${BASE_DOMAIN}/scene-1?iTwinId=itw-1&orderBy=displayName`,
       headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },

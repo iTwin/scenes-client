@@ -145,7 +145,7 @@ describe("Scenes operation", () => {
       code: "SceneNotFound",
     } as ScenesApiError);
 
-    await expect(client.deleteScene({ iTwinId: ITWIN_ID, sceneId: sceneBId }));
+    await client.deleteScene({ iTwinId: ITWIN_ID, sceneId: sceneBId });
     await expect(
       client.getScene({ iTwinId: ITWIN_ID, sceneId: sceneBId }),
     ).rejects.toMatchObject({

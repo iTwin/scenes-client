@@ -197,9 +197,9 @@ export class SceneClient {
    * Fetch scenes objects in a single page specified by top/skip/kind.
    * @param params.iTwinId – The iTwin’s unique identifier.
    * @param params.sceneId – The scene’s unique identifier.
-   * @param params.top – Number of items per page.
-   * @param params.skip – Number of items to skip.
-   * @param params.kind – Property to order by.
+   * @param params.top – Number of items per page (default 100).
+   * @param params.skip – Number of items to skip (default 0).
+   * @param params.orderBy – Property to order objects by (default OrderByProperties.KIND).
    * @returns SceneObjectListResponse containing the objects in the scene.
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
@@ -219,10 +219,10 @@ export class SceneClient {
    * Fetch scene objects with pagination.
    * @param params.iTwinId – The iTwin’s unique identifier.
    * @param params.sceneId – The scene’s unique identifier.
-   * @param params.top – Number of items per page.
-   * @param params.skip – Number of items to skip.
-   * @param params.delayMs – Milliseconds to wait between requests.
-   * @param params.kind – Property to order by.
+   * @param params.top – Number of items per page (default 100).
+   * @param params.skip – Number of items to skip (default 0).
+   * @param params.delayMs – Milliseconds to wait between requests (default 0).
+   * @param params.orderBy – Property to order objects by (default OrderByProperties.KIND).
    * @returns An async iterator of SceneObjectListResponse.
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */

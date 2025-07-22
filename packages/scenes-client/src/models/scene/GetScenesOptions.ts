@@ -14,6 +14,6 @@ export interface GetScenesOptions {
 
 export const GET_SCENES_DEFAULTS: Required<GetScenesOptions> = {
   top: 100,
-  delayMs: 50,
+  delayMs: 0,
   skip: 0,
 };
