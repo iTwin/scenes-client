@@ -35,7 +35,7 @@ export async function getObject({
   baseUrl,
 }: GetObjectParams & AuthArgs): Promise<SceneObjectResponse> {
   return callApi<SceneObjectResponse>({
-    endpoint: `/v1/scenes/${sceneId}/objects/${objectId}?iTwinId=${iTwinId}`,
+    endpoint: `/${sceneId}/objects/${objectId}?iTwinId=${iTwinId}`,
     getAccessToken,
     baseUrl,
     postProcess: async (response) => {
@@ -77,7 +77,7 @@ export async function getObjects({
   baseUrl,
 }: GetObjectsParams & AuthArgs): Promise<SceneObjectListResponse> {
   return callApi<SceneObjectListResponse>({
-    endpoint: `/v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}&$top=${top}&$skip=${skip}&orderBy=${kind}`,
+    endpoint: `/${sceneId}/objects?iTwinId=${iTwinId}&$top=${top}&$skip=${skip}&orderBy=${kind}`,
     getAccessToken,
     baseUrl,
     postProcess: async (response) => {
@@ -116,7 +116,7 @@ export function getAllObjects(
 ): AsyncIterableIterator<SceneObjectPagedResponse> {
   const { sceneId, iTwinId, getAccessToken, baseUrl } = args;
   const { top, skip, delayMs, orderBy: kind } = opts;
-  const initialUrl = `${baseUrl}/v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}&$top=${top}&$skip=${skip}&orderBy=${kind}`;
+  const initialUrl = `${baseUrl}/${sceneId}/objects?iTwinId=${iTwinId}&$top=${top}&$skip=${skip}&orderBy=${kind}`;
 
   return iteratePagedEndpoint<SceneObjectPagedResponse>(
     initialUrl,
@@ -168,7 +168,7 @@ export async function postObjects({
   const results: SceneObjectListResponse[] = [];
   for (const batch of batched(objects, batchSize)) {
     const response = await callApi({
-      endpoint: `/v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}`,
+      endpoint: `/${sceneId}/objects?iTwinId=${iTwinId}`,
       getAccessToken,
       baseUrl,
       postProcess: async (response) => {
@@ -225,7 +225,7 @@ export async function patchObjects({
   const results: SceneObjectListResponse[] = [];
   for (const batch of batched(objects, batchSize)) {
     const response = await callApi({
-      endpoint: `/v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}`,
+      endpoint: `/${sceneId}/objects?iTwinId=${iTwinId}`,
       getAccessToken,
       baseUrl,
       postProcess: async (response) => {
@@ -278,7 +278,7 @@ export async function deleteObject({
   baseUrl,
 }: DeleteObjectParams & AuthArgs): Promise<void> {
   return callApi({
-    endpoint: `/v1/scenes/${sceneId}/objects/${objectId}?iTwinId=${iTwinId}`,
+    endpoint: `/${sceneId}/objects/${objectId}?iTwinId=${iTwinId}`,
     getAccessToken,
     baseUrl,
     postProcess: async (response) => {
@@ -315,7 +315,7 @@ export async function deleteObjects({
   for (const batch of batched(objectIds, 20)) {
     promises.push(
       callApi({
-        endpoint: `/v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}&ids=${batch.join(",")}`,
+        endpoint: `/${sceneId}/objects?iTwinId=${iTwinId}&ids=${batch.join(",")}`,
         getAccessToken,
         baseUrl,
         postProcess: async (response) => {

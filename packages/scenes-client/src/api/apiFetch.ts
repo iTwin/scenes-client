@@ -52,5 +52,7 @@ export async function callApi<T>({
     ...fetchOptions,
     headers,
   });
+  console.log(`API call to ${baseUrl}${endpoint} returned status ${response.status}`);
+  
   return postProcess(response);
 }

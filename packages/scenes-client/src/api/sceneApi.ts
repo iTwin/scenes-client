@@ -25,12 +25,13 @@ import { callApi, AuthArgs } from "./apiFetch";
  */
 export async function getScene({
   sceneId,
+  orderBy,
   iTwinId,
   getAccessToken,
   baseUrl,
 }: GetSceneParams & AuthArgs): Promise<SceneResponse> {
   return callApi<SceneResponse>({
-    endpoint: `/v1/scenes/${sceneId}?iTwinId=${iTwinId}`,
+    endpoint: `/${sceneId}?iTwinId=${iTwinId}&orderBy=${orderBy}`,
     getAccessToken,
     postProcess: async (response) => {
       const responseJson = await response.json();
@@ -71,7 +72,7 @@ export async function getScenes({
   getAccessToken,
   baseUrl,
 }: GetScenesParams & AuthArgs): Promise<SceneListResponse> {
-  const url = `${baseUrl}/v1/scenes?iTwinId=${iTwinId}&$top=${top}&$skip=${skip}`;
+  const url = `${baseUrl}?iTwinId=${iTwinId}&$top=${top}&$skip=${skip}`;
 
   const response = await callApi<SceneListResponse>({
     baseUrl: url,
@@ -110,7 +111,7 @@ export function getAllScenes(
 ): AsyncIterableIterator<SceneListResponse> {
   const { iTwinId, getAccessToken, baseUrl } = args;
   const { top, delayMs, skip } = opts;
-  const initialUrl = `${baseUrl}/v1/scenes?iTwinId=${iTwinId}&$top=${top}&$skip=${skip}`;
+  const initialUrl = `${baseUrl}?iTwinId=${iTwinId}&$top=${top}&$skip=${skip}`;
 
   return iteratePagedEndpoint<SceneListResponse>(
     initialUrl,
@@ -159,7 +160,7 @@ export async function postScene({
   baseUrl,
 }: PostSceneParams & AuthArgs): Promise<SceneResponse> {
   return callApi<SceneResponse>({
-    endpoint: `/v1/scenes?iTwinId=${iTwinId}`,
+    endpoint: `?iTwinId=${iTwinId}`,
     getAccessToken,
     baseUrl,
     postProcess: async (response) => {
@@ -208,7 +209,7 @@ export async function patchScene({
   baseUrl,
 }: PatchSceneParams & AuthArgs): Promise<SceneResponse> {
   return callApi<SceneResponse>({
-    endpoint: `/v1/scenes/${sceneId}?iTwinId=${iTwinId}`,
+    endpoint: `/${sceneId}?iTwinId=${iTwinId}`,
     getAccessToken,
     baseUrl,
     postProcess: async (response) => {
@@ -255,7 +256,7 @@ export async function deleteScene({
   baseUrl,
 }: DeleteSceneParams & AuthArgs): Promise<void> {
   return callApi({
-    endpoint: `/v1/scenes/${sceneId}?iTwinId=${iTwinId}`,
+    endpoint: `/${sceneId}?iTwinId=${iTwinId}`,
     getAccessToken,
     baseUrl,
     fetchOptions: { method: "DELETE" },

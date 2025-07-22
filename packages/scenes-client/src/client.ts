@@ -43,7 +43,7 @@ import {
 
 type AccessTokenFn = () => Promise<string>;
 
-const DEFAULT_BASE_URL = "https://itwinscenes-eus.bentley.com";
+const DEFAULT_BASE_URL = "https://api.bentley.com/scenes";
 
 export class SceneClient {
   private readonly getAccessToken: AccessTokenFn;
@@ -66,13 +66,15 @@ export class SceneClient {
    * Fetch a single scene by its ID.
    * @param params.iTwinId – The iTwin’s unique identifier.
    * @param params.sceneId – The scene’s unique identifier.
+   * @param params.orderBy – Property to sort the returned sceneData.objects(optional, defaults to kind).
    * @returns SceneResponse containing the Scene's details.
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async getScene(params: GetSceneParams): Promise<SceneResponse> {
     return getScene({
-      sceneId: params.sceneId,
       iTwinId: params.iTwinId,
+      sceneId: params.sceneId,
+      orderBy: params.orderBy ?? GET_OBJECTS_DEFAULTS.orderBy,
       getAccessToken: this.getAccessToken,
       baseUrl: this.baseUrl,
     });

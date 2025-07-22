@@ -21,7 +21,7 @@ import {
   SceneResponse,
 } from "../src/models/index";
 
-const BASE_DOMAIN = "https://itwinscenes-eus.bentley.com";
+const BASE_DOMAIN = "https://api.bentley.com/scenes";
 
 const fetchMock = vi.fn();
 beforeAll(() => vi.stubGlobal("fetch", fetchMock));
@@ -34,9 +34,9 @@ describe("Scenes Operations", () => {
       createSuccessfulResponse(exampleSceneResponse),
     );
     const client = new SceneClient(getAccessToken);
-    await client.getScene({ iTwinId: "itw-1", sceneId: "scene-1" });
+    await client.getScene({ iTwinId: "itw-1", sceneId: "scene-1", orderBy: OrderByProperties.NAME });
     verifyFetch(fetchMock, {
-      url: `${BASE_DOMAIN}/v1/scenes/scene-1?iTwinId=itw-1`,
+      url: `${BASE_DOMAIN}/scene-1?iTwinId=itw-1&orderBy=displayName`,
       headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
     });
   });
@@ -54,7 +54,7 @@ describe("Scenes Operations", () => {
     expect(scenes).toEqual(exampleSceneListResponse);
 
     verifyFetch(fetchMock, {
-      url: `${BASE_DOMAIN}/v1/scenes?iTwinId=itw-1&$top=10&$skip=2`,
+      url: `${BASE_DOMAIN}?iTwinId=itw-1&$top=10&$skip=2`,
       headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
     });
   });
@@ -68,7 +68,7 @@ describe("Scenes Operations", () => {
     await it.next();
 
     verifyFetch(fetchMock, {
-      url: `${BASE_DOMAIN}/v1/scenes?iTwinId=itw-1&$top=${GET_SCENES_DEFAULTS.top}&$skip=${GET_SCENES_DEFAULTS.skip}`,
+      url: `${BASE_DOMAIN}?iTwinId=itw-1&$top=${GET_SCENES_DEFAULTS.top}&$skip=${GET_SCENES_DEFAULTS.skip}`,
       headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
     });
   });
@@ -85,7 +85,7 @@ describe("Scenes Operations", () => {
     });
     await it.next();
     verifyFetch(fetchMock, {
-      url: `${BASE_DOMAIN}/v1/scenes?iTwinId=itw-1&$top=50&$skip=25`,
+      url: `${BASE_DOMAIN}?iTwinId=itw-1&$top=50&$skip=25`,
       headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
     });
   });
@@ -104,7 +104,7 @@ describe("Scenes Operations", () => {
     });
 
     verifyFetch(fetchMock, {
-      url: `${BASE_DOMAIN}/v1/scenes?iTwinId=itw-1`,
+      url: `${BASE_DOMAIN}?iTwinId=itw-1`,
       headers: {
         "Content-Type": "application/json",
         Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -129,7 +129,7 @@ describe("Scenes Operations", () => {
     });
 
     verifyFetch(fetchMock, {
-      url: `${BASE_DOMAIN}/v1/scenes/scene-1?iTwinId=itw-1`,
+      url: `${BASE_DOMAIN}/scene-1?iTwinId=itw-1`,
       headers: {
         "Content-Type": "application/json",
         Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -145,7 +145,7 @@ describe("Scenes Operations", () => {
     await client.deleteScene({ iTwinId: "itw-1", sceneId: "scene-1" });
 
     verifyFetch(fetchMock, {
-      url: `${BASE_DOMAIN}/v1/scenes/scene-1?iTwinId=itw-1`,
+      url: `${BASE_DOMAIN}/scene-1?iTwinId=itw-1`,
       headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
       method: "DELETE",
     });
@@ -165,7 +165,7 @@ describe("Scene Object Operations", () => {
     });
 
     verifyFetch(fetchMock, {
-      url: `${BASE_DOMAIN}/v1/scenes/scene-1/objects/object-1?iTwinId=itw-1`,
+      url: `${BASE_DOMAIN}/scene-1/objects/object-1?iTwinId=itw-1`,
       headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
     });
   });
@@ -185,7 +185,7 @@ describe("Scene Object Operations", () => {
     expect(objects).toEqual(exampleSceneObjectListResponse);
 
     verifyFetch(fetchMock, {
-      url: `${BASE_DOMAIN}/v1/scenes/scene-1/objects?iTwinId=itw-1&$top=24&$skip=77&orderBy=displayName`,
+      url: `${BASE_DOMAIN}/scene-1/objects?iTwinId=itw-1&$top=24&$skip=77&orderBy=displayName`,
       headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
     });
   });
@@ -202,7 +202,7 @@ describe("Scene Object Operations", () => {
     await it.next();
 
     verifyFetch(fetchMock, {
-      url: `${BASE_DOMAIN}/v1/scenes/scene-1/objects?iTwinId=itw-1&$top=100&$skip=0&orderBy=kind`,
+      url: `${BASE_DOMAIN}/scene-1/objects?iTwinId=itw-1&$top=100&$skip=0&orderBy=kind`,
       headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
     });
   });
@@ -226,7 +226,7 @@ describe("Scene Object Operations", () => {
     });
 
     verifyFetch(fetchMock, {
-      url: `${BASE_DOMAIN}/v1/scenes/scene-1/objects?iTwinId=itw-1`,
+      url: `${BASE_DOMAIN}/scene-1/objects?iTwinId=itw-1`,
       headers: {
         "Content-Type": "application/json",
         Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -268,7 +268,7 @@ describe("Scene Object Operations", () => {
     });
 
     verifyFetch(fetchMock, {
-      url: `${BASE_DOMAIN}/v1/scenes/scene-1/objects?iTwinId=itw-1`,
+      url: `${BASE_DOMAIN}/scene-1/objects?iTwinId=itw-1`,
       headers: {
         "Content-Type": "application/json",
         Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -301,7 +301,7 @@ describe("Scene Object Operations", () => {
     });
 
     verifyFetch(fetchMock, {
-      url: `${BASE_DOMAIN}/v1/scenes/scene-1/objects/object-1?iTwinId=itw-1`,
+      url: `${BASE_DOMAIN}/scene-1/objects/object-1?iTwinId=itw-1`,
       headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
       method: "DELETE",
     });
@@ -317,7 +317,7 @@ describe("Scene Object Operations", () => {
     });
 
     verifyFetch(fetchMock, {
-      url: `${BASE_DOMAIN}/v1/scenes/scene-1/objects?iTwinId=itw-1&ids=object-1,object-2`,
+      url: `${BASE_DOMAIN}/scene-1/objects?iTwinId=itw-1&ids=object-1,object-2`,
       headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
       method: "DELETE",
     });
