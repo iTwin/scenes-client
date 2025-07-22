@@ -7,7 +7,6 @@ import {
   patchScene,
   deleteScene,
 } from "./api/sceneApi";
-
 import {
   postObjects,
   getObject,
@@ -17,44 +16,32 @@ import {
   getObjectsPaged,
 } from "./api/sceneObjectApi";
 import {
-  SceneCreateDTO,
-  SceneUpdateDTO,
   SceneListResponse,
-  SceneObjectCreateDTO,
   SceneObjectResponse,
   SceneObjectListResponse,
-  SceneObjectUpdateDTO,
   SceneResponse,
   GetScenesOptions,
   GET_SCENES_DEFAULTS,
   GetObjectsOptions,
   GET_OBJECTS_DEFAULTS,
-  BulkSceneObjectUpdate,
-  BulkSceneObjectCreateDTO,
+  GetSceneParams,
+  PostSceneParams,
+  GetScenesPagedParams,
+  PatchSceneParams,
+  DeleteSceneParams,
+  GetObjectParams,
+  GetObjectsPagedParams,
+  SceneParams,
+  PostObjectsParams,
+  PatchObjectsParams,
+  DeleteObjectParams,
+  DeleteObjectsParams,
+  GetScenesParams,
 } from "./models/index";
 
 type AccessTokenFn = () => Promise<string>;
 
 const DEFAULT_BASE_URL = "https://itwinscenes-eus.bentley.com";
-
-// @naron: the api should reuse params here
-type ITwinParams = { iTwinId: string };
-type SceneParams = ITwinParams & { sceneId: string };
-type ObjectParams = SceneParams & { objectId: string };
-
-export type GetScenesParams = ITwinParams;
-export type GetScenesPagedParams = ITwinParams & GetScenesOptions;
-export type GetSceneParams = SceneParams;
-export type PostSceneParams = ITwinParams & { scene: SceneCreateDTO };
-export type PatchSceneParams = SceneParams & { scene: SceneUpdateDTO };
-export type DeleteSceneParams = SceneParams;
-
-export type GetObjectParams = ObjectParams;
-export type GetObjectsPagedParams = SceneParams & GetObjectsOptions;
-export type PostObjectsParams = SceneParams & BulkSceneObjectCreateDTO;
-export type PatchObjectsParams = SceneParams & BulkSceneObjectUpdate;
-export type DeleteObjectParams = ObjectParams;
-export type DeleteObjectsParams = SceneParams & { objectIds: string[] };
 
 export class SceneClient {
   private readonly getAccessToken: AccessTokenFn;
@@ -75,11 +62,9 @@ export class SceneClient {
 
   /**
    * Fetch a list of scenes for the given iTwinId.
-   * @param params.iTwinId – The iTwin’s unique identifier.
-   * @param params.top – Maximum number of scenes to return (default: 100).
-   * @param params.skip – Number of scenes to skip (default: 0).
-   * @param params.delayMs – Delay in milliseconds between requests (default: 50). //@naron: to be changed?
+   * @param params - {@link GetScenesPagedParams}
    * @returns List of scenes.
+   * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async getScenesPaged(
     params: GetScenesPagedParams,
@@ -102,12 +87,11 @@ export class SceneClient {
 
   /**
    * Fetch all scenes for the given iTwinId.
-   * @param params.iTwinId – The iTwin’s unique identifier.
+   * @param params - {@link GetScenesParams}
    * @returns List of all scenes.
+   * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
-  async getAllScenes(params: {
-    iTwinId: string;
-  }): Promise<SceneListResponse[]> {
+  async getAllScenes(params: GetScenesParams): Promise<SceneListResponse[]> {
     const pages = await this.getScenesPaged(params);
     const all: SceneListResponse[] = [];
     for await (const page of pages) {
@@ -118,9 +102,9 @@ export class SceneClient {
 
   /**
    * Fetch a single scene by its ID.
-   * @param params.iTwinId – The iTwin’s unique identifier.
-   * @param params.sceneId – The scene’s unique identifier.
+   * @param params - {@link GetSceneParams}
    * @returns Scene details.
+   * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async getScene(params: GetSceneParams): Promise<SceneResponse> {
     return getScene({
@@ -133,9 +117,9 @@ export class SceneClient {
 
   /**
    * Create a new scene.
-   * @param params.iTwinId – The iTwin’s unique identifier.
-   * @param params.scene – SceneCreateDto object to create.
+   * @param params - {@link PostSceneParams}
    * @returns Created scene details.
+   * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async postScene(params: PostSceneParams): Promise<SceneResponse> {
     return postScene({
@@ -148,10 +132,9 @@ export class SceneClient {
 
   /**
    * Update an existing scene.
-   * @param params.iTwinId – The iTwin’s unique identifier.
-   * @param params.sceneId – The scene’s unique identifier.
-   * @param params.scene – SceneUpdateDTO object with updated fields.
+   * @param params - {@link PatchSceneParams}
    * @returns Updated scene details.
+   * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async patchScene(params: PatchSceneParams): Promise<SceneResponse> {
     return patchScene({
@@ -165,8 +148,8 @@ export class SceneClient {
 
   /**
    * Delete a scene by its ID.
-   * @param params.iTwinId – The iTwin’s unique identifier.
-   * @param params.sceneId – The scene’s unique identifier.
+   * @param params - {@link DeleteSceneParams}
+   * @throws {ScenesApiError} If the API call fails.
    */
   async deleteScene(params: DeleteSceneParams): Promise<void> {
     return deleteScene({
@@ -179,10 +162,9 @@ export class SceneClient {
 
   /**
    * Fetch a single scene object by its object ID.
-   * @param params.iTwinId – The iTwin’s unique identifier.
-   * @param params.sceneId – The scene’s unique identifier.
-   * @param params.objectId – The object’s unique identifier.
-   * @returns a SceneObject List Response containing the single object details.
+   * @param params - {@link GetObjectParams}
+   * @returns SceneObjectResponse containing the single object details.
+   * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async getObject(params: GetObjectParams): Promise<SceneObjectResponse> {
     return getObject({
@@ -196,13 +178,9 @@ export class SceneClient {
 
   /**
    * Fetch multiple scene objects with pagination.
-   * @param params.iTwinId – The iTwin’s unique identifier.
-   * @param params.sceneId – The scene’s unique identifier.
-   * @param params.top – Maximum number of objects to return (default: 100).
-   * @param params.skip – Number of objects to skip (default: 0).
-   * @param params.delayMs – Delay in milliseconds between requests (default: 50).
-   * @param params.kind – Property to order objects by (default: OrderByProperties.KIND).
+   * @param params - {@link GetObjectsPagedParams}
    * @returns Async iterable of scene object list response.
+   * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async getObjectsPaged(
     params: GetObjectsPagedParams,
@@ -227,9 +205,9 @@ export class SceneClient {
 
   /**
    * Fetch all scene objects for the given sceneId.
-   * @param params.iTwinId – The iTwin’s unique identifier.
-   * @param params.sceneId – The scene’s unique identifier.
-   * @returns List of all scene objects in list response
+   * @param params - {@link SceneParams}
+   * @returns List of all scene objects in list response.
+   * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async getAllObjects(params: SceneParams): Promise<SceneObjectListResponse[]> {
     const pages = await this.getObjectsPaged(params);
@@ -242,10 +220,9 @@ export class SceneClient {
 
   /**
    * Create one or multiple scene objects.
-   * @param params.iTwinId – The iTwin’s unique identifier.
-   * @param params.sceneId – The scene’s unique identifier.
-   * @param params.objects – Array of SceneObjectCreateDto to create.
-   * @returns Created scene objects details.
+   * @param params - {@link PostObjectsParams}
+   * @returns Created scene objects details in list.
+   * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async postObjects(
     params: PostObjectsParams,
@@ -261,10 +238,9 @@ export class SceneClient {
 
   /**
    * Update one or multiple scene objects.
-   * @param params.iTwinId – The iTwin’s unique identifier.
-   * @param params.sceneId – The scene’s unique identifier.
-   * @param params.objects – Array of SceneObjectUpdateWithIdDTO to update.
+   * @param params - {@link PatchObjectsParams}
    * @returns Updated scene objects details.
+   * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async patchObjects(
     params: PatchObjectsParams,
@@ -280,9 +256,8 @@ export class SceneClient {
 
   /**
    * Delete a single scene object by its ID.
-   * @param params.iTwinId – The iTwin’s unique identifier.
-   * @param params.sceneId – The scene’s unique identifier.
-   * @param params.objectId – The object’s unique identifier.
+   * @param params - {@link DeleteObjectParams}
+   * @throws {ScenesApiError} If the API call fails.
    */
   async deleteObject(params: DeleteObjectParams): Promise<void> {
     return deleteObject({
@@ -296,9 +271,8 @@ export class SceneClient {
 
   /**
    * Delete multiple scene objects by their IDs.
-   * @param params.iTwinId – The iTwin’s unique identifier.
-   * @param params.sceneId – The scene’s unique identifier.
-   * @param params.objectIds – Array of object IDs to delete.
+   * @param params - {@link DeleteObjectsParams}
+   * @throws {ScenesApiError} If the API call fails.
    */
   async deleteObjects(params: DeleteObjectsParams): Promise<void> {
     return deleteObjects({

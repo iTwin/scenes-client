@@ -20,6 +20,12 @@ import {
 import { iteratePagedEndpoint, batched } from "../utilities";
 import { callApi, AuthArgs } from "./apiFetch";
 
+/**
+ * Fetches a single scene object by its object ID.
+ * @param params - {@link GetObjectParams}
+ * @returns SceneObjectResponse containing the single object details.
+ * @throws {ScenesApiError} If the API call fails or the response format is invalid.
+ */
 export async function getObject({
   sceneId,
   iTwinId,
@@ -38,8 +44,9 @@ export async function getObject({
         throw new ScenesApiError(err, response.status);
       }
       if (!isSceneObjectResponse(responseJson)) {
-        throw new Error(
-          "Error fetching scene object: unexpected response format",
+        throw new ScenesApiError(
+          { code: "InvalidResponse", message: "Error fetching scene object: unexpected response format" },
+          response.status,
         );
       }
       return responseJson;
@@ -50,6 +57,13 @@ export async function getObject({
   });
 }
 
+/**
+ * Fetches scene objects with pagination.
+ * @param args - {@link GetObjectsPagedParams}
+ * @param opts - {@link GetObjectsOptions}
+ * @returns Async iterator of paged scene object lists.
+ * @throws {ScenesApiError} If the API call fails or the response format is invalid.
+ */
 export function getObjectsPaged(
   args: GetObjectsPagedParams & AuthArgs,
   opts: Required<GetObjectsOptions>,
@@ -72,8 +86,9 @@ export function getObjectsPaged(
             throw new ScenesApiError(err, response.status);
           }
           if (!isSceneObjectPagedResponse(responseJson)) {
-            throw new Error(
-              "Error fetching scene objects: unexpected response format",
+            throw new ScenesApiError(
+              { code: "InvalidResponse", message: "Error fetching scene objects: unexpected response format" },
+              response.status,
             );
           }
           return responseJson;
@@ -86,6 +101,12 @@ export function getObjectsPaged(
   );
 }
 
+/**
+ * Creates one or multiple scene objects.
+ * @param params - {@link PostObjectsParams}
+ * @returns Created scene objects details in list.
+ * @throws {ScenesApiError} If the API call fails or the response format is invalid.
+ */
 export async function postObjects({
   sceneId,
   iTwinId,
@@ -93,36 +114,52 @@ export async function postObjects({
   getAccessToken,
   baseUrl,
 }: PostObjectsParams & AuthArgs): Promise<SceneObjectListResponse> {
-  return callApi({
-    endpoint: `/v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}`,
-    getAccessToken,
-    baseUrl,
-    postProcess: async (response) => {
-      const responseJson = await response.json();
-      if (!response.ok) {
-        const err = responseJson.error as ScenesErrorResponse;
-        throw new ScenesApiError(err, response.status);
-      }
-      if (!isSceneObjectListResponse(responseJson)) {
-        throw new Error(
-          "Error creating scene objects: unexpected response format",
-        );
-      }
-      return responseJson;
-    },
-    fetchOptions: {
-      method: "POST",
-      body: JSON.stringify({ objects }, (_, value) =>
-        value === undefined ? null : value,
-      ),
-    },
-    additionalHeaders: {
-      Accept: "application/vnd.bentley.itwin-platform.v1+json",
-      "Content-Type": "application/json",
-    },
-  });
+  const batchSize = 20;
+  const results: SceneObjectListResponse[] = [];
+  for (const batch of batched(objects, batchSize)) {
+    const response = await callApi({
+      endpoint: `/v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}`,
+      getAccessToken,
+      baseUrl,
+      postProcess: async (response) => {
+        const responseJson = await response.json();
+        if (!response.ok) {
+          const err = responseJson.error as ScenesErrorResponse;
+          throw new ScenesApiError(err, response.status);
+        }
+        if (!isSceneObjectListResponse(responseJson)) {
+          throw new ScenesApiError(
+            { code: "InvalidResponse", message: "Error creating scene objects: unexpected response format" },
+            response.status,
+          );
+        }
+        return responseJson;
+      },
+      fetchOptions: {
+        method: "POST",
+        body: JSON.stringify({ objects: batch }, (_, value) =>
+          value === undefined ? null : value,
+        ),
+      },
+      additionalHeaders: {
+        Accept: "application/vnd.bentley.itwin-platform.v1+json",
+        "Content-Type": "application/json",
+      },
+    });
+    results.push(response);
+  }
+  // Combine all objects from batches into a single response
+  return {
+    objects: results.flatMap(r => r.objects),
+  };
 }
 
+/**
+ * Updates one or multiple scene objects.
+ * @param params - {@link PatchObjectsParams}
+ * @returns Updated scene objects details.
+ * @throws {ScenesApiError} If the API call fails or the response format is invalid.
+ */
 export async function patchObjects({
   sceneId,
   iTwinId,
@@ -130,36 +167,51 @@ export async function patchObjects({
   getAccessToken,
   baseUrl,
 }: PatchObjectsParams & AuthArgs): Promise<SceneObjectListResponse> {
-  return callApi({
-    endpoint: `/v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}`,
-    getAccessToken,
-    baseUrl,
-    postProcess: async (response) => {
-      const responseJson = await response.json();
-      if (!response.ok) {
-        const err = responseJson.error as ScenesErrorResponse;
-        throw new ScenesApiError(err, response.status);
-      }
-      if (!isSceneObjectListResponse(responseJson)) {
-        throw new Error(
-          "Error updating scene objects: unexpected response format",
-        );
-      }
-      return responseJson;
-    },
-    fetchOptions: {
-      method: "PATCH",
-      body: JSON.stringify({ objects }, (_, value) =>
-        value === undefined ? null : value,
-      ),
-    },
-    additionalHeaders: {
-      Accept: "application/vnd.bentley.itwin-platform.v1+json",
-      "Content-Type": "application/json",
-    },
-  });
+  const batchSize = 20;
+  const results: SceneObjectListResponse[] = [];
+  for (const batch of batched(objects, batchSize)) {
+    const response = await callApi({
+      endpoint: `/v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}`,
+      getAccessToken,
+      baseUrl,
+      postProcess: async (response) => {
+        const responseJson = await response.json();
+        if (!response.ok) {
+          const err = responseJson.error as ScenesErrorResponse;
+          throw new ScenesApiError(err, response.status);
+        }
+        if (!isSceneObjectListResponse(responseJson)) {
+          throw new ScenesApiError(
+            { code: "InvalidResponse", message: "Error updating scene objects: unexpected response format" },
+            response.status,
+          );
+        }
+        return responseJson;
+      },
+      fetchOptions: {
+        method: "PATCH",
+        body: JSON.stringify({ objects: batch }, (_, value) =>
+          value === undefined ? null : value,
+        ),
+      },
+      additionalHeaders: {
+        Accept: "application/vnd.bentley.itwin-platform.v1+json",
+        "Content-Type": "application/json",
+      },
+    });
+    results.push(response);
+  }
+  // Combine all objects from batches into a single response
+  return {
+    objects: results.flatMap(r => r.objects),
+  };
 }
 
+/**
+ * Deletes a single scene object by its ID.
+ * @param params - {@link DeleteObjectParams}
+ * @throws {ScenesApiError} If the API call fails.
+ */
 export async function deleteObject({
   sceneId,
   iTwinId,
@@ -171,7 +223,13 @@ export async function deleteObject({
     endpoint: `/v1/scenes/${sceneId}/objects/${objectId}?iTwinId=${iTwinId}`,
     getAccessToken,
     baseUrl,
-    postProcess: async () => { },
+    postProcess: async (response) => {
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}) as ScenesErrorResponse);
+        throw new ScenesApiError(err, response.status);
+      }
+      return;
+    },
     fetchOptions: {
       method: "DELETE",
     },
@@ -181,6 +239,11 @@ export async function deleteObject({
   });
 }
 
+/**
+ * Deletes multiple scene objects by their IDs.
+ * @param params - {@link DeleteObjectsParams}
+ * @throws {ScenesApiError} If the API call fails.
+ */
 export async function deleteObjects({
   sceneId,
   iTwinId,
@@ -195,7 +258,13 @@ export async function deleteObjects({
         endpoint: `/v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}&ids=${batch.join(",")}`,
         getAccessToken,
         baseUrl,
-        postProcess: async () => { },
+        postProcess: async (response) => {
+          if (!response.ok) {
+            const err = await response.json().catch(() => ({}) as ScenesErrorResponse);
+            throw new ScenesApiError(err, response.status);
+          }
+          return;
+        },
         fetchOptions: {
           method: "DELETE",
         },

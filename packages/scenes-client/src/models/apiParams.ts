@@ -22,6 +22,7 @@ export type DeleteSceneParams = SceneParams;
 export type GetObjectParams = ObjectParams;
 export type GetObjectsPagedParams = SceneParams & GetObjectsOptions;
 export type PostObjectsParams = SceneParams & BulkSceneObjectCreateDTO;
+
 export type PatchObjectsParams = SceneParams & BulkSceneObjectUpdate;
 export type DeleteObjectParams = ObjectParams;
 export type DeleteObjectsParams = SceneParams & { objectIds: string[] };

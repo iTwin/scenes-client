@@ -18,6 +18,9 @@ import { callApi, AuthArgs } from "./apiFetch";
 
 /**
  * Fetches a single scene by its ID.
+ * @param params - {@link GetSceneParams}
+ * @returns Scene details.
+ * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
 export async function getScene({
   sceneId,
@@ -31,11 +34,13 @@ export async function getScene({
     postProcess: async (response) => {
       const responseJson = await response.json();
       if (!response.ok) {
-        const err = responseJson.error as ScenesErrorResponse;
-        throw new ScenesApiError(err, response.status);
+        throw new ScenesApiError(responseJson.error as ScenesErrorResponse, response.status);
       }
       if (!isSceneResponse(responseJson)) {
-        throw new Error("Error fetching scene: unexpected response format");
+        throw new ScenesApiError(
+          { code: "InvalidResponse", message: "Error fetching scene: unexpected response format" },
+          response.status,
+        );
       }
       return responseJson;
     },
@@ -48,6 +53,10 @@ export async function getScene({
 
 /**
  * Fetches scenes in a paginated manner.
+ * @param args - {@link GetScenesPagedParams}
+ * @param opts - {@link GetScenesOptions}
+ * @returns Async iterator of paged scene lists.
+ * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
 export function getScenesPaged(
   args: GetScenesPagedParams & AuthArgs,
@@ -70,14 +79,12 @@ export function getScenesPaged(
         postProcess: async (response) => {
           const json = await response.json();
           if (!response.ok) {
-            throw new ScenesApiError(
-              json.error as ScenesErrorResponse,
-              response.status,
-            );
+            throw new ScenesApiError(json.error as ScenesErrorResponse, response.status);
           }
           if (!isSceneListResponse(json)) {
-            throw new Error(
-              "Error fetching scenes: unexpected response format",
+            throw new ScenesApiError(
+              { code: "InvalidResponse", message: "Error fetching scenes: unexpected response format" },
+              response.status,
             );
           }
           return json;
@@ -89,6 +96,9 @@ export function getScenesPaged(
 
 /**
  * Creates a new scene.
+ * @param params - {@link PostSceneParams}
+ * @returns Created scene details.
+ * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
 export async function postScene({
   iTwinId,
@@ -103,11 +113,13 @@ export async function postScene({
     postProcess: async (response) => {
       const responseJson = await response.json();
       if (!response.ok) {
-        const err = responseJson.error as ScenesErrorResponse;
-        throw new ScenesApiError(err, response.status);
+        throw new ScenesApiError(responseJson.error as ScenesErrorResponse, response.status);
       }
       if (!isSceneResponse(responseJson)) {
-        throw new Error("Error creating scene: unexpected response format");
+        throw new ScenesApiError(
+          { code: "InvalidResponse", message: "Error creating scene: unexpected response format" },
+          response.status,
+        );
       }
       return responseJson;
     },
@@ -126,6 +138,9 @@ export async function postScene({
 
 /**
  * Updates an existing scene.
+ * @param params - {@link PatchSceneParams}
+ * @returns Updated scene details.
+ * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
 export async function patchScene({
   iTwinId,
@@ -141,11 +156,13 @@ export async function patchScene({
     postProcess: async (response) => {
       const responseJson = await response.json();
       if (!response.ok) {
-        const err = responseJson.error as ScenesErrorResponse;
-        throw new ScenesApiError(err, response.status);
+        throw new ScenesApiError(responseJson.error as ScenesErrorResponse, response.status);
       }
       if (!isSceneResponse(responseJson)) {
-        throw new Error("Error updating scene: unexpected response format");
+        throw new ScenesApiError(
+          { code: "InvalidResponse", message: "Error updating scene: unexpected response format" },
+          response.status,
+        );
       }
       return responseJson;
     },
@@ -164,6 +181,8 @@ export async function patchScene({
 
 /**
  * Deletes a scene by its ID.
+ * @param params - {@link DeleteSceneParams}
+ * @throws {ScenesApiError} If the API call fails.
  */
 export async function deleteScene({
   sceneId,
