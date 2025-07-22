@@ -1,0 +1,17 @@
+{
+  "$id": "/schemas/Movie.1.0.0",
+  "description": "A sequence of camera animations, or clips, which can be played independently or sequentially",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "animations": {
+      "description": "Series of CameraAnimations in the movie.",
+      "type": "array",
+      "items": {
+        "$ref": "/schemas/CommonTypes#/definitions/guid",
+        "description": "Id of the scene object containing CameraAnimation data for this movie clip"
+      }
+    }
+  },
+  "required": [ "animations" ]
+}

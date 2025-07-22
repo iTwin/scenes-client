@@ -1,0 +1,93 @@
+{
+  "$id": "/schemas/UnrealAtmosphericStyling.1.0.0",
+  "description": "Global setting to control unreal atmospheric styling when visualizing the scene in Carrot.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atmosphere": {
+      "description": "Atmospheric styling settings for the scene",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sunAzimuth": {
+          "description": "The horizontal angle of the sun, in degrees",
+          "type": "number",
+          "minimum": -360,
+          "maximum": 360
+        },
+        "sunPitch": {
+          "description": "The vertical angle of the sun above the horizon",
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90
+        },
+        "heliodonLongitude": {
+          "description": "Geographic longitude for simulating sun position",
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180
+        },
+        "heliodonLatitude": {
+          "description": "Geographic latitude for simulating sun position",
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90
+        },
+        "heliodonDate": {
+          "description": "Date used to calculate the sun position based on Earth's orbit",
+          "$ref": "/schemas/CommonTypes#/definitions/dateTime"
+        },
+        "weather": {
+          "description": "Controls the density or presence of atmospheric clouds (0: no clouds, 1: fully overcast)",
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "windOrientation": {
+          "description": "Direction the wind is blowing from, in degrees",
+          "type": "number",
+          "minimum": -360,
+          "maximum": 360
+        },
+        "windForce": {
+          "description": "Strength or intensity of the wind",
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "fog": {
+          "description": "Controls the density or presence of atmospheric fog",
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "exposure": {
+          "description": "Adjusts camera exposure, affecting brightness and contrast",
+          "type": "number",
+          "minimum": -4.0,
+          "maximum": 4.0
+        },
+        "useHeliodon": {
+          "description": "Enable or disable the heliodon system (sun simulation)",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "sunAzimuth",
+        "sunPitch",
+        "heliodonLongitude",
+        "heliodonLatitude",
+        "heliodonDate",
+        "weather",
+        "windOrientation",
+        "windForce",
+        "fog",
+        "exposure",
+        "useHeliodon"
+      ]
+    }
+  },
+  "required": [
+    "atmosphere"
+  ]
+}

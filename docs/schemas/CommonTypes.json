@@ -1,0 +1,169 @@
+{
+  "$id": "/schemas/CommonTypes",
+  "description": "Collection of reusable definitions for common structures, types, and constraints.",
+  "definitions": {
+    "guid": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+      "description": "GUID string"
+    },
+    "alphaNumericString": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9]*$",
+      "description": "String containing only alphanumeric characters"
+    },
+    "safeString": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9 ?!@+-.:=_/]*$",
+      "description": "String containing only web safe characters"
+    },
+    "dateTime": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z$",
+      "description": "Date time in format: YYYY-MM-DDThh:mm:ssZ or YYYY-MM-DDThh:mm:ss.sssZ"
+    },
+    "id64": {
+      "type": "string",
+      "pattern": "(^0x[1-9a-f][0-9a-f]{0,15}$)|(^0$)",
+      "description": "Id64 string. See https://www.itwinjs.org/learning/common/id64/"
+    },
+    "compressedId64Set": {
+      "type": "string",
+      "pattern": "(^[+][0-9A-F][0-9A-F*+]*$)|(^$)",
+      "description": "Compressed Id64 set."
+    },
+    "vector3d": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "type": "number",
+          "description": "X coordinate"
+        },
+        "y": {
+          "type": "number",
+          "description": "Y coordinate"
+        },
+        "z": {
+          "type": "number",
+          "description": "Z coordinate"
+        }
+      },
+      "required": ["x", "y", "z"]
+    },
+    "transform": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 16,
+      "maxItems": 16,
+      "description": "Array of 16 numbers representing a 4x4 matrix in row-major order"
+    },
+    "clipPlane": {
+      "description": "A single plane represented as an inward unit normal and a signed distance",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "normal": {
+          "$ref": "#/definitions/vector3d",
+          "description": "The plane's inward normal."
+        },
+        "distance": {
+          "type": "number",
+          "description": "The plane's distance from the origin."
+        },
+        "invisible": {
+          "type": "boolean",
+          "description": "True if plane is marked invisible. Invisible planes should not generate edges when clipping geometry in the view."
+        },
+        "interior": {
+          "type": "boolean",
+          "description": "Used by iTwin.Js. Interior planes should not generate edges when clipping geometry in the view."
+        }
+      },
+      "required": []
+    },
+    "clipPlaneSet": {
+      "description": "Collection of ClipPlanes, often used for bounding regions of space.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "planes": {
+          "description": "Collection of ClipPlanes.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/clipPlane"
+          }
+        }
+      },
+      "required": ["planes"]
+    },
+    "colorDef": {
+      "description": "An unsigned 32-bit integer in 0xTTBBGGRR format.",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4294967295
+    },
+    "rgbColor": {
+      "description": "An immutable representation of a color with r, g, and b components each in the integer range [0, 255]",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "r": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "Red component of the color"
+        },
+        "g": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "Green component of the color"
+        },
+        "b": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "Blue component of the color"
+        }
+      },
+      "required": ["r", "g", "b"]
+    },
+    "linePixels": {
+      "enum": [
+        0, 2155905152, 4177066232, 4292935648, 4262526480, 3772834016, 4169726088, 4279828248,
+        3435973836, 1, -1
+      ],
+      "type": "integer",
+      "description": "If defined and not equal to -1 (Invalid), the pixel pattern used to draw the edges. If undefined, edges are drawn using the element's line pattern. The patterns are, in order:\n0: Code0 (Solid), 2155905152 (0x80808080): Code1 (1 lit pixel followed by 7 unlit pixels), 4177066232 (0xf8f8f8f8): Code2 (5 lit pixels followed by 3 unlit pixels), 4292935648 (0xffe0ffe0): Code3 (11 lit pixels followed by 5 unlit pixels), 4262526480 (0xfe10fe10): Code4 (7 lit pixels followed by 4 unlit pixels followed by 1 lit pixel followed by 1 lit pixel), 3772834016 (0xe0e0e0e0): Code5 (3 lit pixels followed by 5 unlit pixels), 4169726088 (0xf888f888): Code6 (5 lit pixels followed by 3 unlit followed by 1 lit followed by 3 unlit followed by 1 lit followed by 3 unlit), 4279828248 (0xff18ff18): Code7 (8 lit pixels followed by 3 unlit followed by 2 lit followed by 3 unlit), 3435973836 (0xcccccccc): HiddenLine (2 lit pixels followed by 2 unlit pixels - default style for drawing hidden edges), 1 (0x00000001): Invisible, -1: Invalid"
+    },
+    "hiddenLineStyle": {
+      "description": "JSON representation of a hidden line style, which can be used to define how hidden lines are rendered in a view.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ovrColor": {
+          "type": "boolean",
+          "description": "If true, and color is defined, then the edge color is overridden"
+        },
+        "color": {
+          "$ref": "#/definitions/colorDef",
+          "description": "If defined, and overrideColor is not `false`, the color used to draw the edges. If undefined, edges are drawn using the element's line color"
+        },
+        "pattern": {
+          "$ref": "#/definitions/linePixels",
+          "description": "If defined and not equal to -1 (Invalid), the pixel pattern used to draw the edges. If undefined, edges are drawn using the element's line pattern. The patterns are, in order:\n0: Code0 (Solid), 2155905152 (0x80808080): Code1 (1 lit pixel followed by 7 unlit pixels), 4177066232 (0xf8f8f8f8): Code2 (5 lit pixels followed by 3 unlit pixels), 4292935648 (0xffe0ffe0): Code3 (11 lit pixels followed by 5 unlit pixels), 4262526480 (0xfe10fe10): Code4 (7 lit pixels followed by 4 unlit pixels followed by 1 lit pixel followed by 1 lit pixel), 3772834016 (0xe0e0e0e0): Code5 (3 lit pixels followed by 5 unlit pixels), 4169726088 (0xf888f888): Code6 (5 lit pixels followed by 3 unlit followed by 1 lit followed by 3 unlit followed by 1 lit followed by 3 unlit), 4279828248 (0xff18ff18): Code7 (8 lit pixels followed by 3 unlit followed by 2 lit followed by 3 unlit), 3435973836 (0xcccccccc): HiddenLine (2 lit pixels followed by 2 unlit pixels - default style for drawing hidden edges), 1 (0x00000001): Invisible, -1: Invalid"
+        },
+        "width": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 32,
+          "description": "If defined and non-zero, the width of the edges in pixels. If undefined (or 0), edges are drawn using the element's line width.\n Non-integer values are truncated, and values are clamped to the range [1, 32]."
+        }
+      },
+      "required": []
+    }
+  }
+}
