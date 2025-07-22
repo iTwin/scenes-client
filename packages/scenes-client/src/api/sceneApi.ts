@@ -8,10 +8,11 @@ import {
   isSceneResponse,
   GetScenesOptions,
   GetSceneParams,
-  GetScenesPagedParams,
+  GetAllScenesParams,
   PostSceneParams,
   PatchSceneParams,
   DeleteSceneParams,
+  GetScenesParams,
 } from "../models/index";
 import { iteratePagedEndpoint } from "../utilities";
 import { callApi, AuthArgs } from "./apiFetch";
@@ -52,14 +53,53 @@ export async function getScene({
 }
 
 /**
+ * Fetches scenes in single page specified by the options.
+ * @param params - {@link GetScenesParams}
+ * @returns Async iterator of paged scene lists.
+ * @throws {ScenesApiError} If the API call fails or the response format is invalid.
+ */
+export async function getScenes({
+  iTwinId,
+  top,
+  skip,
+  getAccessToken,
+  baseUrl,
+}: GetScenesParams & AuthArgs): Promise<SceneListResponse> {
+  const url = `${baseUrl}/v1/scenes?iTwinId=${iTwinId}&$top=${top}&$skip=${skip}`;
+
+  const response = await callApi<SceneListResponse>({
+    baseUrl: url,
+    getAccessToken,
+    additionalHeaders: {
+      Accept: "application/vnd.bentley.itwin-platform.v1+json",
+    },
+    postProcess: async (res) => {
+      const json = await res.json();
+      if (!res.ok) {
+        throw new ScenesApiError(json.error as ScenesErrorResponse, res.status);
+      }
+      if (!isSceneListResponse(json)) {
+        throw new ScenesApiError(
+          { code: "InvalidResponse", message: "Unexpected response format" },
+          res.status,
+        );
+      }
+      return json;
+    },
+  });
+
+  return response;
+}
+
+/**
  * Fetches scenes in a paginated manner.
- * @param args - {@link GetScenesPagedParams}
+ * @param args - {@link GetAllScenesParams}
  * @param opts - {@link GetScenesOptions}
  * @returns Async iterator of paged scene lists.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
-export function getScenesPaged(
-  args: GetScenesPagedParams & AuthArgs,
+export function getAllScenes(
+  args: GetAllScenesParams & AuthArgs,
   opts: Required<GetScenesOptions>,
 ): AsyncIterableIterator<SceneListResponse> {
   const { iTwinId, getAccessToken, baseUrl } = args;

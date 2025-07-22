@@ -12,6 +12,7 @@ import {
 import { SceneClient } from "../src/client";
 import {
   GET_SCENES_DEFAULTS,
+  OrderByProperties,
   PagingLinks,
   SceneListResponse,
   SceneObjectListResponse,
@@ -40,12 +41,26 @@ describe("Scenes Operations", () => {
     });
   });
 
-  it("getScenesPaged()", async () => {
+  it("getScenes()", async () => {
     fetchMock.mockImplementation(() =>
       createSuccessfulResponse(exampleSceneListResponse),
     );
     const client = new SceneClient(getAccessToken);
-    const it = await client.getScenesPaged({ iTwinId: "itw-1" });
+    const scenes = await client.getScenes({ iTwinId: "itw-1", top: 10, skip: 2 });
+    expect(scenes).toEqual(exampleSceneListResponse);
+
+    verifyFetch(fetchMock, {
+      url: `${BASE_DOMAIN}/v1/scenes?iTwinId=itw-1&$top=10&$skip=2`,
+      headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
+    });
+  });
+
+  it("getAllScenes()", async () => {
+    fetchMock.mockImplementation(() =>
+      createSuccessfulResponse(exampleSceneListResponse),
+    );
+    const client = new SceneClient(getAccessToken);
+    const it = await client.getAllScenes({ iTwinId: "itw-1" });
     await it.next();
 
     verifyFetch(fetchMock, {
@@ -54,12 +69,12 @@ describe("Scenes Operations", () => {
     });
   });
 
-  it("getScenesPaged() respects top & skip params", async () => {
+  it("getAllScenes() respects top & skip params", async () => {
     fetchMock.mockImplementation(() =>
       createSuccessfulResponse(exampleSceneListResponse),
     );
     const client = new SceneClient(getAccessToken);
-    const it = await client.getScenesPaged({
+    const it = await client.getAllScenes({
       iTwinId: "itw-1",
       top: 50,
       skip: 25,
@@ -151,12 +166,32 @@ describe("Scene Object Operations", () => {
     });
   });
 
-  it("getObjectsPaged()", async () => {
+  it("getObjects()", async () => {
+    fetchMock.mockImplementation(() =>
+      createSuccessfulResponse(exampleSceneObjectListResponse),
+    );
+    const client = new SceneClient(getAccessToken);
+    const objects = await client.getObjects({
+      iTwinId: "itw-1",
+      sceneId: "scene-1",
+      top: 24,
+      skip: 77,
+      kind: OrderByProperties.NAME, // @naron: should we let user just pass string and check with that?
+    });
+    expect(objects).toEqual(exampleSceneObjectListResponse);
+
+    verifyFetch(fetchMock, {
+      url: `${BASE_DOMAIN}/v1/scenes/scene-1/objects?iTwinId=itw-1&$top=24&$skip=77&orderBy=displayName`,
+      headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
+    });
+  });
+
+  it("getAllObjects()", async () => {
     fetchMock.mockImplementation(() =>
       createSuccessfulResponse(exampleSceneObjectPagedResponse),
     );
     const client = new SceneClient(getAccessToken);
-    const it = await client.getObjectsPaged({
+    const it = await client.getAllObjects({
       iTwinId: "itw-1",
       sceneId: "scene-1",
     });

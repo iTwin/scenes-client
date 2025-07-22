@@ -19,6 +19,7 @@ export interface GetObjectsOptions {
   skip?: number;
   /** ms pause between pages (default 0) */
   delayMs?: number;
+  /** property to order by (default OrderByProperties.KIND) */
   kind?: OrderByProperties;
 }
 

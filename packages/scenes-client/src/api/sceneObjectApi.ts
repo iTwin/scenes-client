@@ -11,11 +11,12 @@ import {
   SceneObjectPagedResponse,
   isSceneObjectPagedResponse,
   GetObjectParams,
-  GetObjectsPagedParams,
+  GetAllObjectsParams,
   PostObjectsParams,
   PatchObjectsParams,
   DeleteObjectParams,
   DeleteObjectsParams,
+  GetObjectsParams,
 } from "../models/index";
 import { iteratePagedEndpoint, batched } from "../utilities";
 import { callApi, AuthArgs } from "./apiFetch";
@@ -58,14 +59,53 @@ export async function getObject({
 }
 
 /**
+ * Fetches objects in single paged specified by the options.
+ * @param params - {@link GetObjectsParams}
+ * @returns SceneObjectListResponse containing the objects in the scene.
+ * @throws {ScenesApiError} If the API call fails or the response format is invalid
+ */
+export async function getObjects({
+  sceneId,
+  iTwinId,
+  top,
+  skip,
+  kind,
+  getAccessToken,
+  baseUrl,
+}: GetObjectsParams & AuthArgs): Promise<SceneObjectListResponse> {
+  return callApi<SceneObjectListResponse>({
+    endpoint: `/v1/scenes/${sceneId}/objects?iTwinId=${iTwinId}&$top=${top}&$skip=${skip}&orderBy=${kind}`,
+    getAccessToken,
+    baseUrl,
+    postProcess: async (response) => {
+      const responseJson = await response.json();
+      if (!response.ok) {
+        const err = responseJson.error as ScenesErrorResponse;
+        throw new ScenesApiError(err, response.status);
+      }
+      if (!isSceneObjectListResponse(responseJson)) {
+        throw new ScenesApiError(
+          { code: "InvalidResponse", message: "Error fetching scene objects: unexpected response format" },
+          response.status,
+        );
+      }
+      return responseJson;
+    },
+    additionalHeaders: {
+      Accept: "application/vnd.bentley.itwin-platform.v1+json",
+    },
+  });
+}
+
+/**
  * Fetches scene objects with pagination.
- * @param args - {@link GetObjectsPagedParams}
+ * @param args - {@link GetAllObjectsParams}
  * @param opts - {@link GetObjectsOptions}
  * @returns Async iterator of paged scene object lists.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
-export function getObjectsPaged(
-  args: GetObjectsPagedParams & AuthArgs,
+export function getAllObjects(
+  args: GetAllObjectsParams & AuthArgs,
   opts: Required<GetObjectsOptions>,
 ): AsyncIterableIterator<SceneObjectPagedResponse> {
   const { sceneId, iTwinId, getAccessToken, baseUrl } = args;

@@ -110,7 +110,7 @@ describe("Scenes operation", () => {
   });
 
   it("get scenes paged", async () => {
-    const res = await client.getScenesPaged({ iTwinId: ITWIN_ID });
+    const res = await client.getAllScenes({ iTwinId: ITWIN_ID });
 
     let found = false;
     for await (const page of res) {
@@ -124,11 +124,6 @@ describe("Scenes operation", () => {
     }
 
     expect(found).toBe(true);
-  });
-
-  it("get all scenes", async () => {
-    const res = await client.getAllScenes({ iTwinId: ITWIN_ID });
-    expect(res.length).toBeGreaterThanOrEqual(2);
   });
 
   it("update scene", async () => {
@@ -224,7 +219,7 @@ describe("Scenes Objects operations", () => {
   });
 
   it("get objects paged", async () => {
-    const res = await client.getObjectsPaged({
+    const res = await client.getAllObjects({
       iTwinId: ITWIN_ID,
       sceneId: SCENE_ID,
     });
@@ -242,15 +237,6 @@ describe("Scenes Objects operations", () => {
 
     expect(found).toBe(true);
   });
-
-  // taking too long to run
-  // it("get all objects", async () => {
-  //   const res = await client.getAllObjects({
-  //     iTwinId: ITWIN_ID,
-  //     sceneId: SCENE_ID,
-  //   });
-  //   expect(res.length).toBeGreaterThanOrEqual(3);
-  // });
 
   it("delete object", async () => {
     await client.deleteObjects({

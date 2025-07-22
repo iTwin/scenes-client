@@ -2,10 +2,11 @@
 
 import {
   getScene,
-  getScenesPaged,
+  getAllScenes,
   postScene,
   patchScene,
   deleteScene,
+  getScenes,
 } from "./api/sceneApi";
 import {
   postObjects,
@@ -13,7 +14,8 @@ import {
   deleteObject,
   deleteObjects,
   patchObjects,
-  getObjectsPaged,
+  getAllObjects,
+  getObjects,
 } from "./api/sceneObjectApi";
 import {
   SceneListResponse,
@@ -26,17 +28,17 @@ import {
   GET_OBJECTS_DEFAULTS,
   GetSceneParams,
   PostSceneParams,
-  GetScenesPagedParams,
+  GetAllScenesParams,
   PatchSceneParams,
   DeleteSceneParams,
   GetObjectParams,
-  GetObjectsPagedParams,
-  SceneParams,
+  GetAllObjectsParams,
   PostObjectsParams,
   PatchObjectsParams,
   DeleteObjectParams,
   DeleteObjectsParams,
   GetScenesParams,
+  GetObjectsParams,
 } from "./models/index";
 
 type AccessTokenFn = () => Promise<string>;
@@ -61,46 +63,6 @@ export class SceneClient {
   }
 
   /**
-   * Fetch a list of scenes for the given iTwinId.
-   * @param params - {@link GetScenesPagedParams}
-   * @returns List of scenes.
-   * @throws {ScenesApiError} If the API call fails or the response format is invalid.
-   */
-  async getScenesPaged(
-    params: GetScenesPagedParams,
-  ): Promise<AsyncIterableIterator<SceneListResponse>> {
-    const opts: Required<GetScenesOptions> = {
-      top: params.top ?? GET_SCENES_DEFAULTS.top,
-      skip: params.skip ?? GET_SCENES_DEFAULTS.skip,
-      delayMs: params.delayMs ?? GET_SCENES_DEFAULTS.delayMs,
-    };
-
-    return getScenesPaged(
-      {
-        iTwinId: params.iTwinId,
-        getAccessToken: this.getAccessToken,
-        baseUrl: this.baseUrl,
-      },
-      opts,
-    );
-  }
-
-  /**
-   * Fetch all scenes for the given iTwinId.
-   * @param params - {@link GetScenesParams}
-   * @returns List of all scenes.
-   * @throws {ScenesApiError} If the API call fails or the response format is invalid.
-   */
-  async getAllScenes(params: GetScenesParams): Promise<SceneListResponse[]> {
-    const pages = await this.getScenesPaged(params);
-    const all: SceneListResponse[] = [];
-    for await (const page of pages) {
-      all.push(page);
-    }
-    return all;
-  }
-
-  /**
    * Fetch a single scene by its ID.
    * @param params - {@link GetSceneParams}
    * @returns Scene details.
@@ -113,6 +75,47 @@ export class SceneClient {
       getAccessToken: this.getAccessToken,
       baseUrl: this.baseUrl,
     });
+  }
+
+  /**
+   * Fetches scenes in single page specified by the option's top/skip.
+   * @param params - {@link GetScenesParams}
+   * @returns SceneListResponse containing the list of scenes.
+   * @throws {ScenesApiError} If the API call fails or the response format is
+   */
+  async getScenes(params: GetScenesParams): Promise<SceneListResponse> {
+    return getScenes({
+      iTwinId: params.iTwinId,
+      top: params.top ?? GET_SCENES_DEFAULTS.top,
+      skip: params.skip ?? GET_SCENES_DEFAULTS.skip,
+      getAccessToken: this.getAccessToken,
+      baseUrl: this.baseUrl,
+    });
+  }
+
+  /**
+   * Fetch a list of scenes for the given iTwinId.
+   * @param params - {@link GetAllScenesParams}
+   * @returns an iterator of scenes list response.
+   * @throws {ScenesApiError} If the API call fails or the response format is invalid.
+   */
+  async getAllScenes(
+    params: GetAllScenesParams,
+  ): Promise<AsyncIterableIterator<SceneListResponse>> {
+    const opts: Required<GetScenesOptions> = {
+      top: params.top ?? GET_SCENES_DEFAULTS.top,
+      skip: params.skip ?? GET_SCENES_DEFAULTS.skip,
+      delayMs: params.delayMs ?? GET_SCENES_DEFAULTS.delayMs,
+    };
+
+    return getAllScenes(
+      {
+        iTwinId: params.iTwinId,
+        getAccessToken: this.getAccessToken,
+        baseUrl: this.baseUrl,
+      },
+      opts,
+    );
   }
 
   /**
@@ -177,13 +180,33 @@ export class SceneClient {
   }
 
   /**
+   * Fetches objects in single paged specified by the options.
+   * @param params - {@link GetObjectsParams}
+   * @returns SceneObjectListResponse containing the objects in the scene.
+   * @throws {ScenesApiError} If the API call fails or the response format is invalid
+   */
+  async getObjects(
+    params: GetObjectsParams,
+  ): Promise<SceneObjectListResponse> {
+    return getObjects({
+      sceneId: params.sceneId,
+      iTwinId: params.iTwinId,
+      top: params.top ?? GET_OBJECTS_DEFAULTS.top,
+      skip: params.skip ?? GET_OBJECTS_DEFAULTS.skip,
+      kind: params.kind ?? GET_OBJECTS_DEFAULTS.kind,
+      getAccessToken: this.getAccessToken,
+      baseUrl: this.baseUrl,
+    });
+  }
+
+  /**
    * Fetch multiple scene objects with pagination.
-   * @param params - {@link GetObjectsPagedParams}
-   * @returns Async iterable of scene object list response.
+   * @param params - {@link GetAllObjectsParams}
+   * @returns an iterator of scene object list response.
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
-  async getObjectsPaged(
-    params: GetObjectsPagedParams,
+  async getAllObjects(
+    params: GetAllObjectsParams,
   ): Promise<AsyncIterableIterator<SceneObjectListResponse>> {
     const opts: Required<GetObjectsOptions> = {
       top: params.top ?? GET_OBJECTS_DEFAULTS.top,
@@ -192,7 +215,7 @@ export class SceneClient {
       kind: params.kind ?? GET_OBJECTS_DEFAULTS.kind,
     };
 
-    return getObjectsPaged(
+    return getAllObjects(
       {
         sceneId: params.sceneId,
         iTwinId: params.iTwinId,
@@ -201,21 +224,6 @@ export class SceneClient {
       },
       opts,
     );
-  }
-
-  /**
-   * Fetch all scene objects for the given sceneId.
-   * @param params - {@link SceneParams}
-   * @returns List of all scene objects in list response.
-   * @throws {ScenesApiError} If the API call fails or the response format is invalid.
-   */
-  async getAllObjects(params: SceneParams): Promise<SceneObjectListResponse[]> {
-    const pages = await this.getObjectsPaged(params);
-    const all: SceneObjectListResponse[] = [];
-    for await (const page of pages) {
-      all.push(page);
-    }
-    return all;
   }
 
   /**
