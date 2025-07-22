@@ -1,5 +1,13 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 
+/**
+ * Arguments for configuring an API request.
+ * @template T - The expected response type after post-processing.
+ * @property endpoint - Optional endpoint path to append to the base URL.
+ * @property postProcess - Function to process the raw HTTP response and return the desired result.
+ * @property additionalHeaders - Optional additional HTTP headers to include in the request.
+ * @property fetchOptions - Optional fetch options (method, body, etc.), excluding headers.
+ */
 export interface RequestArgs<T> {
   endpoint?: string;
   postProcess: (response: Response) => Promise<T>;
@@ -7,6 +15,11 @@ export interface RequestArgs<T> {
   fetchOptions?: Omit<RequestInit, "headers">;
 }
 
+/**
+ * Authentication and base URL arguments for API requests.
+ * @property getAccessToken - Async function to retrieve the access token for authentication.
+ * @property baseUrl - The base URL for the API.
+ */
 export interface AuthArgs {
   getAccessToken: () => Promise<string>;
   baseUrl: string;

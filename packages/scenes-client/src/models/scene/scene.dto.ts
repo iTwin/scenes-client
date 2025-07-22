@@ -8,12 +8,21 @@ import {
 } from "./sceneCreate.dto";
 
 export interface SceneDTO extends SceneCreateDTO {
+  /** Unique identifier for the scene (UUID). */
   id: string;
+  /** Scene informational objects. */
   sceneData: SceneDataCreateDTO;
+  /**
+   * Indicates sceneData was filtered because the user lacks necessary permissions to view all objects.
+   */
   isPartial?: boolean;
+  /** Id of the user who created the scene (UUID). */
   createdById: string;
+  /** iTwin Id associated with the scene (UUID). */
   iTwinId: string;
+  /** Time the scene was created as an ISO8601 string, 'YYYY-MM-DDTHH:mm:ss.sssZ'. */
   creationTime: string;
+  /** Time the scene was last modified as an ISO8601 string, 'YYYY-MM-DDTHH:mm:ss.sssZ'. */
   lastModified: string;
 }
 
