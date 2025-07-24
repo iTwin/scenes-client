@@ -180,6 +180,16 @@ describe("Scenes Objects operations", () => {
     obj2 = repo.id;
   });
 
+  it("patch object", async () => {
+    const p1 = await client.patchObject({
+      iTwinId: ITWIN_ID,
+      sceneId: SCENE_ID,
+      objectId: obj1,
+      object: { displayName: "Layer1Up" },
+    });
+    expect(p1.object.displayName).toBe("Layer1Up");
+  });
+
   it("patches objects", async () => {
     const p1 = await client.patchObjects({
       iTwinId: ITWIN_ID,
@@ -187,11 +197,11 @@ describe("Scenes Objects operations", () => {
       objects: [
         {
           id: obj1,
-          displayName: "Layer1Up",
+          displayName: "Layer1Up squared",
         },
       ],
     });
-    expect(p1.objects[0].displayName).toBe("Layer1Up");
+    expect(p1.objects[0].displayName).toBe("Layer1Up squared");
 
     const pAll = await client.patchObjects({
       iTwinId: ITWIN_ID,

@@ -2,7 +2,10 @@
 
 import { GetObjectsOptions } from "./object/GetObjectsOptions";
 import { BulkSceneObjectCreateDTO } from "./object/sceneObjectCreate.dto";
-import { BulkSceneObjectUpdate } from "./object/sceneObjectUpdate.dto";
+import {
+  BulkSceneObjectUpdate,
+  SceneObjectUpdateDTO,
+} from "./object/sceneObjectUpdate.dto";
 import { GetScenesOptions } from "./scene/GetScenesOptions";
 import { SceneCreateDTO } from "./scene/sceneCreate.dto";
 import { SceneUpdateDTO } from "./scene/sceneUpdate.dto";
@@ -22,6 +25,7 @@ export type GetObjectParams = ObjectParams;
 export type GetObjectsParams = SceneParams & Omit<GetObjectsOptions, "delayMs">;
 export type GetAllObjectsParams = SceneParams & GetObjectsOptions;
 export type PostObjectsParams = SceneParams & BulkSceneObjectCreateDTO;
+export type PatchObjectParam = ObjectParams & { object: SceneObjectUpdateDTO };
 export type PatchObjectsParams = SceneParams & BulkSceneObjectUpdate;
 export type DeleteObjectParams = ObjectParams;
 export type DeleteObjectsParams = SceneParams & { objectIds: string[] };

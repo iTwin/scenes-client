@@ -11,7 +11,7 @@ import { SceneClient } from "@itwin/scenes-client";
 
 const client = new SceneClient(
   getAccessToken: async () => "<itwin_platform_auth_token>",
-  baseUrl: HOST_URL, // default prod: https://itwinscenes-eus.bentley.com
+  baseUrl: HOST_URL, // default prod: https://api.bentley.com/scenes
 );
 
 const scene = await client.getScene({

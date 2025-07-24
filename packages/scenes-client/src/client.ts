@@ -16,6 +16,7 @@ import {
   patchObjects,
   getAllObjects,
   getObjects,
+  patchObject,
 } from "./api/sceneObjectApi";
 import {
   SceneListResponse,
@@ -39,6 +40,7 @@ import {
   DeleteObjectsParams,
   GetScenesParams,
   GetObjectsParams,
+  PatchObjectParam,
 } from "./models/index";
 
 type AccessTokenFn = () => Promise<string>;
@@ -251,7 +253,7 @@ export class SceneClient {
    * Create one or multiple scene objects.
    * @param params.iTwinId – The iTwin’s unique identifier.
    * @param params.sceneId – The scene’s unique identifier.
-   * @param params.objects – Array of SceneObjectCreateDTO to create.
+   * @param params.objects – Array of {@link SceneObjectCreateDTO} to create.
    * @returns Created scene objects details in list.
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
@@ -268,10 +270,30 @@ export class SceneClient {
   }
 
   /**
+   * Update a single scene object by its ID.
+   * @param params.iTwinId – The iTwin’s unique identifier.
+   * @param params.sceneId – The scene’s unique identifier.
+   * @param params.objectId – The object’s unique identifier.
+   * @param params.object – The {@link SceneObjectUpdateDTO} to update.
+   * @returns Updated scene object details.
+   * @throws {ScenesApiError} If the API call fails or the response format is invalid.
+   */
+  async patchObject(params: PatchObjectParam): Promise<SceneObjectResponse> {
+    return patchObject({
+      iTwinId: params.iTwinId,
+      sceneId: params.sceneId,
+      objectId: params.objectId,
+      object: params.object,
+      getAccessToken: this.getAccessToken,
+      baseUrl: this.baseUrl,
+    });
+  }
+
+  /**
    * Update one or multiple scene objects.
    * @param params.iTwinId – The iTwin’s unique identifier.
    * @param params.sceneId – The scene’s unique identifier.
-   * @param params.objects – Array of SceneObjectUpdateById to update.
+   * @param params.objects – Array of {@link SceneObjectUpdateById} to update.
    * @returns Updated scene objects details.
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */

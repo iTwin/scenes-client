@@ -17,6 +17,7 @@ import {
   DeleteObjectParams,
   DeleteObjectsParams,
   GetObjectsParams,
+  PatchObjectParam,
 } from "../models/index";
 import { iteratePagedEndpoint, batched } from "../utilities";
 import { callApi, AuthArgs } from "./apiFetch";
@@ -72,12 +73,12 @@ export async function getObjects({
   iTwinId,
   top,
   skip,
-  orderBy: kind,
+  orderBy,
   getAccessToken,
   baseUrl,
 }: GetObjectsParams & AuthArgs): Promise<SceneObjectListResponse> {
   return callApi<SceneObjectListResponse>({
-    endpoint: `/${sceneId}/objects?iTwinId=${iTwinId}&$top=${top}&$skip=${skip}&orderBy=${kind}`,
+    endpoint: `/${sceneId}/objects?iTwinId=${iTwinId}&$top=${top}&$skip=${skip}&orderBy=${orderBy}`,
     getAccessToken,
     baseUrl,
     postProcess: async (response) => {
@@ -206,6 +207,54 @@ export async function postObjects({
   return {
     objects: results.flatMap((r) => r.objects),
   };
+}
+
+/**
+ * Updates a single scene object by its ID.
+ * @param params - {@link PatchObjectParam}
+ * @returns Updated scene object details.
+ * @throws {ScenesApiError} If the API call fails or the response format is invalid.
+ */
+export async function patchObject({
+  sceneId,
+  iTwinId,
+  objectId,
+  object,
+  getAccessToken,
+  baseUrl,
+}: PatchObjectParam & AuthArgs): Promise<SceneObjectResponse> {
+  return callApi<SceneObjectResponse>({
+    endpoint: `/${sceneId}/objects/${objectId}?iTwinId=${iTwinId}`,
+    getAccessToken,
+    baseUrl,
+    postProcess: async (response) => {
+      const responseJson = await response.json();
+      if (!response.ok) {
+        const err = responseJson.error as ScenesErrorResponse;
+        throw new ScenesApiError(err, response.status);
+      }
+      if (!isSceneObjectResponse(responseJson)) {
+        throw new ScenesApiError(
+          {
+            code: "InvalidResponse", //@naron: this seemed repetitive
+            message: "Error updating scene object: unexpected response format",
+          },
+          response.status,
+        );
+      }
+      return responseJson;
+    },
+    fetchOptions: {
+      method: "PATCH",
+      body: JSON.stringify(object, (_, value) =>
+        value === undefined ? null : value,
+      ),
+    },
+    additionalHeaders: {
+      Accept: "application/vnd.bentley.itwin-platform.v1+json",
+      "Content-Type": "application/json",
+    },
+  });
 }
 
 /**

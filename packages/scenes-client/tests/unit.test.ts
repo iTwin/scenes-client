@@ -249,6 +249,32 @@ describe("Scene Object Operations", () => {
     });
   });
 
+  it("patchObject()", async () => {
+    fetchMock.mockImplementation(() =>
+      createSuccessfulResponse(exampleSceneObjectResponse),
+    );
+    const client = new SceneClient(getAccessToken);
+    await client.patchObject({
+      iTwinId: "itw-1",
+      sceneId: "scene-1",
+      objectId: "object-1",
+      object: {
+        displayName: "UpdatedObject1",
+      },
+    });
+    verifyFetch(fetchMock, {
+      url: `${BASE_DOMAIN}/scene-1/objects/object-1?iTwinId=itw-1`,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/vnd.bentley.itwin-platform.v1+json",
+      },
+      method: "PATCH",
+      body: JSON.stringify({
+        displayName: "UpdatedObject1",
+      }),
+    });
+  });
+
   it("patchObjects()", async () => {
     fetchMock.mockImplementation(() =>
       createSuccessfulResponse({ objects: [] }),
