@@ -21,11 +21,11 @@
     "dotenv": "^17.0.1",
     "dotenv-cli": "^8.0.0",
     "eslint": "^9.30.1",
-    "eslint-config-prettier": "^10.1.5",
+    "eslint-config-prettier": ">=10.1.8",
     "eslint-define-config": "^2.1.0",
     "eslint-plugin-header": "^3.1.1",
     "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-prettier": "^5.5.1",
+    "eslint-plugin-prettier": ">=5.5.3",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.36.0",
     "vitest": "^3.2.4"
