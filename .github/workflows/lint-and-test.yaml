@@ -23,3 +23,6 @@ jobs:
       - name: Lint scenes client
         working-directory: packages/scenes-client
         run: pnpm lint
+      - name: Run unit tests
+        working-directory: packages/scenes-client
+        run: pnpm vitest tests/unit.test.ts
