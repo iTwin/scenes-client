@@ -8,7 +8,10 @@
     "lint": "eslint --ext .js,.ts,.tsx ."
   },
   "keywords": [],
-  "author": "",
+  "author": {
+    "name": "Bentley Systems, Inc.",
+    "url": "https://www.bentley.com"
+  },
   "license": "MIT",
   "type": "module",
   "devDependencies": {
