@@ -356,95 +356,70 @@ describe("Scene Object Operations", () => {
 });
 
 describe("Error Handling", () => {
-  it("should throw ScenesApiError for 404 Not Found", async () => {
-    fetchMock.mockImplementation(() =>
-      createErrorResponse(
-        {
-          code: "SceneNotFound",
-          message: "Scene not found",
-        },
-        404,
-      ),
-    );
-    const client = new SceneClient(getAccessToken);
+  const client = new SceneClient(getAccessToken);
 
-    await expect(
-      client.getScene({
+  // Test different client methods to ensure error handling works across all endpoints
+  const testCases = [
+    {
+      name: "scene operations",
+      method: () => client.getScene({ iTwinId: "itw-1", sceneId: "scene-1" }),
+    },
+    {
+      name: "scene list operations",
+      method: () => client.getScenes({ iTwinId: "itw-1" }),
+    },
+    {
+      name: "scene creation",
+      method: () => client.postScene({
         iTwinId: "itw-1",
-        sceneId: "nonexistent-scene",
+        scene: { displayName: "Test", sceneData: { objects: [] } }
       }),
-    ).rejects.toThrow(ScenesApiError);
-
-    try {
-      await client.getScene({
+    },
+    {
+      name: "scene updates",
+      method: () => client.patchScene({
         iTwinId: "itw-1",
-        sceneId: "nonexistent-scene",
-      });
-    } catch (error) {
-      expect(error).toBeInstanceOf(ScenesApiError);
-      expect((error as ScenesApiError).code).toBe("SceneNotFound");
-      expect((error as ScenesApiError).message).toBe("Scene not found");
-      expect((error as ScenesApiError).status).toBe(404);
-    }
-  });
+        sceneId: "scene-1",
+        scene: { displayName: "Updated" }
+      }),
+    },
+    {
+      name: "scene deletion",
+      method: () => client.deleteScene({ iTwinId: "itw-1", sceneId: "scene-1" }),
+    },
+    {
+      name: "object operations",
+      method: () => client.getObject({
+        iTwinId: "itw-1",
+        sceneId: "scene-1",
+        objectId: "object-1"
+      }),
+    },
+    {
+      name: "object updates",
+      method: () => client.patchObject({
+        iTwinId: "itw-1",
+        sceneId: "scene-1",
+        objectId: "object-1",
+        object: { displayName: "Updated" }
+      }),
+    },
+  ];
 
-  it("should throw ScenesApiError for 400 Bad Request with details", async () => {
+  it("should throw ScenesApiError for server errors", async () => {
     fetchMock.mockImplementation(() =>
       createErrorResponse(
         {
-          code: "InvalidRequest",
-          message: "The request is invalid",
-          target: "iTwinId",
-          details: [
-            {
-              code: "Required",
-              message: "iTwinId is required",
-            },
-          ],
+          code: "ServerError",
+          message: "Internal server error occurred",
         },
-        400,
+        500,
       ),
     );
-    const client = new SceneClient(getAccessToken);
 
-    try {
-      await client.getScenes({
-        iTwinId: "", // Invalid empty iTwinId
-      });
-    } catch (error) {
-      expect(error).toBeInstanceOf(ScenesApiError);
-      expect((error as ScenesApiError).code).toBe("InvalidRequest");
-      expect((error as ScenesApiError).message).toBe("The request is invalid");
-      expect((error as ScenesApiError).status).toBe(400);
-      expect((error as ScenesApiError).target).toBe("iTwinId");
-      expect((error as ScenesApiError).details).toHaveLength(1);
-      const details = (error as ScenesApiError).details;
-      expect(details?.[0]?.code).toBe("Required");
-      expect(details?.[0]?.message).toBe("iTwinId is required");
-    }
-  });
-
-  it("should throw ScenesApiError for 401 Unauthorized", async () => {
-    fetchMock.mockImplementation(() =>
-      createErrorResponse(
-        {
-          code: "Unauthorized",
-          message: "Access token is invalid or expired",
-        },
-        401,
-      ),
-    );
-    const client = new SceneClient(getAccessToken);
-
-    try {
-      await client.getScenes({
-        iTwinId: "itw-1",
-      });
-    } catch (error) {
-      expect(error).toBeInstanceOf(ScenesApiError);
-      expect((error as ScenesApiError).code).toBe("Unauthorized");
-      expect((error as ScenesApiError).message).toBe("Access token is invalid or expired");
-      expect((error as ScenesApiError).status).toBe(401);
+    // Test that all client methods properly handle server errors
+    for (const testCase of testCases) {
+      await expect(testCase.method()).rejects.toThrow(ScenesApiError);
     }
   });
 
@@ -452,19 +427,61 @@ describe("Error Handling", () => {
     fetchMock.mockImplementation(() =>
       createSuccessfulResponse({ invalidProperty: "invalid" }),
     );
-    const client = new SceneClient(getAccessToken);
+
+    // Test methods that expect specific response formats
+    const formatTestCases = testCases.filter(tc =>
+      !tc.name.includes("deletion") // DELETE methods don't validate response format
+    );
+
+    for (const testCase of formatTestCases) {
+      try {
+        await testCase.method();
+      } catch (error) {
+        expect(error).toBeInstanceOf(ScenesApiError);
+        expect((error as ScenesApiError).code).toBe("InvalidResponse");
+        expect((error as ScenesApiError).message).toMatch(/unexpected response format/i);
+      }
+    }
+  });
+
+  it("should properly parse error details (code, message, target, details)", async () => {
+    const errorResponse = {
+      code: "ValidationError",
+      message: "Request validation failed",
+      target: "requestBody",
+      details: [
+        {
+          code: "Required",
+          message: "displayName is required",
+        },
+        {
+          code: "InvalidFormat",
+          message: "iTwinId must be a valid UUID",
+        },
+      ],
+    };
+
+    fetchMock.mockImplementation(() => createErrorResponse(errorResponse, 422));
 
     try {
-      await client.getScene({
-        iTwinId: "itw-1",
-        sceneId: "scene-1",
-      });
+      await client.getScene({ iTwinId: "itw-1", sceneId: "scene-1" });
     } catch (error) {
       expect(error).toBeInstanceOf(ScenesApiError);
-      expect((error as ScenesApiError).code).toBe("InvalidResponse");
-      expect((error as ScenesApiError).message).toContain(
-        "unexpected response format",
-      );
+      const apiError = error as ScenesApiError;
+
+      // Verify all error properties are correctly parsed
+      expect(apiError.code).toBe("ValidationError");
+      expect(apiError.message).toBe("Request validation failed");
+      expect(apiError.status).toBe(422);
+      expect(apiError.target).toBe("requestBody");
+      expect(apiError.details).toHaveLength(2);
+
+      // Verify error details array
+      const details = apiError.details!;
+      expect(details[0].code).toBe("Required");
+      expect(details[0].message).toBe("displayName is required");
+      expect(details[1].code).toBe("InvalidFormat");
+      expect(details[1].message).toBe("iTwinId must be a valid UUID");
     }
   });
 });
