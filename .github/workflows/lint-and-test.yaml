@@ -16,13 +16,9 @@ jobs:
         with:
           node-version: '20'
           cache: 'pnpm'
-          cache-dependency-path: 'packages/scenes-client/pnpm-lock.yaml'
       - name: Install dependencies
-        working-directory: packages/scenes-client
         run: pnpm install
-      - name: Lint scenes client
-        working-directory: packages/scenes-client
-        run: pnpm lint
+      - name: Lint
+        run: pnpm lint:client
       - name: Run unit tests
-        working-directory: packages/scenes-client
-        run: pnpm vitest tests/unit.test.ts
+        run: pnpm test:client:unit

@@ -12,7 +12,13 @@ This is a pnpm workspace. To get started:
 # Install all dependencies (run once at root)
 pnpm install
 
-# Run lint in client
+# run only unit tests in client
+pnpm test:client:unit
+
+#run only integration tests in client
+pnpm test:client:integration
+
+# Run all tests in client
 pnpm test:client
 
 # Run lint in client

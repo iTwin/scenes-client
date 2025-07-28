@@ -2,7 +2,7 @@
 
 ## About
 
-This package provides client-side code and TypeScript types for interacting with the [iTwin Platform Scenes API](https://developer.bentley.com/apis/scenes/overview/).
+This package provides client-side code and TypeScript types for interacting with the Scenes API.
 
 ## Usage
 
@@ -45,6 +45,12 @@ See [Contributing](../../README.md#contributing).
 
 This package is part of a pnpm workspace.
 
+### Test Configuration
+
+1. Create a `.env` file in the `tests` folder based on `.env.template`.
+2. Set `HOST_URL` to your local host or use `https://dev-itwinscenes-eus.bentley.com`.
+3. Run tests with either approach above or use the Vitest extension in VS Code.
+
 ### Quick Start
 
 ```sh
@@ -53,6 +59,8 @@ cd ../../  # Go to workspace root
 pnpm install
 
 # Run commands from root
+pnpm test:client:unit # Run only unit tests
+pnpm test:client:integration # Run only integration tests
 pnpm test:client     # Run tests
 pnpm lint:client     # Run linting
 pnpm build:client    # Build package
@@ -62,16 +70,13 @@ pnpm build:client    # Build package
 
 ```sh
 # Or work directly in this package directory
+pnpm test:unit # Run only unit tests
+pnpm test:integration # Run only integration tests
+
 pnpm test     # Run tests locally
 pnpm lint     # Run linting locally
 pnpm build    # Build locally
 ```
-
-### Test Configuration
-
-1. Create a `.env` file in the `tests` folder based on `.env.template`.
-2. Set `HOST_URL` to your local host or use `https://dev-itwinscenes-eus.bentley.com`.
-3. Run tests with either approach above or use the Vitest extension in VS Code.
 
 ---
 
