@@ -265,10 +265,13 @@ export async function deleteScene({
     },
     postProcess: async (response) => {
       if (!response.ok) {
-        const err = await response
+        const responseJson = await response
           .json()
-          .catch(() => ({}) as ScenesErrorResponse);
-        throw new ScenesApiError(err, response.status);
+          .catch(() => ({ error: {} as ScenesErrorResponse }));
+        throw new ScenesApiError(
+          responseJson.error as ScenesErrorResponse,
+          response.status,
+        );
       }
       return;
     },

@@ -19,6 +19,7 @@ import {
   SceneObjectPagedResponse,
   SceneObjectResponse,
   SceneResponse,
+  ScenesApiError,
 } from "../src/models/index";
 
 const BASE_DOMAIN = "https://api.bentley.com/scenes";
@@ -354,6 +355,120 @@ describe("Scene Object Operations", () => {
   });
 });
 
+describe("Error Handling", () => {
+  it("should throw ScenesApiError for 404 Not Found", async () => {
+    fetchMock.mockImplementation(() =>
+      createErrorResponse(
+        {
+          code: "SceneNotFound",
+          message: "Scene not found",
+        },
+        404,
+      ),
+    );
+    const client = new SceneClient(getAccessToken);
+
+    await expect(
+      client.getScene({
+        iTwinId: "itw-1",
+        sceneId: "nonexistent-scene",
+      }),
+    ).rejects.toThrow(ScenesApiError);
+
+    try {
+      await client.getScene({
+        iTwinId: "itw-1",
+        sceneId: "nonexistent-scene",
+      });
+    } catch (error) {
+      expect(error).toBeInstanceOf(ScenesApiError);
+      expect((error as ScenesApiError).code).toBe("SceneNotFound");
+      expect((error as ScenesApiError).message).toBe("Scene not found");
+      expect((error as ScenesApiError).status).toBe(404);
+    }
+  });
+
+  it("should throw ScenesApiError for 400 Bad Request with details", async () => {
+    fetchMock.mockImplementation(() =>
+      createErrorResponse(
+        {
+          code: "InvalidRequest",
+          message: "The request is invalid",
+          target: "iTwinId",
+          details: [
+            {
+              code: "Required",
+              message: "iTwinId is required",
+            },
+          ],
+        },
+        400,
+      ),
+    );
+    const client = new SceneClient(getAccessToken);
+
+    try {
+      await client.getScenes({
+        iTwinId: "", // Invalid empty iTwinId
+      });
+    } catch (error) {
+      expect(error).toBeInstanceOf(ScenesApiError);
+      expect((error as ScenesApiError).code).toBe("InvalidRequest");
+      expect((error as ScenesApiError).message).toBe("The request is invalid");
+      expect((error as ScenesApiError).status).toBe(400);
+      expect((error as ScenesApiError).target).toBe("iTwinId");
+      expect((error as ScenesApiError).details).toHaveLength(1);
+      const details = (error as ScenesApiError).details;
+      expect(details?.[0]?.code).toBe("Required");
+      expect(details?.[0]?.message).toBe("iTwinId is required");
+    }
+  });
+
+  it("should throw ScenesApiError for 401 Unauthorized", async () => {
+    fetchMock.mockImplementation(() =>
+      createErrorResponse(
+        {
+          code: "Unauthorized",
+          message: "Access token is invalid or expired",
+        },
+        401,
+      ),
+    );
+    const client = new SceneClient(getAccessToken);
+
+    try {
+      await client.getScenes({
+        iTwinId: "itw-1",
+      });
+    } catch (error) {
+      expect(error).toBeInstanceOf(ScenesApiError);
+      expect((error as ScenesApiError).code).toBe("Unauthorized");
+      expect((error as ScenesApiError).message).toBe("Access token is invalid or expired");
+      expect((error as ScenesApiError).status).toBe(401);
+    }
+  });
+
+  it("should throw ScenesApiError for invalid response format", async () => {
+    fetchMock.mockImplementation(() =>
+      createSuccessfulResponse({ invalidProperty: "invalid" }),
+    );
+    const client = new SceneClient(getAccessToken);
+
+    try {
+      await client.getScene({
+        iTwinId: "itw-1",
+        sceneId: "scene-1",
+      });
+    } catch (error) {
+      expect(error).toBeInstanceOf(ScenesApiError);
+      expect((error as ScenesApiError).code).toBe("InvalidResponse");
+      expect((error as ScenesApiError).message).toContain(
+        "unexpected response format",
+      );
+    }
+  });
+});
+
 async function getAccessToken(): Promise<string> {
   return "test_auth_token";
 }
@@ -362,6 +477,14 @@ function createSuccessfulResponse(body: unknown) {
   return Promise.resolve({
     ok: true,
     json: async () => body,
+  } as Response);
+}
+
+function createErrorResponse(errorBody: unknown, status: number) {
+  return Promise.resolve({
+    ok: false,
+    status,
+    json: async () => ({ error: errorBody }),
   } as Response);
 }
 
