@@ -17,27 +17,28 @@ export interface PagingLinks {
   next?: Link;
 }
 
-/** Scene response model following APIM structure */
+/** Scene response model */
 export interface SceneResponse {
   scene: SceneDTO;
 }
 
-/** Scene list response model following APIM structure */
+/** Scene list response model */
 export interface SceneListResponse {
   scenes: SceneMinimalDTO[];
   _links?: PagingLinks;
 }
 
-/** Scene object response model following APIM structure */
+/** Scene object response model */
 export interface SceneObjectResponse {
   object: SceneObjectDTO;
 }
 
-/** Scene object list response model following APIM structure */
+/** Scene object list response model for bulk responses */
 export interface SceneObjectListResponse {
   objects: SceneObjectDTO[];
 }
 
+/** Scene object list response model for paginated responses */
 export interface SceneObjectPagedResponse extends SceneObjectListResponse {
   _links: PagingLinks;
 }

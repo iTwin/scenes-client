@@ -23,7 +23,7 @@ export interface SceneObjectUpdateById extends SceneObjectUpdateDTO {
  */
 export interface BulkSceneObjectUpdate {
   /**
-   * Array of scene objects to patch (limit is BULK_OPERATION_LIMIT).
+   * Array of scene objects to patch.
    */
   objects: SceneObjectUpdateById[];
 }

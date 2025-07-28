@@ -43,23 +43,35 @@ See [Contributing](../../README.md#contributing).
 
 ## Development & Testing
 
-- **Install dependencies:**
-  ```sh
-  pnpm install
-  ```
-- **Run tests:**
-  1. Create a `.env` file in the `tests` folder based on `.env.template`.
-  2. Set `HOST_URL` to your local host or use `https://dev-itwinscenes-eus.bentley.com`.
-  3. Run tests with:
-     ```sh
-     pnpm run test
-     ```
-     Or use the Vitest extension in VS Code.
+This package is part of a pnpm workspace.
 
-- **Lint:**
-  ```sh
-  pnpm run lint
-  ```
+### Quick Start
+
+```sh
+# From the root directory, install all dependencies
+cd ../../  # Go to workspace root
+pnpm install
+
+# Run commands from root
+pnpm test:client     # Run tests
+pnpm lint:client     # Run linting
+pnpm build:client    # Build package
+```
+
+### Alternative: Local Development
+
+```sh
+# Or work directly in this package directory
+pnpm test     # Run tests locally
+pnpm lint     # Run linting locally
+pnpm build    # Build locally
+```
+
+### Test Configuration
+
+1. Create a `.env` file in the `tests` folder based on `.env.template`.
+2. Set `HOST_URL` to your local host or use `https://dev-itwinscenes-eus.bentley.com`.
+3. Run tests with either approach above or use the Vitest extension in VS Code.
 
 ---
 

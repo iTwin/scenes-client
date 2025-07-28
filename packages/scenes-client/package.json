@@ -4,21 +4,17 @@
   "description": "Client-side code for managing scenes",
   "main": "index.js",
   "scripts": {
+    "build": "tsc 1>&2",
     "test": "dotenv -e tests/.env -- pnpm vitest",
-    "lint": "eslint --ext .js,.ts,.tsx ."
+    "lint": "eslint src tests"
   },
-  "keywords": [],
+  "keywords": [ ],
   "author": {
     "name": "Bentley Systems, Inc.",
     "url": "https://www.bentley.com"
   },
   "license": "MIT",
   "type": "module",
-  "pnpm": {
-    "overrides": {
-      "synckit": ">=0.11.11"
-    }
-  },
   "devDependencies": {
     "@types/node": "^24.0.7",
     "@typescript-eslint/eslint-plugin": "^8.36.0",

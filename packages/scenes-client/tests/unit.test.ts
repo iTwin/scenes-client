@@ -370,39 +370,44 @@ describe("Error Handling", () => {
     },
     {
       name: "scene creation",
-      method: () => client.postScene({
-        iTwinId: "itw-1",
-        scene: { displayName: "Test", sceneData: { objects: [] } }
-      }),
+      method: () =>
+        client.postScene({
+          iTwinId: "itw-1",
+          scene: { displayName: "Test", sceneData: { objects: [] } },
+        }),
     },
     {
       name: "scene updates",
-      method: () => client.patchScene({
-        iTwinId: "itw-1",
-        sceneId: "scene-1",
-        scene: { displayName: "Updated" }
-      }),
+      method: () =>
+        client.patchScene({
+          iTwinId: "itw-1",
+          sceneId: "scene-1",
+          scene: { displayName: "Updated" },
+        }),
     },
     {
       name: "scene deletion",
-      method: () => client.deleteScene({ iTwinId: "itw-1", sceneId: "scene-1" }),
+      method: () =>
+        client.deleteScene({ iTwinId: "itw-1", sceneId: "scene-1" }),
     },
     {
       name: "object operations",
-      method: () => client.getObject({
-        iTwinId: "itw-1",
-        sceneId: "scene-1",
-        objectId: "object-1"
-      }),
+      method: () =>
+        client.getObject({
+          iTwinId: "itw-1",
+          sceneId: "scene-1",
+          objectId: "object-1",
+        }),
     },
     {
       name: "object updates",
-      method: () => client.patchObject({
-        iTwinId: "itw-1",
-        sceneId: "scene-1",
-        objectId: "object-1",
-        object: { displayName: "Updated" }
-      }),
+      method: () =>
+        client.patchObject({
+          iTwinId: "itw-1",
+          sceneId: "scene-1",
+          objectId: "object-1",
+          object: { displayName: "Updated" },
+        }),
     },
   ];
 
@@ -429,8 +434,8 @@ describe("Error Handling", () => {
     );
 
     // Test methods that expect specific response formats
-    const formatTestCases = testCases.filter(tc =>
-      !tc.name.includes("deletion") // DELETE methods don't validate response format
+    const formatTestCases = testCases.filter(
+      (tc) => !tc.name.includes("deletion"), // DELETE methods don't validate response format
     );
 
     for (const testCase of formatTestCases) {
@@ -439,7 +444,9 @@ describe("Error Handling", () => {
       } catch (error) {
         expect(error).toBeInstanceOf(ScenesApiError);
         expect((error as ScenesApiError).code).toBe("InvalidResponse");
-        expect((error as ScenesApiError).message).toMatch(/unexpected response format/i);
+        expect((error as ScenesApiError).message).toMatch(
+          /unexpected response format/i,
+        );
       }
     }
   });
@@ -477,11 +484,13 @@ describe("Error Handling", () => {
       expect(apiError.details).toHaveLength(2);
 
       // Verify error details array
-      const details = apiError.details!;
-      expect(details[0].code).toBe("Required");
-      expect(details[0].message).toBe("displayName is required");
-      expect(details[1].code).toBe("InvalidFormat");
-      expect(details[1].message).toBe("iTwinId must be a valid UUID");
+      const details = apiError.details;
+      expect(details).toBeDefined();
+      expect(details).toHaveLength(2);
+      expect(details?.[0]?.code).toBe("Required");
+      expect(details?.[0]?.message).toBe("displayName is required");
+      expect(details?.[1]?.code).toBe("InvalidFormat");
+      expect(details?.[1]?.message).toBe("iTwinId must be a valid UUID");
     }
   });
 });
