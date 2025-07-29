@@ -1,0 +1,22 @@
+{
+  "name": "scenes-client-workspace",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "test:client": "pnpm --filter @itwin/scenes-client test",
+    "test:client:unit": "pnpm --filter @itwin/scenes-client test:unit",
+    "test:client:integration": "pnpm --filter @itwin/scenes-client test:integration",
+    "lint:client": "pnpm --filter @itwin/scenes-client lint",
+    "build:client": "pnpm --filter @itwin/scenes-client build"
+  },
+  "pnpm": {
+    "overrides": {
+      "synckit": ">=0.11.11"
+    }
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}

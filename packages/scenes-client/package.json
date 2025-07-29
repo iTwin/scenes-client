@@ -1,0 +1,34 @@
+{
+  "name": "@itwin/scenes-client",
+  "version": "0.0.1",
+  "description": "Client-side code for managing scenes",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc 1>&2",
+    "test": "pnpm vitest",
+    "test:unit": "pnpm vitest tests/unit.test.ts",
+    "test:integration": "pnpm vitest tests/integration.test.ts",
+    "lint": "eslint src tests"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Bentley Systems, Inc.",
+    "url": "https://www.bentley.com"
+  },
+  "license": "MIT",
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "^24.0.7",
+    "@typescript-eslint/eslint-plugin": "^8.36.0",
+    "@typescript-eslint/parser": "^8.36.0",
+    "eslint": "^9.30.1",
+    "eslint-config-prettier": ">=10.1.8",
+    "eslint-define-config": "^2.1.0",
+    "eslint-plugin-header": "^3.1.1",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-prettier": ">=5.5.3",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.36.0",
+    "vitest": "^3.2.4"
+  }
+}
