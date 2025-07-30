@@ -4,6 +4,11 @@
 
 This package hosts client-side code and TypeScript types for interacting with Scenes API.
 
+## Documentation
+
+- **[Client Usage](./packages/scenes-client/README.md)** - Installation, configuration, and code examples
+- **[Scene Object Schemas](./docs/README.md)** - JSON schema definitions and examples for scene objects
+
 ## Development & Testing
 
 This is a pnpm workspace. To get started:
@@ -28,12 +33,14 @@ pnpm lint:client
 pnpm build:client
 ```
 
-### Test Configuration in Client Pakcage
+### Test Configuration in Client Package
 
 see [Client's Package Readme](./packages/scenes-client/README.md)
 
 ## Issues
 
 Please report bugs, feature requests, or questions using the [GitHub Issues](./issues) page.
+
+---
 
 Copyright © Bentley Systems, Incorporated. All rights reserved. See [LICENSE.md](./LICENSE.md) for license terms and full copyright notice.
