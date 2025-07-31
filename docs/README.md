@@ -160,7 +160,7 @@ Scene: "Construction Site Overview"
         "kind": "iModelVisibility",
         "version": "1.0.0",
         "parentId": "709f6a9d-d791-4e6c-9154-1b8fffbab3c1",  // Organized under Buildings Layer
-        "relatedId": "0e5751c6-2846-4637-9de4-5e486968c8b2",  // Styles the Main Building iModel
+        "relatedId": "0e5751c6-2846-4637-9de4-5e486968c8b2", // Styles the Main Building iModel
         "data": {
           "categories": {
             "shownList": "",
