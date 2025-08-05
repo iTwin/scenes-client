@@ -1,5 +1,5 @@
 {
-  "name": "scenes-client-workspace",
+  "name": "scenes-client-workspace ",
   "private": true,
   "workspaces": [
     "packages/*"
