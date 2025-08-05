@@ -5,7 +5,7 @@ on:
     branches: [main]
 
 jobs:
-  lint-and-test:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -39,4 +39,4 @@ jobs:
           # There are issues with changesets in github workflows, so we need to force pull the master branch
           # Fix for issue https://github.com/changesets/changesets/issues/517#issuecomment-884778604
           git pull -f origin main:main
-          yarn changeset status --since=main
+          pnpm changeset status --since=main
