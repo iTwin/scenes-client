@@ -1,0 +1,90 @@
+name: Changesets Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  CreateRelease:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history for all branches and tags
+          token: ${{ secrets.IMJS_ADMIN_GH_TOKEN }}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9
+          run_install: false
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Lint
+        run: pnpm lint:client
+
+      - name: Typecheck
+        run: pnpm typecheck:client
+
+      - name: Run audit
+        run: pnpm audit --audit-level high
+
+      - name: Build components scenes-client
+        run: pnpm build:client
+
+      - name: Run unit tests
+        run: pnpm test:client:unit
+
+      - name: Setup .npmrc for Azure Artifacts
+        run: |
+          cat << EOF >> "$HOME/.npmrc"
+            @bentley:registry=https://pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/
+            always-auth=true
+            //registry.npmjs.org/:_authToken=XXXXX-XXXXX-XXXXX-XXXXX
+            ; begin auth token
+            //pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/:username=bentleycs
+            //pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/:_password=${AZURE_ARTIFACTS_PAT}
+            //pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/:email=npm requires email to be set but doesn't use the value
+            //pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/:username=bentleycs
+            //pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/:_password=${AZURE_ARTIFACTS_PAT}
+            //pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/:email=npm requires email to be set but doesn't use the value
+            ; end auth token
+          EOF
+        env:
+          AZURE_ARTIFACTS_PAT: ${{ secrets.NPM_PACKAGE_PUBLISH_BENTLEYCS }}
+
+      - name: Create release PR or publish to ADO
+        id: changesets
+        uses: changesets/action@v1.2.1
+        with:
+          publish: pnpm changeset publish
+          title: Release packages [publish docs]
+          commit: Release packages [publish docs]
+          createGithubReleases: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.IMJS_ADMIN_GH_TOKEN }}
+          GIT_AUTHOR_NAME: imodeljs-admin
+          GIT_AUTHOR_EMAIL: imodeljs-admin@users.noreply.github.com
+          GIT_COMMITTER_NAME: imodeljs-admin
+          GIT_COMMITTER_EMAIL: imodeljs-admin@users.noreply.github.com
+
+      - name: Log Changesets Outputs
+        run: |
+          echo "Published: ${{ steps.changesets.outputs.published }}"
+          echo "Published Packages: ${{ steps.changesets.outputs.publishedPackages }}"
+          echo "Has Changesets: ${{ steps.changesets.outputs.hasChangesets }}"
+          echo "Pull Request Number: ${{ steps.changesets.outputs.pullRequestNumber }}"

@@ -5,11 +5,16 @@
     "packages/*"
   ],
   "scripts": {
-    "test:client": "pnpm --filter @itwin/scenes-client test",
-    "test:client:unit": "pnpm --filter @itwin/scenes-client test:unit",
-    "test:client:integration": "pnpm --filter @itwin/scenes-client test:integration",
-    "lint:client": "pnpm --filter @itwin/scenes-client lint",
-    "build:client": "pnpm --filter @itwin/scenes-client build"
+    "test:client": "pnpm --filter scenes-client test",
+    "test:client:unit": "pnpm --filter scenes-client test:unit",
+    "test:client:integration": "pnpm --filter scenes-client test:integration",
+    "lint:client": "pnpm --filter scenes-client lint",
+    "build:client": "pnpm --filter scenes-client build",
+    "typecheck:client": "pnpm --filter scenes-client typecheck"
+  },
+  "engines": {
+    "pnpm": ">=9",
+    "node": ">=20"
   },
   "pnpm": {
     "overrides": {
@@ -17,6 +22,8 @@
     }
   },
   "devDependencies": {
+    "@changesets/types": "6.0.0",
+    "@changesets/cli": "^2.27.11",
     "typescript": "^5.8.3"
   }
 }
