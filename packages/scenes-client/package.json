@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Client-side code for managing scenes",
   "main": "index.js",
-  "private": true,
+  "types": "./lib/index.d.ts",
   "publishConfig": {
     "registry": "https://pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/",
     "access": "restricted"
