@@ -1,6 +1,6 @@
 {
   "name": "@bentley/scenes-client",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Client-side code for managing scenes",
   "main": "index.js",
   "types": "./lib/index.d.ts",
@@ -16,7 +16,7 @@
     "lint": "eslint src tests",
     "typecheck": "tsc --noEmit"
   },
-  "keywords": [ ],
+  "keywords": [],
   "author": {
     "name": "Bentley Systems, Inc.",
     "url": "https://www.bentley.com"
