@@ -1,68 +1,89 @@
-# @itwin/scenes-client
+# Scenes
+
+[![CI](https://github.com/iTwin/scenes-client/actions/workflows/CI.yaml/badge.svg)](https://github.com/iTwin/scenes-client/actions/workflows/CI.yaml)
+[![release](https://img.shields.io/github/v/release/iTwin/scenes-client)](https://github.com/iTwin/scenes-client/releases/latest)
+
 
 ## About
 
-This package hosts client-side code and TypeScript types for interacting with Scenes API.
+This repository contains a TypeScript client for interacting with the Scenes API.
+
+> **Getting started?** Begin with the [Scenes API Overview](https://developer.bentley.com/apis/scenes/overview/), then dive into [Schema Docs](./docs/README.md) for implementation details.
 
 ## Documentation
 
 - **[Client Usage](./packages/scenes-client/README.md)** - Installation, configuration, and code examples
 - **[Scene Object Schemas](./docs/README.md)** - JSON schema definitions and examples for scene objects
 
-## Development & Testing
-
-This is a pnpm workspace. To get started:
+## Quick Start
 
 ```sh
-# Install all dependencies (run once at root)
-pnpm install
-
-# Run only unit tests in client
-pnpm test:client:unit
-
-# Run only integration tests in client
-pnpm test:client:integration
-
-# Run all tests in client
-pnpm test:client
-
-# Run lint in client
-pnpm lint:client
-
-# Build the client package
-pnpm build:client
-
-# Type check the client package
-pnpm typecheck:client
+pnpm install         # Install dependencies
+pnpm test:client     # Run tests
+pnpm build:client    # Build the package
 ```
 
-### Test Configuration
+## Project Structure
 
-For scenes-client integration tests:
+```
+scenes-client/
+├── docs/                          # Scene documentation
+│   ├── README.md                  # Schema guide with examples
+│   └── schemas/                   # JSON schema definitions
+├── packages/
+│   └── scenes-client/             # Main client package
+│       ├── src/                   # Source code
+│       ├── tests/                 # Tests
+│       └── README.md              # Usage docs
+├── .changeset/                    # Versioning config
+└── README.md
+```
 
-1. Create a `.env` file in the `packages/scenes-client/tests` folder based on `.env.template`
+## Development & Testing
+
+### Prerequisites
+
+- [Node >=20](https://nodejs.org/en/) : Node installation also includes the **npm** package manager.
+- [pnpm >=9](https://pnpm.io/): Package manager used for this repository. Install with `npm install -g pnpm@9`.
+
+### Top-level Commands
+
+This is a pnpm workspace. All commands should be run from the repository root:
+
+```sh
+pnpm install                      # Install all dependencies
+pnpm build:client                 # Build client
+pnpm test:client:unit             # Run client unit tests
+pnpm test:client:integration      # Run client integration tests
+pnpm lint:client                  # Lint code
+pnpm typecheck:client             # Type check
+```
+
+### Integration Test Setup
+
+1. Create an `.env` file in the [scenes-client/tests](packages/scenes-client/tests) folder based on [.env.template](packages/scenes-client/tests/.env.template)
 2. Set `HOST_URL` to your local host or use `https://dev-api.bentley.com/scenes`
 3. Run tests using the commands above or use the Vitest extension in VS Code
 
-### Alternative: Local Development in Package Directory
+## Contributing
 
-```sh
-# Navigate to the package directory
-cd packages/scenes-client
+### Issues
 
-# Run commands locally within the package
-pnpm test:unit        # Run only unit tests
-pnpm test:integration # Run only integration tests
-pnpm test            # Run all tests
-pnpm lint            # Run linting
-pnpm build           # Build package
-pnpm typecheck       # Type check
+We welcome contributions to make this package better. You can submit feature requests or report bugs by creating an [issue](https://github.com/iTwin/scenes-client/issues).
+
+### Versioning with Changesets
+
+This repository uses [Changesets](https://github.com/changesets/changesets) to manage package versioning and changelogs. When making changes that affect the public API or behavior, please add a changeset by running:
+
+```shell
+pnpm changeset
 ```
 
+Follow the prompts to describe your changes and select the appropriate version bump (major, minor, or patch). Versioning should follow [semver](https://semver.org/) conventions. If no version bump is required (such as for documentation-only changes), use `pnpm changeset --empty`.
 
-## Issues
+When changesets are added and merged into the main branch, a release pull request (PR) will be automatically created by the Changesets GitHub Action. This PR will contain the version updates and changelog entries generated from your changesets. Review the release PR to ensure the version bumps and changelog messages are accurate before merging. Once the release PR is merged, the new package version will be published automatically.
 
-Please report bugs, feature requests, or questions using the [GitHub Issues](./issues) page.
+For more details, see the [Changesets documentation](https://github.com/changesets/changesets/blob/main/README.md).
 
 ---
 
