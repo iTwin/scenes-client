@@ -1,7 +1,6 @@
 # Scenes
 
 [![CI](https://github.com/iTwin/scenes-client/actions/workflows/CI.yaml/badge.svg)](https://github.com/iTwin/scenes-client/actions/workflows/CI.yaml)
-[![release](https://img.shields.io/github/v/release/iTwin/scenes-client)](https://github.com/iTwin/scenes-client/releases/latest)
 
 
 ## About
