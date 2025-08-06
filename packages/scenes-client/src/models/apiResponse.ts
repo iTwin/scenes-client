@@ -2,7 +2,7 @@
 
 import { isObject } from "../utilities";
 import { isSceneObjectDTO, SceneObjectDTO } from "./object/sceneObject.dto";
-import { isSceneMinimalDTO, SceneMinimalDTO } from "./scene/SceneMinimal.dto";
+import { isSceneMinimalDTO, SceneMinimalDTO } from "./scene/sceneMinimal.dto";
 import { isSceneDTO, SceneDTO } from "./scene/scene.dto";
 
 /** Generic href link */
