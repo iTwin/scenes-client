@@ -17,10 +17,10 @@ This is a pnpm workspace. To get started:
 # Install all dependencies (run once at root)
 pnpm install
 
-# run only unit tests in client
+# Run only unit tests in client
 pnpm test:client:unit
 
-#run only integration tests in client
+# Run only integration tests in client
 pnpm test:client:integration
 
 # Run all tests in client
@@ -31,11 +31,34 @@ pnpm lint:client
 
 # Build the client package
 pnpm build:client
+
+# Type check the client package
+pnpm typecheck:client
 ```
 
-### Test Configuration in Client Package
+### Test Configuration
 
-see [Client's Package Readme](./packages/scenes-client/README.md)
+For scenes-client integration tests:
+
+1. Create a `.env` file in the `packages/scenes-client/tests` folder based on `.env.template`
+2. Set `HOST_URL` to your local host or use `https://dev-api.bentley.com/scenes`
+3. Run tests using the commands above or use the Vitest extension in VS Code
+
+### Alternative: Local Development in Package Directory
+
+```sh
+# Navigate to the package directory
+cd packages/scenes-client
+
+# Run commands locally within the package
+pnpm test:unit        # Run only unit tests
+pnpm test:integration # Run only integration tests
+pnpm test            # Run all tests
+pnpm lint            # Run linting
+pnpm build           # Build package
+pnpm typecheck       # Type check
+```
+
 
 ## Issues
 
