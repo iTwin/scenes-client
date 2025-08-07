@@ -1,10 +1,10 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 import { isObject } from "../../utilities";
-import { SceneDTO } from "./scene.dto";
+import { Scene } from "./scene";
 
-export type SceneMinimalDTO = Omit<SceneDTO, "sceneData" | "isPartial">;
+export type SceneMinimal = Omit<Scene, "sceneData" | "isPartial">;
 
-export function isSceneMinimalDTO(v: unknown): v is SceneMinimalDTO {
+export function isSceneMinimal(v: unknown): v is SceneMinimal {
   return (
     isObject(v) &&
     typeof v.id === "string" &&

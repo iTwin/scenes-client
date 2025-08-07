@@ -2,16 +2,16 @@
 
 import { isObject } from "../../utilities";
 import {
-  isSceneDataCreateDTO,
-  SceneCreateDTO,
-  SceneDataCreateDTO,
-} from "./sceneCreate.dto";
+  isSceneDataCreate,
+  SceneCreate,
+  SceneDataCreate,
+} from "./sceneCreate";
 
-export interface SceneDTO extends SceneCreateDTO {
+export interface Scene extends SceneCreate {
   /** Unique identifier for the scene (UUID). */
   id: string;
   /** Scene informational objects. */
-  sceneData: SceneDataCreateDTO;
+  sceneData: SceneDataCreate;
   /**
    * Indicates sceneData was filtered because the user lacks necessary permissions to view all objects.
    */
@@ -26,11 +26,11 @@ export interface SceneDTO extends SceneCreateDTO {
   lastModified: string;
 }
 
-export function isSceneDTO(v: unknown): v is SceneDTO {
+export function isScene(v: unknown): v is Scene {
   return (
     isObject(v) &&
     typeof v.id === "string" &&
-    isSceneDataCreateDTO(v.sceneData) &&
+    isSceneDataCreate(v.sceneData) &&
     (v.isPartial === undefined || typeof v.isPartial === "boolean") &&
     typeof v.createdById === "string" &&
     typeof v.iTwinId === "string" &&

@@ -2,11 +2,11 @@
 
 import { isObject } from "../../utilities";
 import {
-  isSceneObjectCreateDTO,
-  SceneObjectCreateDTO,
-} from "./sceneObjectCreate.dto";
+  isSceneObjectCreate,
+  SceneObjectCreate,
+} from "./sceneObjectCreate";
 
-export interface SceneObjectDTO extends SceneObjectCreateDTO {
+export interface SceneObject extends SceneObjectCreate {
   /** Unique identifier for the scene object (UUID). */
   id: string;
   /** Id of the scene containing the object (UUID). */
@@ -19,7 +19,7 @@ export interface SceneObjectDTO extends SceneObjectCreateDTO {
   lastModified: string;
 }
 
-export function isSceneObjectDTO(v: unknown): v is SceneObjectDTO {
+export function isSceneObject(v: unknown): v is SceneObject {
   return (
     isObject(v) &&
     typeof v.id === "string" &&
@@ -27,6 +27,6 @@ export function isSceneObjectDTO(v: unknown): v is SceneObjectDTO {
     typeof v.createdById === "string" &&
     typeof v.creationTime === "string" &&
     typeof v.lastModified === "string" &&
-    isSceneObjectCreateDTO(v)
+    isSceneObjectCreate(v)
   );
 }

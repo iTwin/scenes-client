@@ -2,16 +2,16 @@
 
 import { isObject } from "../../utilities";
 import {
-  isSceneObjectCreateDTO,
-  SceneObjectCreateDTO,
-} from "../object/sceneObjectCreate.dto";
+  isSceneObjectCreate,
+  SceneObjectCreate,
+} from "../object/sceneObjectCreate";
 
-export interface SceneDataCreateDTO {
+export interface SceneDataCreate {
   /** Array of scene objects */
-  objects: SceneObjectCreateDTO[];
+  objects: SceneObjectCreate[];
 }
 
-export interface SceneCreateDTO {
+export interface SceneCreate {
   /** Optional identifier for the scene object (UUID) */
   id?: string;
 
@@ -22,13 +22,13 @@ export interface SceneCreateDTO {
   parentId?: string;
 
   /** Scene informational objects */
-  sceneData?: SceneDataCreateDTO;
+  sceneData?: SceneDataCreate;
 }
 
-export function isSceneDataCreateDTO(v: unknown): v is SceneDataCreateDTO {
+export function isSceneDataCreate(v: unknown): v is SceneDataCreate {
   return (
     isObject(v) &&
     Array.isArray(v.objects) &&
-    v.objects.every((obj) => isSceneObjectCreateDTO(obj))
+    v.objects.every((obj) => isSceneObjectCreate(obj))
   );
 }

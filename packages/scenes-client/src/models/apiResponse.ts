@@ -1,9 +1,9 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 
 import { isObject } from "../utilities";
-import { isSceneObjectDTO, SceneObjectDTO } from "./object/sceneObject.dto";
-import { isSceneMinimalDTO, SceneMinimalDTO } from "./scene/SceneMinimal.dto";
-import { isSceneDTO, SceneDTO } from "./scene/scene.dto";
+import { isSceneObject, SceneObject } from "./object/sceneObject";
+import { isSceneMinimal, SceneMinimal } from "./scene/SceneMinimal";
+import { isScene, Scene } from "./scene/scene";
 
 /** Generic href link */
 export interface Link {
@@ -19,23 +19,23 @@ export interface PagingLinks {
 
 /** Scene response model */
 export interface SceneResponse {
-  scene: SceneDTO;
+  scene: Scene;
 }
 
 /** Scene list response model */
 export interface SceneListResponse {
-  scenes: SceneMinimalDTO[];
+  scenes: SceneMinimal[];
   _links?: PagingLinks;
 }
 
 /** Scene object response model */
 export interface SceneObjectResponse {
-  object: SceneObjectDTO;
+  object: SceneObject;
 }
 
 /** Scene object list response model for bulk responses */
 export interface SceneObjectListResponse {
-  objects: SceneObjectDTO[];
+  objects: SceneObject[];
 }
 
 /** Scene object list response model for paginated responses */
@@ -58,19 +58,19 @@ export function isPagingLinks(v: unknown): v is PagingLinks {
 }
 
 export function isSceneResponse(v: unknown): v is SceneResponse {
-  return isObject(v) && isSceneDTO(v.scene);
+  return isObject(v) && isScene(v.scene);
 }
 
 export function isSceneListResponse(v: unknown): v is SceneListResponse {
   return (
     isObject(v) &&
     Array.isArray(v.scenes) &&
-    v.scenes.every((scene) => isSceneMinimalDTO(scene))
+    v.scenes.every((scene) => isSceneMinimal(scene))
   );
 }
 
 export function isSceneObjectResponse(v: unknown): v is SceneObjectResponse {
-  return isObject(v) && isSceneObjectDTO(v.object);
+  return isObject(v) && isSceneObject(v.object);
 }
 
 export function isSceneObjectListResponse(
@@ -79,7 +79,7 @@ export function isSceneObjectListResponse(
   return (
     isObject(v) &&
     Array.isArray(v.objects) &&
-    v.objects.every((obj) => isSceneObjectDTO(obj))
+    v.objects.every((obj) => isSceneObject(obj))
   );
 }
 
