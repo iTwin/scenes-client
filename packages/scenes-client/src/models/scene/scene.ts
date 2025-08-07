@@ -1,11 +1,7 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 
 import { isObject } from "../../utilities";
-import {
-  isSceneDataCreate,
-  SceneCreate,
-  SceneDataCreate,
-} from "./sceneCreate";
+import { isSceneDataCreate, SceneCreate, SceneDataCreate } from "./sceneCreate";
 
 export interface Scene extends SceneCreate {
   /** Unique identifier for the scene (UUID). */

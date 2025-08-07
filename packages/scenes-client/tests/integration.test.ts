@@ -1,11 +1,7 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 import { describe, it, expect } from "vitest";
 import { SceneClient } from "../src/client";
-import {
-  SceneCreate,
-  SceneObjectCreate,
-  ScenesApiError,
-} from "../src/models";
+import { SceneCreate, SceneObjectCreate, ScenesApiError } from "../src/models";
 
 function requireMetaEnv<K extends keyof ImportMetaEnv>(
   key: K,
