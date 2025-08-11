@@ -2,7 +2,6 @@
 
 [![CI](https://github.com/iTwin/scenes-client/actions/workflows/CI.yaml/badge.svg)](https://github.com/iTwin/scenes-client/actions/workflows/CI.yaml)
 
-
 ## About
 
 This repository contains a TypeScript client for interacting with the Scenes API.
@@ -17,9 +16,9 @@ This repository contains a TypeScript client for interacting with the Scenes API
 ## Quick Start
 
 ```sh
-pnpm install         # Install dependencies
-pnpm test:client     # Run tests
-pnpm build:client    # Build the package
+pnpm install           # Install dependencies
+pnpm run test:client   # Run tests
+pnpm run build:client  # Build the package
 ```
 
 ## Project Structure
@@ -51,11 +50,11 @@ This is a pnpm workspace. All commands should be run from the repository root:
 
 ```sh
 pnpm install                      # Install all dependencies
-pnpm build:client                 # Build client
-pnpm test:client:unit             # Run client unit tests
-pnpm test:client:integration      # Run client integration tests
-pnpm lint:client                  # Lint code
-pnpm typecheck:client             # Type check
+pnpm run build:client             # Build client
+pnpm run test:client:unit         # Run client unit tests
+pnpm run test:client:integration  # Run client integration tests
+pnpm run lint:client              # Lint code
+pnpm run typecheck:client         # Type check
 ```
 
 ### Integration Test Setup
