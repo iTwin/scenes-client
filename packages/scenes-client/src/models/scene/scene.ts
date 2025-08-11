@@ -1,16 +1,15 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 
 import { isObject } from "../../utilities";
-import { isSceneDataCreate, SceneCreate, SceneDataCreate } from "./sceneCreate";
+import { SceneCreate } from "./sceneCreate";
+import { isSceneData, SceneData } from "./sceneData";
 
 export interface Scene extends SceneCreate {
   /** Unique identifier for the scene (UUID). */
   id: string;
   /** Scene informational objects. */
-  sceneData: SceneDataCreate;
-  /**
-   * Indicates sceneData was filtered because the user lacks necessary permissions to view all objects.
-   */
+  sceneData: SceneData;
+  /** Indicates sceneData was filtered because the user lacks necessary permissions to view all objects. */
   isPartial?: boolean;
   /** Id of the user who created the scene (UUID). */
   createdById: string;
@@ -26,7 +25,7 @@ export function isScene(v: unknown): v is Scene {
   return (
     isObject(v) &&
     typeof v.id === "string" &&
-    isSceneDataCreate(v.sceneData) &&
+    isSceneData(v.sceneData) &&
     (v.isPartial === undefined || typeof v.isPartial === "boolean") &&
     typeof v.createdById === "string" &&
     typeof v.iTwinId === "string" &&

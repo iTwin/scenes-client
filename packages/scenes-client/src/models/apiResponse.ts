@@ -2,7 +2,7 @@
 
 import { isObject } from "../utilities";
 import { isSceneObject, SceneObject } from "./object/sceneObject";
-import { isSceneMinimal, SceneMinimal } from "./scene/SceneMinimal";
+import { isSceneMinimal, SceneMinimal } from "./scene/sceneMinimal";
 import { isScene, Scene } from "./scene/scene";
 
 /** Generic href link */
