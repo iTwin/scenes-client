@@ -17,6 +17,47 @@
       "pattern": "^[a-zA-Z0-9 ?!@+-.:=_/]*$",
       "description": "String containing only web safe characters"
     },
+    "expressionString": {
+      "type": "string",
+      "isJsep": true,
+      "description": "A JavaScript (JSEP) expression for frontend rendering that excludes potentially dangerous constructs. It's up to the frontend to validate and execute this expression safely."
+    },
+    "expressionOrConditions": {
+      "description": "Expression that determines styling conditions or a single expression.",
+      "oneOf": [
+        {
+          "$ref": "/schemas/CommonTypes#/definitions/expressionString",
+          "description": "Single expression string"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [ "conditions" ],
+          "properties": {
+            "conditions": {
+              "type": "array",
+              "description": "Array of condition-value pairs for determining styling",
+              "minItems": 1,
+              "items": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": [
+                  {
+                    "$ref": "/schemas/CommonTypes#/definitions/expressionString",
+                    "description": "Condition expression that evaluates to a boolean"
+                  },
+                  {
+                    "$ref": "/schemas/CommonTypes#/definitions/expressionString",
+                    "description": "Expression that returns a value when the condition is true"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
     "dateTime": {
       "type": "string",
       "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z$",
@@ -49,7 +90,7 @@
           "description": "Z coordinate"
         }
       },
-      "required": ["x", "y", "z"]
+      "required": [ "x", "y", "z" ]
     },
     "transform": {
       "type": "array",
@@ -82,7 +123,7 @@
           "description": "Used by iTwin.Js. Interior planes should not generate edges when clipping geometry in the view."
         }
       },
-      "required": []
+      "required": [ ]
     },
     "clipPlaneSet": {
       "description": "Collection of ClipPlanes, often used for bounding regions of space.",
@@ -97,7 +138,7 @@
           }
         }
       },
-      "required": ["planes"]
+      "required": [ "planes" ]
     },
     "colorDef": {
       "description": "An unsigned 32-bit integer in 0xTTBBGGRR format.",
@@ -129,7 +170,7 @@
           "description": "Blue component of the color"
         }
       },
-      "required": ["r", "g", "b"]
+      "required": [ "r", "g", "b" ]
     },
     "linePixels": {
       "enum": [
@@ -163,7 +204,7 @@
           "description": "If defined and non-zero, the width of the edges in pixels. If undefined (or 0), edges are drawn using the element's line width.\n Non-integer values are truncated, and values are clamped to the range [1, 32]."
         }
       },
-      "required": []
+      "required": [ ]
     }
   }
 }

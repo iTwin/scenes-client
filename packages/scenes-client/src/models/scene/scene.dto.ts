@@ -1,20 +1,15 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 
 import { isObject } from "../../utilities";
-import {
-  isSceneDataCreateDTO,
-  SceneCreateDTO,
-  SceneDataCreateDTO,
-} from "./sceneCreate.dto";
+import { SceneCreateDTO } from "./sceneCreate.dto";
+import { isSceneDataDTO, SceneDataDTO } from "./sceneData.dto";
 
 export interface SceneDTO extends SceneCreateDTO {
   /** Unique identifier for the scene (UUID). */
   id: string;
   /** Scene informational objects. */
-  sceneData: SceneDataCreateDTO;
-  /**
-   * Indicates sceneData was filtered because the user lacks necessary permissions to view all objects.
-   */
+  sceneData: SceneDataDTO;
+  /** Indicates sceneData was filtered because the user lacks necessary permissions to view all objects. */
   isPartial?: boolean;
   /** Id of the user who created the scene (UUID). */
   createdById: string;
@@ -30,7 +25,7 @@ export function isSceneDTO(v: unknown): v is SceneDTO {
   return (
     isObject(v) &&
     typeof v.id === "string" &&
-    isSceneDataCreateDTO(v.sceneData) &&
+    isSceneDataDTO(v.sceneData) &&
     (v.isPartial === undefined || typeof v.isPartial === "boolean") &&
     typeof v.createdById === "string" &&
     typeof v.iTwinId === "string" &&
