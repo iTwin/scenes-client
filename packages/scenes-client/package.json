@@ -1,6 +1,6 @@
 {
   "name": "@bentley/scenes-client",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Client-side code for managing scenes",
   "main": "index.js",
   "types": "./lib/index.d.ts",
