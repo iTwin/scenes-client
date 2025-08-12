@@ -1,11 +1,7 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 import { describe, it, expect } from "vitest";
 import { SceneClient } from "../src/client";
-import {
-  SceneCreateDTO,
-  SceneObjectCreateDTO,
-  ScenesApiError,
-} from "../src/models";
+import { SceneCreate, SceneObjectCreate, ScenesApiError } from "../src/models";
 
 function requireMetaEnv<K extends keyof ImportMetaEnv>(
   key: K,
@@ -26,12 +22,12 @@ const ITWIN_ID = requireMetaEnv("VITE_ITWIN_ID");
 const IMODEL_ID = requireMetaEnv("VITE_IMODEL_ID");
 const SCENE_ID = requireMetaEnv("VITE_SCENE_ID");
 
-const LAYER_OBJ: SceneObjectCreateDTO = {
+const LAYER_OBJ: SceneObjectCreate = {
   kind: "Layer",
   version: "1.0.0",
   data: { displayName: "TestLayer", visible: true },
 };
-const REPO_OBJ: SceneObjectCreateDTO = {
+const REPO_OBJ: SceneObjectCreate = {
   kind: "RepositoryResource",
   version: "1.0.0",
   iTwinId: ITWIN_ID,
@@ -43,7 +39,7 @@ const REPO_OBJ: SceneObjectCreateDTO = {
   },
 };
 
-const TEST_SCENES: SceneCreateDTO[] = [
+const TEST_SCENES: SceneCreate[] = [
   { displayName: "TestSceneA", sceneData: { objects: [LAYER_OBJ, REPO_OBJ] } },
   { displayName: "TestSceneB", sceneData: { objects: [LAYER_OBJ, REPO_OBJ] } },
 ];

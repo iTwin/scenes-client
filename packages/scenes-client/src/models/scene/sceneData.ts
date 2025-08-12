@@ -2,20 +2,20 @@
 
 import { isObject } from "../../utilities";
 import {
-  isSceneObjectMinimalDTO,
-  SceneObjectMinimalDTO,
-} from "../object/sceneObjectMinimal.dto";
+  isSceneObjectMinimal,
+  SceneObjectMinimal,
+} from "../object/sceneObjectMinimal";
 
 /** Container for scene objects and related data returned by the API */
-export interface SceneDataDTO {
+export interface SceneData {
   /** Array of scene objects */
-  objects: SceneObjectMinimalDTO[];
+  objects: SceneObjectMinimal[];
 }
 
-export function isSceneDataDTO(v: unknown): v is SceneDataDTO {
+export function isSceneData(v: unknown): v is SceneData {
   return (
     isObject(v) &&
     Array.isArray(v.objects) &&
-    v.objects.every((obj) => isSceneObjectMinimalDTO(obj))
+    v.objects.every((obj) => isSceneObjectMinimal(obj))
   );
 }
