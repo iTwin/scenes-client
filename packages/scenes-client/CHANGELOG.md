@@ -1,5 +1,22 @@
 # @bentley/scenes-client
 
+## 0.1.0
+
+### Minor Changes
+
+- bde0333: Rename interfaces for better client experience.
+  Breaking change to expose clean domain models rather than using data transfer object naming.
+  - Renamed `SceneDTO` to `Scene`
+  - Renamed `SceneCreateDTO` to `SceneCreate`
+  - Renamed `SceneObjectDTO` to `SceneObject`
+  - Renamed `SceneObjectCreateDTO` to `SceneObjectCreate`
+
+### Patch Changes
+
+- 77db34e: Fix SceneDTO type mismatch.
+  `SceneDTO.sceneData.objects` now uses correct response `SceneObjectMinimalDTO` instead of `SceneObjectCreateDTO`.
+- 9099882: Update README with usage examples
+
 ## 0.0.1
 
 ### Patch Changes
