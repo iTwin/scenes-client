@@ -1,12 +1,12 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 
-import { GetObjectsOptions } from "./object/GetObjectsOptions";
+import { GetObjectsOptions } from "./object/getObjectsOptions";
 import { BulkSceneObjectCreateDTO } from "./object/sceneObjectCreate.dto";
 import {
   BulkSceneObjectUpdate,
   SceneObjectUpdateDTO,
 } from "./object/sceneObjectUpdate.dto";
-import { GetScenesOptions } from "./scene/GetScenesOptions";
+import { GetScenesOptions } from "./scene/getScenesOptions";
 import { SceneCreateDTO } from "./scene/sceneCreate.dto";
 import { SceneUpdateDTO } from "./scene/sceneUpdate.dto";
 
