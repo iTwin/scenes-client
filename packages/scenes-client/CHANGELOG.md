@@ -1,5 +1,11 @@
 # @bentley/scenes-client
 
+## 0.2.1
+
+### Patch Changes
+
+- 4a0ed8a: Fix usage examples in client README
+
 ## 0.2.0
 
 ### Minor Changes
