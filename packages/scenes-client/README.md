@@ -4,7 +4,6 @@
 
 This package provides a TypeScript client and types for interacting with the [Scenes API](https://developer.bentley.com/apis/scenes/).
 
-
 ## Installation
 
 ```bash
@@ -20,21 +19,25 @@ pnpm add @bentley/scenes-client
 ```ts
 import { SceneClient } from "@bentley/scenes-client";
 
-const client = new SceneClient({
+const client = new SceneClient(
   getAccessToken: async () => "<itwin_platform_auth_token>",
-  baseUrl: "<HOST_URL>", // Optional, defaults to "https://api.bentley.com/scenes"
-});
+  "<HOST_URL>", // Optional, defaults to "https://api.bentley.com/scenes"
+);
 ```
+
 ---
+
 ### Working with Scenes
 
 #### Get a Scene
 
 ```ts
+import { OrderByProperties } from "@bentley/scenes-client";
+
 const sceneResponse = await client.getScene({
   iTwinId: "<itwin_id>",
   sceneId: "<scene_id>",
-  orderBy: "displayName", // Optional property to order scene data by
+  orderBy: OrderByProperties.NAME, // Optional property to order scene data by
 });
 
 console.log(sceneResponse.scene);
@@ -55,15 +58,17 @@ console.log(sceneResponse.scene);
 #### Get List of Scenes for an iTwin
 
 ```ts
+import { SceneMinimal } from "@bentley/scenes-client";
+
 // Get a single page of scenes (for UI pagination)
 const listResponse = await client.getScenes({
   iTwinId: "<itwin_id>",
   top: 10, // Optional, defaults to 100
-  skip: 5  // Optional, defaults to 0
+  skip: 5, // Optional, defaults to 0
 });
 
 console.log(`Found ${listResponse.scenes.length} scenes on this page.`);
-listResponse.scenes.forEach(scene => {
+listResponse.scenes.forEach((scene: SceneMinimal) => {
   console.log(`${scene.displayName} (${scene.id})`);
 });
 ```
@@ -71,6 +76,8 @@ listResponse.scenes.forEach(scene => {
 #### Get All Scenes with Iterator
 
 ```ts
+import { SceneMinimal } from "@bentley/scenes-client";
+
 // Get all scenes using async iterator
 const allScenesIterator = await client.getAllScenes({
   iTwinId: "<itwin_id>",
@@ -79,7 +86,7 @@ const allScenesIterator = await client.getAllScenes({
 let totalScenes = 0;
 for await (const page of allScenesIterator) {
   console.log(`Processing ${page.scenes.length} scenes...`);
-  page.scenes.forEach(scene => {
+  page.scenes.forEach((scene: SceneMinimal) => {
     console.log(`${scene.displayName}`);
     totalScenes++;
   });
@@ -96,9 +103,9 @@ const createResponse = await client.postScene({
   scene: {
     displayName: "Construction Site Overview",
     sceneData: {
-      objects: []
-    }
-  }
+      objects: [],
+    },
+  },
 });
 
 console.log(`Created scene: ${createResponse.scene!.displayName}`);
@@ -111,8 +118,8 @@ const updateResponse = await client.patchScene({
   iTwinId: "<itwin_id>",
   sceneId: "<scene_id>",
   scene: {
-    displayName: "Updated Scene Name"
-  }
+    displayName: "Updated Scene Name",
+  },
 });
 
 console.log(`Updated scene: ${updateResponse.scene!.displayName}`);
@@ -123,12 +130,11 @@ console.log(`Updated scene: ${updateResponse.scene!.displayName}`);
 ```ts
 await client.deleteScene({
   iTwinId: "<itwin_id>",
-  sceneId: "<scene_id>"
+  sceneId: "<scene_id>",
 });
 
 console.log("Scene deleted successfully");
 ```
-
 
 ### Working with Scene Objects
 
@@ -138,7 +144,7 @@ console.log("Scene deleted successfully");
 const objectResponse = await client.getObject({
   iTwinId: "<itwin_id>",
   sceneId: "<scene_id>",
-  objectId: "<object_id>"
+  objectId: "<object_id>",
 });
 
 console.log(objectResponse.object);
@@ -160,17 +166,19 @@ console.log(objectResponse.object);
 #### Get List of Objects in a Scene
 
 ```ts
+import { OrderByProperties, SceneObject } from "@bentley/scenes-client";
+
 // Get a single page of objects (for UI pagination)
 const listResponse = await client.getObjects({
   iTwinId: "<itwin_id>",
   sceneId: "<scene_id>",
-  orderBy: "displayName", // Optional property to order results by
+  orderBy: OrderByProperties.NAME, // Optional property to order results by
   top: 10, // Optional, defaults to 100
-  skip: 5  // Optional, defaults to 0
+  skip: 5, // Optional, defaults to 0
 });
 
 console.log(`Found ${listResponse.objects.length} objects on this page.`);
-listResponse.objects.forEach(object => {
+listResponse.objects.forEach((object: SceneObject) => {
   console.log(`${object.displayName} (${object.id})`);
 });
 ```
@@ -178,16 +186,18 @@ listResponse.objects.forEach(object => {
 #### Get All Objects with Iterator
 
 ```ts
+import { SceneObject } from "@bentley/scenes-client";
+
 // Get all objects in a scene using async iterator
 const allObjectsIterator = await client.getAllObjects({
   iTwinId: "<itwin_id>",
-  sceneId: "<scene_id>"
+  sceneId: "<scene_id>",
 });
 
 let totalObjects = 0;
 for await (const page of allObjectsIterator) {
   console.log(`Processing ${page.objects.length} objects...`);
-  page.objects.forEach(object => {
+  page.objects.forEach((object: SceneObject) => {
     console.log(`${object.id}`);
     totalObjects++;
   });
@@ -199,8 +209,10 @@ console.log(`Processed ${totalObjects} total objects`);
 #### Create Scene Objects
 
 ```ts
+import { SceneObject, SceneObjectCreate } from "@bentley/scenes-client";
+
 // Create objects in bulk
-const objectsPayload = [
+const objectsPayload: SceneObjectCreate[] = [
   // Add a Layer
   {
     id: "<layer_id>",
@@ -209,8 +221,8 @@ const objectsPayload = [
     displayName: "Buildings",
     data: {
       visible: true,
-      displayName: "Buildings"
-    }
+      displayName: "Buildings",
+    },
   },
   // Add an iModel resource
   {
@@ -223,8 +235,8 @@ const objectsPayload = [
       class: "iModels",
       repositoryId: "iModels",
       id: "<imodel_id>",
-      visible: true
-    }
+      visible: true,
+    },
   },
   // Add a 3D view
   {
@@ -238,51 +250,52 @@ const objectsPayload = [
       aspectRatio: 1.33,
       near: 1,
       far: 1000,
-      ecefTransform: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
-    }
-  }
+      ecefTransform: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+    },
+  },
 ];
 
 // Create objects in bulk
 const createResponse = await client.postObjects({
   iTwinId: "<itwin_id>",
   sceneId: "<scene_id>",
-  objects: objectsPayload
+  objects: objectsPayload,
 });
 
 console.log(`Created ${createResponse.objects.length} objects:`);
-createResponse.objects.forEach(obj => {
+createResponse.objects.forEach((obj: SceneObject) => {
   console.log(`Created ${obj.kind} object: ${obj.displayName} (${obj.id})`);
 });
-
 ```
 
 #### Update Scene Objects
 
 ```ts
+import { SceneObjectUpdate, SceneObjectUpdateById } from "@bentley/scenes-client";
+
 // Update a single object by id
-const updatePayload = {
-  displayName: "Updated Object Name"
+const updatePayload: SceneObjectUpdate = {
+  displayName: "Updated Object Name",
 };
 const updateResponse = await client.patchObject({
   iTwinId: "<itwin_id>",
   sceneId: "<scene_id>",
   objectId: "<object_id>",
-  object: updatePayload
+  object: updatePayload,
 });
 
 console.log(`Updated object: ${updateResponse.object.displayName}`);
 
 // Update multiple objects in bulk (ex. reorder objects)
-const bulkUpdatePayload = [
+const bulkUpdatePayload: SceneObjectUpdateById[] = [
   { id: "<object_id_1>", order: 1 },
   { id: "<object_id_2>", order: 2 },
-  { id: "<object_id_3>", order: 3 }
+  { id: "<object_id_3>", order: 3 },
 ];
 const bulkUpdateResponse = await client.patchObjects({
   iTwinId: "<itwin_id>",
   sceneId: "<scene_id>",
-  objects: bulkUpdatePayload
+  objects: bulkUpdatePayload,
 });
 
 console.log(`Updated ${bulkUpdateResponse.objects.length} objects`);
@@ -295,18 +308,14 @@ console.log(`Updated ${bulkUpdateResponse.objects.length} objects`);
 await client.deleteObject({
   iTwinId: "<itwin_id>",
   sceneId: "<scene_id>",
-  objectId: "<object_id>"
+  objectId: "<object_id>",
 });
 
 // Delete objects in bulk
 await client.deleteObjects({
   iTwinId: "<itwin_id>",
   sceneId: "<scene_id>",
-  objectIds: [
-    "<object_id_1>",
-    "<object_id_2>",
-    "<object_id_3>"
-  ]
+  objectIds: ["<object_id_1>", "<object_id_2>", "<object_id_3>"],
 });
 ```
 
@@ -318,7 +327,7 @@ import { SceneApiError } from "@bentley/scenes-client";
 try {
   const scene = await client.getScene({
     iTwinId: "<itwin_id>",
-    sceneId: "<invalid_scene_id>"
+    sceneId: "<invalid_scene_id>",
   });
 } catch (error) {
   if (error instanceof SceneApiError) {
