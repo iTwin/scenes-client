@@ -15,7 +15,7 @@ import {
  * @param fetch - Function to fetch and return a page of results from a URL.
  * @returns An async iterator yielding each page of results.
  */
-export async function* iteratePagedEndpoint<T extends { _links?: PagingLinks; }>(
+export async function* iteratePagedEndpoint<T extends { _links?: PagingLinks }>(
   initialUrl: string,
   delayMs: number,
   fetch: (url: string) => Promise<T>,
@@ -63,16 +63,19 @@ export function isObject(v: unknown): v is Record<string, unknown> {
 export async function handleErrorResponse(response: Response): Promise<never> {
   let err: ScenesErrorResponse;
   try {
-    const responseJson: any = await response.json();
+    const responseJson = await response.json();
 
-    err = responseJson.error ?? responseJson ?? {
-      code: "UnexpectedFormat",
-      message: `Unexpected response status code: ${response.status} ${response.statusText}.`,
-    };
+    err =
+      isObject(responseJson) && responseJson.error
+        ? (responseJson.error as ScenesErrorResponse)
+        : {
+            code: "UnexpectedFormat",
+            message: `Unexpected response format: ${JSON.stringify(responseJson)}`,
+          };
   } catch (parseError) {
     err = {
       code: "ParseError",
-      message: `Failed to parse error response (${response.headers.get('content-type') ?? 'unknown content-type'})`
+      message: `Failed to parse error response (${response.headers.get("content-type") ?? "unknown content-type"})`,
     };
   }
 
