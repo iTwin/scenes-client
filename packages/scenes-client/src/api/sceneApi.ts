@@ -12,8 +12,9 @@ import {
   PatchSceneParams,
   DeleteSceneParams,
   GetScenesParams,
+  handleErrorResponse,
 } from "../models/index.js";
-import { handleErrorResponse, iteratePagedEndpoint } from "../utilities.js";
+import { iteratePagedEndpoint } from "../utilities.js";
 import { callApi, AuthArgs } from "./apiFetch.js";
 
 /**

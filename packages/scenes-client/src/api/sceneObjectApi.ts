@@ -17,12 +17,9 @@ import {
   DeleteObjectsParams,
   GetObjectsParams,
   PatchObjectParam,
-} from "../models/index.js";
-import {
-  iteratePagedEndpoint,
-  batched,
   handleErrorResponse,
-} from "../utilities.js";
+} from "../models/index.js";
+import { iteratePagedEndpoint, batched } from "../utilities.js";
 import { callApi, AuthArgs } from "./apiFetch.js";
 
 /**

@@ -1,9 +1,5 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
-import {
-  PagingLinks,
-  ScenesApiError,
-  ScenesErrorResponse,
-} from "./models/index.js";
+import { PagingLinks } from "./models/index.js";
 
 /**
  * Async generator for iterating through paged API endpoints
@@ -53,31 +49,4 @@ export function* batched<T>(items: T[], batchSize: number) {
  */
 export function isObject(v: unknown): v is Record<string, unknown> {
   return v !== null && typeof v === "object" && !Array.isArray(v);
-}
-
-/**
- * Handles API error responses
- * @param response HTTP response object from failed API call
- * @throws {ScenesApiError}
- */
-export async function handleErrorResponse(response: Response): Promise<never> {
-  let err: ScenesErrorResponse;
-  try {
-    const responseJson = await response.json();
-
-    err =
-      isObject(responseJson) && responseJson.error
-        ? (responseJson.error as ScenesErrorResponse)
-        : {
-            code: "UnexpectedFormat",
-            message: `Unexpected response format: ${JSON.stringify(responseJson)}`,
-          };
-  } catch (parseError) {
-    err = {
-      code: "ParseError",
-      message: `Failed to parse error response (${response.headers.get("content-type") ?? "unknown content-type"})`,
-    };
-  }
-
-  throw new ScenesApiError(err, response.status);
 }
