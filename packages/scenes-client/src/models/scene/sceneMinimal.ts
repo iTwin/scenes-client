@@ -1,6 +1,6 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
-import { isObject } from "../../utilities";
-import { Scene } from "./scene";
+import { isObject } from "../../utilities.js";
+import { Scene } from "./scene.js";
 
 export type SceneMinimal = Omit<Scene, "sceneData" | "isPartial">;
 

@@ -1,7 +1,7 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
-import { isObject } from "../../utilities";
-import { SceneObject } from "./sceneObject";
-import { isSceneObjectCreate } from "./sceneObjectCreate";
+import { isObject } from "../../utilities.js";
+import { SceneObject } from "./sceneObject.js";
+import { isSceneObjectCreate } from "./sceneObjectCreate.js";
 
 export type SceneObjectMinimal = Omit<
   SceneObject,

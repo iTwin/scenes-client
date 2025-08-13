@@ -1,5 +1,5 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
-import { PagingLinks } from "./models/index";
+import { PagingLinks } from "./models/index.js";
 
 /**
  * Async generator for iterating through paged API endpoints
@@ -48,5 +48,5 @@ export function* batched<T>(items: T[], batchSize: number) {
  * @returns True if v is a non-null object, false otherwise.
  */
 export function isObject(v: unknown): v is Record<string, unknown> {
-  return v !== null && typeof v === "object";
+  return v !== null && typeof v === "object" && !Array.isArray(v);
 }

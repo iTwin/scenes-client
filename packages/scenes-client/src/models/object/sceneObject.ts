@@ -1,7 +1,7 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 
-import { isObject } from "../../utilities";
-import { isSceneObjectCreate, SceneObjectCreate } from "./sceneObjectCreate";
+import { isObject } from "../../utilities.js";
+import { isSceneObjectCreate, SceneObjectCreate } from "./sceneObjectCreate.js";
 
 export interface SceneObject extends SceneObjectCreate {
   /** Unique identifier for the scene object (UUID). */

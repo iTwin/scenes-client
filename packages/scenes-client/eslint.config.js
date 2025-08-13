@@ -10,9 +10,16 @@ export default tseslint.config(
     files: ['src/**/*.ts', 'tests/**/*.ts', '*.d.ts'],
     languageOptions: {
       parser: tseslint.parser,
-      sourceType: "module",
       parserOptions: {
+        ecmaVersion: "latest",
         project: "tsconfig.eslint.json",
+      },
+    },
+    settings: {
+      "import/resolver": {
+        typescript: {
+          project: "tsconfig.eslint.json",
+        },
       },
     },
     plugins: {
@@ -31,6 +38,7 @@ export default tseslint.config(
       "curly": ["error", "all"],
       "eqeqeq": "warn",
       "no-alert": "warn",
+      "no-console": "warn",
       "no-empty": ["warn", { allowEmptyCatch: true }],
       "no-eval": "error",
       "quotes": ["error", "double"],
@@ -39,6 +47,7 @@ export default tseslint.config(
       "@typescript-eslint/no-non-null-assertion": "warn",
       "@typescript-eslint/return-await": "warn",
       "@typescript-eslint/switch-exhaustiveness-check": "warn",
+      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_", caughtErrors: "none" }],
     },
   },
   {

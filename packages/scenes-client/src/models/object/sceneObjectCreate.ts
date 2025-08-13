@@ -1,5 +1,5 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
-import { isObject } from "../../utilities";
+import { isObject } from "../../utilities.js";
 
 export interface SceneObjectCreate {
   /** Optional identifier for the scene object (UUID) */

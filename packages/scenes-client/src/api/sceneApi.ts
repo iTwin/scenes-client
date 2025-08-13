@@ -2,7 +2,6 @@
 import {
   SceneListResponse,
   ScenesApiError,
-  ScenesErrorResponse,
   SceneResponse,
   isSceneListResponse,
   isSceneResponse,
@@ -13,9 +12,10 @@ import {
   PatchSceneParams,
   DeleteSceneParams,
   GetScenesParams,
-} from "../models/index";
-import { iteratePagedEndpoint } from "../utilities";
-import { callApi, AuthArgs } from "./apiFetch";
+  handleErrorResponse,
+} from "../models/index.js";
+import { iteratePagedEndpoint } from "../utilities.js";
+import { callApi, AuthArgs } from "./apiFetch.js";
 
 /**
  * Fetches a single scene by its ID.
@@ -34,13 +34,10 @@ export async function getScene({
     endpoint: `/${sceneId}?iTwinId=${iTwinId}&orderBy=${orderBy}`,
     getAccessToken,
     postProcess: async (response) => {
-      const responseJson = await response.json();
       if (!response.ok) {
-        throw new ScenesApiError(
-          responseJson.error as ScenesErrorResponse,
-          response.status,
-        );
+        await handleErrorResponse(response);
       }
+      const responseJson = await response.json();
       if (!isSceneResponse(responseJson)) {
         throw new ScenesApiError(
           {
@@ -80,18 +77,18 @@ export async function getScenes({
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
     },
-    postProcess: async (res) => {
-      const json = await res.json();
-      if (!res.ok) {
-        throw new ScenesApiError(json.error as ScenesErrorResponse, res.status);
+    postProcess: async (response) => {
+      if (!response.ok) {
+        await handleErrorResponse(response);
       }
-      if (!isSceneListResponse(json)) {
+      const responseJson = await response.json();
+      if (!isSceneListResponse(responseJson)) {
         throw new ScenesApiError(
           { code: "InvalidResponse", message: "Unexpected response format" },
-          res.status,
+          response.status,
         );
       }
-      return json;
+      return responseJson;
     },
   });
 
@@ -124,14 +121,11 @@ export function getAllScenes(
           Accept: "application/vnd.bentley.itwin-platform.v1+json",
         },
         postProcess: async (response) => {
-          const json = await response.json();
           if (!response.ok) {
-            throw new ScenesApiError(
-              json.error as ScenesErrorResponse,
-              response.status,
-            );
+            await handleErrorResponse(response);
           }
-          if (!isSceneListResponse(json)) {
+          const responseJson = await response.json();
+          if (!isSceneListResponse(responseJson)) {
             throw new ScenesApiError(
               {
                 code: "InvalidResponse",
@@ -140,7 +134,7 @@ export function getAllScenes(
               response.status,
             );
           }
-          return json;
+          return responseJson;
         },
       });
     },
@@ -164,13 +158,10 @@ export async function postScene({
     getAccessToken,
     baseUrl,
     postProcess: async (response) => {
-      const responseJson = await response.json();
       if (!response.ok) {
-        throw new ScenesApiError(
-          responseJson.error as ScenesErrorResponse,
-          response.status,
-        );
+        await handleErrorResponse(response);
       }
+      const responseJson = await response.json();
       if (!isSceneResponse(responseJson)) {
         throw new ScenesApiError(
           {
@@ -213,13 +204,10 @@ export async function patchScene({
     getAccessToken,
     baseUrl,
     postProcess: async (response) => {
-      const responseJson = await response.json();
       if (!response.ok) {
-        throw new ScenesApiError(
-          responseJson.error as ScenesErrorResponse,
-          response.status,
-        );
+        await handleErrorResponse(response);
       }
+      const responseJson = await response.json();
       if (!isSceneResponse(responseJson)) {
         throw new ScenesApiError(
           {
@@ -265,13 +253,7 @@ export async function deleteScene({
     },
     postProcess: async (response) => {
       if (!response.ok) {
-        const responseJson = await response
-          .json()
-          .catch(() => ({ error: {} as ScenesErrorResponse }));
-        throw new ScenesApiError(
-          responseJson.error as ScenesErrorResponse,
-          response.status,
-        );
+        await handleErrorResponse(response);
       }
       return;
     },

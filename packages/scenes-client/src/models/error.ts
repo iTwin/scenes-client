@@ -1,5 +1,7 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 
+import { isObject } from "../utilities.js";
+
 /**
  * Details for a specific error returned by the Scenes API.
  */
@@ -51,4 +53,62 @@ export class ScenesApiError extends Error {
     this.details = resp.details;
     this.status = status;
   }
+}
+
+/**
+ * Type guard to check if an unknown value is ScenesErrorResponse
+ * @param v - The value to check
+ */
+export function isScenesErrorResponse(v: unknown): v is ScenesErrorResponse {
+  return (
+    isObject(v) &&
+    typeof v.code === "string" &&
+    typeof v.message === "string" &&
+    (v.target === undefined || typeof v.target === "string") &&
+    (v.details === undefined || Array.isArray(v.details))
+  );
+}
+
+/**
+ * Extracts error from parsed JSON response
+ * @param responseJson - Parsed JSON response from API call
+ * @returns {ScenesErrorResponse}
+ */
+function extractErrorFromResponse(responseJson: unknown): ScenesErrorResponse {
+  // Check if response has an error field (expected pattern)
+  if (
+    isObject(responseJson) &&
+    "error" in responseJson &&
+    isScenesErrorResponse(responseJson.error)
+  ) {
+    return responseJson.error;
+  }
+  // Check for direct error response
+  if (isScenesErrorResponse(responseJson)) {
+    return responseJson;
+  }
+  return {
+    code: "UnexpectedResponse",
+    message: `Unexpected response: ${JSON.stringify(responseJson)}`,
+  };
+}
+
+/**
+ * Handles API error responses
+ * @param response HTTP response object from failed API call
+ * @throws {ScenesApiError}
+ */
+export async function handleErrorResponse(response: Response): Promise<never> {
+  let err: ScenesErrorResponse;
+  try {
+    const responseJson = await response.json();
+    err = extractErrorFromResponse(responseJson);
+  } catch (parseError) {
+    err = {
+      code: "ParseError",
+      message: `Failed to parse error response (${response.headers.get("content-type") ?? "unknown content-type"})`,
+    };
+  }
+
+  throw new ScenesApiError(err, response.status);
 }

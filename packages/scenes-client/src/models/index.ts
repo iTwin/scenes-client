@@ -1,18 +1,18 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 
-export * from "./object/getObjectsOptions";
-export * from "./object/sceneObject";
-export * from "./object/sceneObjectCreate";
-export * from "./object/sceneObjectMinimal";
-export * from "./object/sceneObjectUpdate";
+export * from "./object/getObjectsOptions.js";
+export * from "./object/sceneObject.js";
+export * from "./object/sceneObjectCreate.js";
+export * from "./object/sceneObjectMinimal.js";
+export * from "./object/sceneObjectUpdate.js";
 
-export * from "./scene/getScenesOptions";
-export * from "./scene/scene";
-export * from "./scene/sceneCreate";
-export * from "./scene/sceneData";
-export * from "./scene/sceneMinimal";
-export * from "./scene/sceneUpdate";
+export * from "./scene/getScenesOptions.js";
+export * from "./scene/scene.js";
+export * from "./scene/sceneCreate.js";
+export * from "./scene/sceneData.js";
+export * from "./scene/sceneMinimal.js";
+export * from "./scene/sceneUpdate.js";
 
-export * from "./apiParams";
-export * from "./apiResponse";
-export * from "./error";
+export * from "./apiParams.js";
+export * from "./apiResponse.js";
+export * from "./error.js";
