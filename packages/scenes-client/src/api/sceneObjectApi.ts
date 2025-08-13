@@ -2,7 +2,6 @@
 
 import {
   ScenesApiError,
-  ScenesErrorResponse,
   SceneObjectResponse,
   SceneObjectListResponse,
   isSceneObjectResponse,
@@ -19,7 +18,7 @@ import {
   GetObjectsParams,
   PatchObjectParam,
 } from "../models/index.js";
-import { iteratePagedEndpoint, batched } from "../utilities.js";
+import { iteratePagedEndpoint, batched, handleErrorResponse } from "../utilities.js";
 import { callApi, AuthArgs } from "./apiFetch.js";
 
 /**
@@ -40,11 +39,10 @@ export async function getObject({
     getAccessToken,
     baseUrl,
     postProcess: async (response) => {
-      const responseJson = await response.json();
       if (!response.ok) {
-        const err = responseJson.error as ScenesErrorResponse;
-        throw new ScenesApiError(err, response.status);
+        await handleErrorResponse(response);
       }
+      const responseJson = await response.json();
       if (!isSceneObjectResponse(responseJson)) {
         throw new ScenesApiError(
           {
@@ -82,11 +80,10 @@ export async function getObjects({
     getAccessToken,
     baseUrl,
     postProcess: async (response) => {
-      const responseJson = await response.json();
       if (!response.ok) {
-        const err = responseJson.error as ScenesErrorResponse;
-        throw new ScenesApiError(err, response.status);
+        await handleErrorResponse(response);
       }
+      const responseJson = await response.json();
       if (!isSceneObjectListResponse(responseJson)) {
         throw new ScenesApiError(
           {
@@ -127,11 +124,10 @@ export function getAllObjects(
         baseUrl: url,
         getAccessToken,
         postProcess: async (response) => {
-          const responseJson = await response.json();
           if (!response.ok) {
-            const err = responseJson.error as ScenesErrorResponse;
-            throw new ScenesApiError(err, response.status);
+            await handleErrorResponse(response);
           }
+          const responseJson = await response.json();
           if (!isSceneObjectPagedResponse(responseJson)) {
             throw new ScenesApiError(
               {
@@ -173,11 +169,10 @@ export async function postObjects({
       getAccessToken,
       baseUrl,
       postProcess: async (response) => {
-        const responseJson = await response.json();
         if (!response.ok) {
-          const err = responseJson.error as ScenesErrorResponse;
-          throw new ScenesApiError(err, response.status);
+          await handleErrorResponse(response);
         }
+        const responseJson = await response.json();
         if (!isSceneObjectListResponse(responseJson)) {
           throw new ScenesApiError(
             {
@@ -228,11 +223,10 @@ export async function patchObject({
     getAccessToken,
     baseUrl,
     postProcess: async (response) => {
-      const responseJson = await response.json();
       if (!response.ok) {
-        const err = responseJson.error as ScenesErrorResponse;
-        throw new ScenesApiError(err, response.status);
+        await handleErrorResponse(response);
       }
+      const responseJson = await response.json();
       if (!isSceneObjectResponse(responseJson)) {
         throw new ScenesApiError(
           {
@@ -278,11 +272,10 @@ export async function patchObjects({
       getAccessToken,
       baseUrl,
       postProcess: async (response) => {
-        const responseJson = await response.json();
         if (!response.ok) {
-          const err = responseJson.error as ScenesErrorResponse;
-          throw new ScenesApiError(err, response.status);
+          await handleErrorResponse(response);
         }
+        const responseJson = await response.json();
         if (!isSceneObjectListResponse(responseJson)) {
           throw new ScenesApiError(
             {
@@ -332,11 +325,7 @@ export async function deleteObject({
     baseUrl,
     postProcess: async (response) => {
       if (!response.ok) {
-        const err = await response
-          .json()
-          .then((json: any) => json.error)
-          .catch(() => ({}) as ScenesErrorResponse);
-        throw new ScenesApiError(err, response.status);
+        await handleErrorResponse(response);
       }
       return;
     },
@@ -370,11 +359,7 @@ export async function deleteObjects({
         baseUrl,
         postProcess: async (response) => {
           if (!response.ok) {
-            const err = await response
-              .json()
-              .then((json: any) => json.error)
-              .catch(() => ({}) as ScenesErrorResponse);
-            throw new ScenesApiError(err, response.status);
+            await handleErrorResponse(response);
           }
           return;
         },

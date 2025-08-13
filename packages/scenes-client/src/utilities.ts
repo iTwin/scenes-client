@@ -15,7 +15,7 @@ import {
  * @param fetch - Function to fetch and return a page of results from a URL.
  * @returns An async iterator yielding each page of results.
  */
-export async function* iteratePagedEndpoint<T extends { _links?: PagingLinks }>(
+export async function* iteratePagedEndpoint<T extends { _links?: PagingLinks; }>(
   initialUrl: string,
   delayMs: number,
   fetch: (url: string) => Promise<T>,
@@ -52,5 +52,29 @@ export function* batched<T>(items: T[], batchSize: number) {
  * @returns True if v is a non-null object, false otherwise.
  */
 export function isObject(v: unknown): v is Record<string, unknown> {
-  return v !== null && typeof v === "object";
+  return v !== null && typeof v === "object" && !Array.isArray(v);
+}
+
+/**
+ * Handles API error responses
+ * @param response HTTP response object from failed API call
+ * @throws {ScenesApiError}
+ */
+export async function handleErrorResponse(response: Response): Promise<never> {
+  let err: ScenesErrorResponse;
+  try {
+    const responseJson: any = await response.json();
+
+    err = responseJson.error ?? responseJson ?? {
+      code: "UnexpectedFormat",
+      message: `Unexpected response status code: ${response.status} ${response.statusText}.`,
+    };
+  } catch (parseError) {
+    err = {
+      code: "ParseError",
+      message: `Failed to parse error response (${response.headers.get('content-type') ?? 'unknown content-type'})`
+    };
+  }
+
+  throw new ScenesApiError(err, response.status);
 }
