@@ -1,9 +1,9 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 
-import { isObject } from "../utilities";
-import { isSceneObject, SceneObject } from "./object/sceneObject";
-import { isScene, Scene } from "./scene/scene";
-import { isSceneMinimal, SceneMinimal } from "./scene/sceneMinimal";
+import { isObject } from "../utilities.js";
+import { isSceneObject, SceneObject } from "./object/sceneObject.js";
+import { isScene, Scene } from "./scene/scene.js";
+import { isSceneMinimal, SceneMinimal } from "./scene/sceneMinimal.js";
 
 /** Generic href link */
 export interface Link {

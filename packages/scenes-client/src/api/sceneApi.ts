@@ -13,9 +13,9 @@ import {
   PatchSceneParams,
   DeleteSceneParams,
   GetScenesParams,
-} from "../models/index";
-import { iteratePagedEndpoint } from "../utilities";
-import { callApi, AuthArgs } from "./apiFetch";
+} from "../models/index.js";
+import { iteratePagedEndpoint } from "../utilities.js";
+import { callApi, AuthArgs } from "./apiFetch.js";
 
 /**
  * Fetches a single scene by its ID.

@@ -1,5 +1,9 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
-import { PagingLinks } from "./models/index";
+import {
+  PagingLinks,
+  ScenesApiError,
+  ScenesErrorResponse,
+} from "./models/index.js";
 
 /**
  * Async generator for iterating through paged API endpoints

@@ -1,14 +1,14 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 
-import { GetObjectsOptions } from "./object/getObjectsOptions";
-import { BulkSceneObjectCreate } from "./object/sceneObjectCreate";
+import { GetObjectsOptions } from "./object/getObjectsOptions.js";
+import { BulkSceneObjectCreate } from "./object/sceneObjectCreate.js";
 import {
   BulkSceneObjectUpdate,
   SceneObjectUpdate,
-} from "./object/sceneObjectUpdate";
-import { GetScenesOptions } from "./scene/getScenesOptions";
-import { SceneCreate } from "./scene/sceneCreate";
-import { SceneUpdate } from "./scene/sceneUpdate";
+} from "./object/sceneObjectUpdate.js";
+import { GetScenesOptions } from "./scene/getScenesOptions.js";
+import { SceneCreate } from "./scene/sceneCreate.js";
+import { SceneUpdate } from "./scene/sceneUpdate.js";
 
 export type ITwinParams = { iTwinId: string };
 export type SceneParams = ITwinParams & { sceneId: string };

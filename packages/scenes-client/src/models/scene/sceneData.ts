@@ -1,10 +1,10 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 
-import { isObject } from "../../utilities";
+import { isObject } from "../../utilities.js";
 import {
   isSceneObjectMinimal,
   SceneObjectMinimal,
-} from "../object/sceneObjectMinimal";
+} from "../object/sceneObjectMinimal.js";
 
 /** Container for scene objects and related data returned by the API */
 export interface SceneData {

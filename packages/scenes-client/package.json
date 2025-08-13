@@ -2,8 +2,6 @@
   "name": "@bentley/scenes-client",
   "version": "0.1.0",
   "description": "Client-side code for managing scenes",
-  "main": "index.js",
-  "types": "./lib/index.d.ts",
   "publishConfig": {
     "registry": "https://pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/",
     "access": "restricted"
@@ -16,13 +14,18 @@
     "lint": "eslint src tests",
     "typecheck": "tsc --noEmit"
   },
-  "keywords": [],
-  "author": {
-    "name": "Bentley Systems, Inc.",
-    "url": "https://www.bentley.com"
-  },
-  "license": "MIT",
   "type": "module",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    }
+  },
+  "files": [
+    "./lib"
+  ],
   "devDependencies": {
     "@types/node": "^24.0.7",
     "@typescript-eslint/eslint-plugin": "^8.36.0",

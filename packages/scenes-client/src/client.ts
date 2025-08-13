@@ -7,7 +7,7 @@ import {
   patchScene,
   deleteScene,
   getScenes,
-} from "./api/sceneApi";
+} from "./api/sceneApi.js";
 import {
   postObjects,
   getObject,
@@ -17,7 +17,7 @@ import {
   getAllObjects,
   getObjects,
   patchObject,
-} from "./api/sceneObjectApi";
+} from "./api/sceneObjectApi.js";
 import {
   SceneListResponse,
   SceneObjectResponse,
@@ -41,7 +41,7 @@ import {
   GetScenesParams,
   GetObjectsParams,
   PatchObjectParam,
-} from "./models/index";
+} from "./models/index.js";
 
 type AccessTokenFn = () => Promise<string>;
 

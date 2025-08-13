@@ -18,9 +18,9 @@ import {
   DeleteObjectsParams,
   GetObjectsParams,
   PatchObjectParam,
-} from "../models/index";
-import { iteratePagedEndpoint, batched } from "../utilities";
-import { callApi, AuthArgs } from "./apiFetch";
+} from "../models/index.js";
+import { iteratePagedEndpoint, batched } from "../utilities.js";
+import { callApi, AuthArgs } from "./apiFetch.js";
 
 /**
  * Fetches a single scene object by its object ID.
@@ -334,6 +334,7 @@ export async function deleteObject({
       if (!response.ok) {
         const err = await response
           .json()
+          .then((json: any) => json.error)
           .catch(() => ({}) as ScenesErrorResponse);
         throw new ScenesApiError(err, response.status);
       }
@@ -371,6 +372,7 @@ export async function deleteObjects({
           if (!response.ok) {
             const err = await response
               .json()
+              .then((json: any) => json.error)
               .catch(() => ({}) as ScenesErrorResponse);
             throw new ScenesApiError(err, response.status);
           }

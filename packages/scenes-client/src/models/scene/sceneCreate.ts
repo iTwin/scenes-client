@@ -1,10 +1,10 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 
-import { isObject } from "../../utilities";
+import { isObject } from "../../utilities.js";
 import {
   isSceneObjectCreate,
   SceneObjectCreate,
-} from "../object/sceneObjectCreate";
+} from "../object/sceneObjectCreate.js";
 
 export interface SceneDataCreate {
   /** Array of scene objects */
