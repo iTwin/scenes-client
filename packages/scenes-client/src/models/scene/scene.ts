@@ -1,12 +1,15 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 
 import { isObject } from "../../utilities.js";
-import { SceneCreate } from "./sceneCreate.js";
 import { isSceneData, SceneData } from "./sceneData.js";
 
-export interface Scene extends SceneCreate {
+export interface Scene {
   /** Unique identifier for the scene (UUID). */
   id: string;
+  /** Optional parent Id for the scene (UUID) */
+  parentId?: string;
+  /** User defined display name of the scene */
+  displayName: string;
   /** Scene informational objects. */
   sceneData: SceneData;
   /** Indicates sceneData was filtered because the user lacks necessary permissions to view all objects. */

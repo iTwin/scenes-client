@@ -1,33 +1,37 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 import { isObject } from "../../utilities.js";
+import {
+  SchemaData,
+  SchemaKind,
+  SchemaVersion,
+} from "./types/sceneObjectSchemas.js";
 
-export interface SceneObjectCreate {
+/**
+ * General scene object creation interface.
+ * For specific field requirements, use the typed creation functions.
+ */
+export interface SceneObjectCreate<
+  K extends SchemaKind = SchemaKind,
+  V extends SchemaVersion<K> = SchemaVersion<K>,
+> {
   /** Optional identifier for the scene object (UUID) */
   id?: string;
-
   /** Optional display name for the scene object */
   displayName?: string;
-
   /** Optional order in lists */
   order?: number;
-
   /** JSON schema version this object conforms to (SemVer) */
-  version: string;
-
+  version: V;
   /** Kind of the scene object (schema name) */
-  kind: string;
-
+  kind: K;
   /** Optional parent Id (UUID) */
   parentId?: string;
-
   /** iTwin Id associated with this object (UUID) */
   iTwinId?: string;
-
   /** Related scene object Id for styling (UUID) */
   relatedId?: string;
-
   /** Arbitrary data that matches the object's JSON schema */
-  data: Record<string, unknown>;
+  data: SchemaData<K, V>;
 }
 
 export interface BulkSceneObjectCreate {
