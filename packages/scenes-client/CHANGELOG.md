@@ -1,5 +1,12 @@
 # @bentley/scenes-client
 
+## 0.2.2
+
+### Patch Changes
+
+- 0f5df03: Switch to NodeNext module resolution for better Node.js compatibility.
+  Ensures reliable Node.js usage without bundling, while staying compatible with bundled apps.
+
 ## 0.2.1
 
 ### Patch Changes
