@@ -3,56 +3,56 @@
 
 // CommonTypes interfaces
 /** GUID string */
-export type guid = string;
+export type Guid = string;
 
 /** String containing only alphanumeric characters */
-export type alphaNumericString = string;
+export type AlphaNumericString = string;
 
 /** String containing only web safe characters */
-export type safeString = string;
+export type SafeString = string;
 
 /** A JavaScript (JSEP) expression for frontend rendering that excludes potentially dangerous constructs. It's up to the frontend to validate and execute this expression safely. */
-export type expressionString = string;
+export type ExpressionString = string;
 
 /** Expression that determines styling conditions or a single expression. */
-export type expressionOrConditions =
-  | expressionString
-  | { conditions: [expressionString, expressionString][] };
+export type ExpressionOrConditions =
+  | ExpressionString
+  | { conditions: [ExpressionString, ExpressionString][] };
 
 /** Date time in format: YYYY-MM-DDThh:mm:ssZ or YYYY-MM-DDThh:mm:ss.sssZ */
-export type dateTime = string;
+export type DateTime = string;
 
 /** Id64 string. See https://www.itwinjs.org/learning/common/id64/ */
-export type id64 = string;
+export type Id64 = string;
 
 /** Compressed Id64 set. */
-export type compressedId64Set = string;
+export type CompressedId64Set = string;
 
-export type vector3d = { x: number; y: number; z: number };
+export type Vector3d = { x: number; y: number; z: number };
 
 /** Array of 16 numbers representing a 4x4 matrix in row-major order */
-export type transform = number[];
+export type Transform = number[];
 
 /** A single plane represented as an inward unit normal and a signed distance */
-export type clipPlane = {
-  normal?: vector3d;
+export type ClipPlane = {
+  normal?: Vector3d;
   distance?: number;
   invisible?: boolean;
   interior?: boolean;
 };
 
 /** Collection of ClipPlanes, often used for bounding regions of space. */
-export type clipPlaneSet = { planes: clipPlane[] };
+export type ClipPlaneSet = { planes: ClipPlane[] };
 
 /** An unsigned 32-bit integer in 0xTTBBGGRR format. */
-export type colorDef = number;
+export type ColorDef = number;
 
 /** An immutable representation of a color with r, g, and b components each in the integer range [0, 255] */
-export type rgbColor = { r: number; g: number; b: number };
+export type RgbColor = { r: number; g: number; b: number };
 
 /** If defined and not equal to -1 (Invalid), the pixel pattern used to draw the edges. If undefined, edges are drawn using the element's line pattern. The patterns are, in order:
 0: Code0 (Solid), 2155905152 (0x80808080): Code1 (1 lit pixel followed by 7 unlit pixels), 4177066232 (0xf8f8f8f8): Code2 (5 lit pixels followed by 3 unlit pixels), 4292935648 (0xffe0ffe0): Code3 (11 lit pixels followed by 5 unlit pixels), 4262526480 (0xfe10fe10): Code4 (7 lit pixels followed by 4 unlit pixels followed by 1 lit pixel followed by 1 lit pixel), 3772834016 (0xe0e0e0e0): Code5 (3 lit pixels followed by 5 unlit pixels), 4169726088 (0xf888f888): Code6 (5 lit pixels followed by 3 unlit followed by 1 lit followed by 3 unlit followed by 1 lit followed by 3 unlit), 4279828248 (0xff18ff18): Code7 (8 lit pixels followed by 3 unlit followed by 2 lit followed by 3 unlit), 3435973836 (0xcccccccc): HiddenLine (2 lit pixels followed by 2 unlit pixels - default style for drawing hidden edges), 1 (0x00000001): Invisible, -1: Invalid */
-export type linePixels =
+export type LinePixels =
   | 0
   | 2155905152
   | 4177066232
@@ -66,10 +66,10 @@ export type linePixels =
   | -1;
 
 /** JSON representation of a hidden line style, which can be used to define how hidden lines are rendered in a view. */
-export type hiddenLineStyle = {
+export type HiddenLineStyle = {
   ovrColor?: boolean;
-  color?: colorDef;
-  pattern?: linePixels;
+  color?: ColorDef;
+  pattern?: LinePixels;
   width?: number;
 };
 
@@ -97,11 +97,11 @@ export interface ScenesApiSchemas {
     /** A polygon-defined area projected along the Z-axis on 3D tiles, used to exclude specific regions from rendering. It's primarily used to prevent visual conflicts between overlapping data layers. */
     "1.0.0": {
       /** The points describing the polygon. */
-      polygon: vector3d[];
+      polygon: Vector3d[];
       /** Transform from local to world. */
-      transformFromClip?: transform;
+      transformFromClip?: Transform;
       /** Transform from world to local. */
-      transformToClip?: transform;
+      transformToClip?: Transform;
       /** Upper bound on Z. */
       zHigh?: number;
       /** Lower bound on Z. */
@@ -111,7 +111,7 @@ export interface ScenesApiSchemas {
       /** True if this shape is a masking set. */
       mask: boolean;
       /** The union of convex regions. */
-      clipPlanes?: { convexSets: clipPlaneSet[] };
+      clipPlanes?: { convexSets: ClipPlaneSet[] };
     };
   };
   Layer: {
@@ -125,14 +125,14 @@ export interface ScenesApiSchemas {
     /** Reference to material mapping stored in the decoration service */
     "1.0.0": {
       /** Id of the material decoration for usage with the Decorations API */
-      decorationId?: guid;
+      decorationId?: Guid;
     };
   };
   Movie: {
     /** A sequence of camera animations, or clips, which can be played independently or sequentially */
     "1.0.0": {
       /** Series of CameraAnimations in the movie. */
-      animations: guid[];
+      animations: Guid[];
     };
   };
   RepositoryResource: {
@@ -141,34 +141,34 @@ export interface ScenesApiSchemas {
       /** Whether the layer is turned on or off */
       visible: boolean;
       /** Id of the repository. Should be the same as class for internal repos and a GUID for custom repos */
-      repositoryId: safeString;
+      repositoryId: SafeString;
       /** Id of the individual resource */
-      id: safeString;
+      id: SafeString;
       /** Class of the repository, such as iModels or RealityData */
-      class: safeString;
+      class: SafeString;
       /** SubClass of the repository if applicable */
-      subClass?: safeString;
+      subClass?: SafeString;
     };
   };
   View3d: {
     /** Representation of a 3D view */
     "1.0.0": {
       /** Location of the eye of the camera. */
-      position: vector3d;
+      position: Vector3d;
       /** Whether the view is orthographic or perspective */
       isOrthographic: boolean;
       /** Aspect ratio of the view */
       aspectRatio: number;
       /** Direction the camera is pointing towards */
-      direction: vector3d;
+      direction: Vector3d;
       /** Defines 'up' direction relative to camera in the view */
-      up: vector3d;
+      up: Vector3d;
       /** Near plane distance */
       near: number;
       /** Far plane distance */
       far: number;
       /** Earth-Centered, Earth-Fixed transform */
-      ecefTransform: transform;
+      ecefTransform: Transform;
     };
   };
   GoogleTilesStyling: {
@@ -184,9 +184,9 @@ export interface ScenesApiSchemas {
     /** Global setting to control iModel styling when visualizing the scene in iTwin viewer applications. */
     "1.0.0": {
       /** Background color */
-      backgroundColor?: colorDef;
+      backgroundColor?: ColorDef;
       /** Monochrome color */
-      monochromeColor?: colorDef;
+      monochromeColor?: ColorDef;
       /** Monochrome mode. Flat = 0 and Scaled = 1 */
       monochromeMode?: 0 | 1;
       /** JSON representation of the view flags for the iTwin */
@@ -250,25 +250,25 @@ export interface ScenesApiSchemas {
             lighting?: boolean;
           };
           hiddenLine?: {
-            visible?: hiddenLineStyle;
-            hidden?: hiddenLineStyle;
+            visible?: HiddenLineStyle;
+            hidden?: HiddenLineStyle;
             transThreshold?: number;
           };
           appearance?: {
-            rgb?: rgbColor;
-            lineRgb?: rgbColor;
+            rgb?: RgbColor;
+            lineRgb?: RgbColor;
             weight?: number;
             transparency?: number;
             lineTransparency?: number;
-            linePixels?: linePixels;
+            linePixels?: LinePixels;
             ignoresMaterial?: boolean;
             nonLocatable?: boolean;
             emphasized?: boolean;
           };
         };
-        insideColor?: rgbColor;
-        outsideColor?: rgbColor;
-        intersectionStyle?: { color?: rgbColor; width?: number };
+        insideColor?: RgbColor;
+        outsideColor?: RgbColor;
+        intersectionStyle?: { color?: RgbColor; width?: number };
       };
       /** Controls how white-on-white reversal is applied to make white geometry more visible in the view.
  By default, pure white geometry is displayed as black instead if the backgroundColor is also pure white.
@@ -285,7 +285,7 @@ export interface ScenesApiSchemas {
         sunPitch: number;
         heliodonLongitude: number;
         heliodonLatitude: number;
-        heliodonDate: dateTime;
+        heliodonDate: DateTime;
         weather: number;
         windOrientation: number;
         windForce: number;
@@ -302,22 +302,22 @@ export interface ScenesApiSchemas {
       stylingOptions?:
         | {
             styleType: "Expression";
-            defines?: { [key: string]: expressionString };
-            show?: expressionOrConditions;
-            color: expressionOrConditions;
-            lineWeight?: expressionString;
-            lineColor?: expressionOrConditions;
+            defines?: { [key: string]: ExpressionString };
+            show?: ExpressionOrConditions;
+            color: ExpressionOrConditions;
+            lineWeight?: ExpressionString;
+            lineColor?: ExpressionOrConditions;
           }
         | {
             styleType: "Category";
             rules: {
-              name: safeString;
-              value: expressionString | number | boolean;
+              name: SafeString;
+              value: ExpressionString | number | boolean;
               symbology: {
-                lineColor: colorDef;
-                fillColor: colorDef;
+                lineColor: ColorDef;
+                fillColor: ColorDef;
                 weight: number;
-                linePixels?: linePixels;
+                linePixels?: LinePixels;
               };
             }[];
           };
@@ -327,7 +327,7 @@ export interface ScenesApiSchemas {
     /** 4D scheduling simulation for a specific iModel. */
     "1.0.0": {
       /** The Id of a RenderTimeline element containing a RenderSchedule.Script used to animate the schedule of a specific iModel */
-      timelineId: id64;
+      timelineId: Id64;
       /** The point in time expressed in seconds in the Unix epoch */
       timePoint: number;
     };
@@ -337,11 +337,11 @@ export interface ScenesApiSchemas {
     "1.0.0": {
       /** Object maintaining visibility of categories in an iModel */
       categories: {
-        shownList: compressedId64Set;
-        hiddenList: compressedId64Set;
+        shownList: CompressedId64Set;
+        hiddenList: CompressedId64Set;
       };
       /** Object maintaining visibility of models in an iModel */
-      models: { shownList: compressedId64Set; hiddenList: compressedId64Set };
+      models: { shownList: CompressedId64Set; hiddenList: CompressedId64Set };
       /** Matrix used for adjusting the positioning of the iModel */
       adjustment?: number[];
       /** Quality of iModel rendering */

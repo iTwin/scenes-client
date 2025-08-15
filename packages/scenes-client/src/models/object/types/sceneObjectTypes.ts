@@ -1,5 +1,4 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
-// THIS FILE HAS BEEN GENERATED AUTOMATICALLY. PLEASE DO NOT EDIT IT DIRECTLY.
 import type {
   ResourceStylingObject,
   ITwinScopedObject,
@@ -194,34 +193,34 @@ export type iModelVisibilityV1 = ResourceStylingObject<
 /** Latest iModelVisibility response type. Currently points to 1.0.0. */
 export type iModelVisibility = iModelVisibilityV1;
 
-/** Union of all scene object creation types using latest versions. */
-export type LatestSceneObjectCreateType =
-  | CameraAnimationCreate
-  | CutoutCreate
-  | LayerCreate
-  | MaterialDecorationCreate
-  | MovieCreate
-  | RepositoryResourceCreate
-  | View3dCreate
-  | GoogleTilesStylingCreate
-  | ITwinDisplayStyleOptionsCreate
-  | UnrealAtmosphericStylingCreate
-  | ExpressionStylingCreate
-  | ScheduleSimulationCreate
-  | iModelVisibilityCreate;
+/** Union of all scene object creation types. */
+export type SceneObjectCreateType =
+  | CameraAnimationCreateV1
+  | CutoutCreateV1
+  | LayerCreateV1
+  | MaterialDecorationCreateV1
+  | MovieCreateV1
+  | RepositoryResourceCreateV1
+  | View3dCreateV1
+  | GoogleTilesStylingCreateV1
+  | ITwinDisplayStyleOptionsCreateV1
+  | UnrealAtmosphericStylingCreateV1
+  | ExpressionStylingCreateV1
+  | ScheduleSimulationCreateV1
+  | iModelVisibilityCreateV1;
 
-/** Union of all scene object types using latest versions. */
-export type LatestSceneObjectType =
-  | CameraAnimation
-  | Cutout
-  | Layer
-  | MaterialDecoration
-  | Movie
-  | RepositoryResource
-  | View3d
-  | GoogleTilesStyling
-  | ITwinDisplayStyleOptions
-  | UnrealAtmosphericStyling
-  | ExpressionStyling
-  | ScheduleSimulation
-  | iModelVisibility;
+/** Union of all scene object types */
+export type SceneObjectType =
+  | CameraAnimationV1
+  | CutoutV1
+  | LayerV1
+  | MaterialDecorationV1
+  | MovieV1
+  | RepositoryResourceV1
+  | View3dV1
+  | GoogleTilesStylingV1
+  | ITwinDisplayStyleOptionsV1
+  | UnrealAtmosphericStylingV1
+  | ExpressionStylingV1
+  | ScheduleSimulationV1
+  | iModelVisibilityV1;

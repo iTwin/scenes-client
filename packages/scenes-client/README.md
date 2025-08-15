@@ -212,7 +212,8 @@ console.log(`Processed ${totalObjects} total objects`);
 import { SceneObject, StandardObjectCreate, ITwinScopedObjectCreate ResourceStylingObjectCreate } from "@bentley/scenes-client";
 
 // Create objects with strongly typed interfaces
-const layer: StandardObjectCreate<"Layer", "1.0.0"> = {
+// Note: LayerCreate is an alias for StandardObjectCreate<"Layer", "1.0.0">
+const layer: LayerCreate = {
   id: "<layer_id>",
   kind: "Layer",
   version: "1.0.0",
@@ -222,7 +223,8 @@ const layer: StandardObjectCreate<"Layer", "1.0.0"> = {
   },
 };
 
-const iModelResource: ITwinScopedObjectCreate<"RepositoryResource", "1.0.0"> = {
+// Note: RepositoryResourceCreate is an alias for ITwinScopedObjectCreate<"RepositoryResource", "1.0.0">
+const iModelResource: RepositoryResourceCreate = {
   id: "<imodel_object_id>",
   kind: "RepositoryResource",
   version: "1.0.0",
@@ -237,7 +239,8 @@ const iModelResource: ITwinScopedObjectCreate<"RepositoryResource", "1.0.0"> = {
   },
 };
 
-const iModelStyling: ResourceStylingObjectCreate<"iModelVisibility", "1.0.0"> = {
+// Note: iModelVisibilityCreate is an alias for ResourceStylingObjectCreate<"iModelVisibility", "1.0.0">
+const iModelStyling: iModelVisibilityCreate = {
   kind: "iModelVisibility",
   version: "1.0.0",
   displayName: "Hide Building Elements",
@@ -255,7 +258,8 @@ const iModelStyling: ResourceStylingObjectCreate<"iModelVisibility", "1.0.0"> = 
   },
 };
 
-const view3d: StandardObjectCreate<"View3d", "1.0.0"> = {
+// Note: iModelVisibilityCreate is an alias for StandardObjectCreate<"View3d", "1.0.0">
+const view3d: View3dCreate = {
   kind: "View3d",
   version: "1.0.0",
   displayName: "Aerial View",
