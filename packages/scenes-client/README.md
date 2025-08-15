@@ -209,7 +209,7 @@ console.log(`Processed ${totalObjects} total objects`);
 #### Create Scene Objects
 
 ```ts
-import { SceneObject, StandardObjectCreate, ITwinScopedObjectCreate ResourceStylingObjectCreate } from "@bentley/scenes-client";
+import { SceneObject, iModelVisibilityCreate, LayerCreate, RepositoryResourceCreate, View3dCreate } from "@bentley/scenes-client";
 
 // Create objects with strongly typed interfaces
 // Note: LayerCreate is an alias for StandardObjectCreate<"Layer", "1.0.0">
