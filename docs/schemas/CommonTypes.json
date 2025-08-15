@@ -26,7 +26,7 @@
       "description": "Expression that determines styling conditions or a single expression.",
       "oneOf": [
         {
-          "$ref": "/schemas/CommonTypes#/definitions/expressionString",
+          "$ref": "#/definitions/expressionString",
           "description": "Single expression string"
         },
         {
@@ -44,11 +44,11 @@
                 "maxItems": 2,
                 "items": [
                   {
-                    "$ref": "/schemas/CommonTypes#/definitions/expressionString",
+                    "$ref": "#/definitions/expressionString",
                     "description": "Condition expression that evaluates to a boolean"
                   },
                   {
-                    "$ref": "/schemas/CommonTypes#/definitions/expressionString",
+                    "$ref": "#/definitions/expressionString",
                     "description": "Expression that returns a value when the condition is true"
                   }
                 ]
