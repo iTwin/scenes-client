@@ -25,7 +25,8 @@ const SCENE_ID = requireMetaEnv("VITE_SCENE_ID");
 const LAYER_OBJ: SceneObjectCreate = {
   kind: "Layer",
   version: "1.0.0",
-  data: { displayName: "TestLayer", visible: true },
+  displayName: "TestLayer",
+  data: { visible: true },
 };
 const REPO_OBJ: SceneObjectCreate = {
   kind: "RepositoryResource",

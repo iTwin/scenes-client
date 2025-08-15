@@ -1,29 +1,112 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+import { SchemaData, SchemaVersion } from "./types/sceneObjectSchemas.js";
+import {
+  ITwinScopedSchemas,
+  ResourceStylingSchemas,
+  StandardSchemas,
+} from "./types/schemaCategories.js";
 
-export interface SceneObjectUpdate {
+/**
+ * Optional metadata properties that can be updated for any scene object
+ */
+export interface MetadataSceneObjectUpdate {
   /** Display name for the scene object */
   displayName?: string;
   /** Number for the scene object's order in lists */
   order?: number;
   /** Parent Id for the scene object (UUID) */
   parentId?: string;
-  /** iTwin Id the scene object is associated with (UUID) */
-  iTwinId?: string;
-  /** Data for the scene object */
-  data?: object;
-}
-
-export interface SceneObjectUpdateById extends SceneObjectUpdate {
-  /** Id of the scene object to update (UUID) */
-  id: string;
 }
 
 /**
- * Bulk update of scene objects.
+ * Interface for updating resource styling object data (and optionally metadata)
+ *
+ * @example
+ * ```typescript
+ * const stylingUpdate: ResourceStylingObjectUpdate<'ExpressionStyling', '1.0.0'> = {
+ *   displayName: 'Updated Expression',
+ *   data: { stylingOptions: { styleType: "Expression", show: 'element.category === "Door"' } }
+ * };
+ * ```
+ */
+export interface ResourceStylingObjectDataUpdate<
+  K extends ResourceStylingSchemas,
+  V extends SchemaVersion<K> = SchemaVersion<K>,
+> extends MetadataSceneObjectUpdate {
+  /** Schema-specific data to update for the resource styling scene object */
+  data: SchemaData<K, V>;
+}
+
+/**
+ * Interface for updating iTwin scoped object data (and optionally metadata)
+ * When updating data, iTwinId is required
+ *
+ * @example
+ * ```typescript
+ * const repositoryUpdate: ITwinScopedObjectUpdate<'RepositoryResource', '1.0.0'> = {
+ *   displayName: 'Updated Repository',
+ *   iTwinId: '<iTwin_id>',
+ *   data: { repositoryId: '<repo_id>',  id: '<resource_id>', class: '<repo_class>', visible: true }
+ * };
+ * ```
+ */
+export interface ITwinScopedObjectDataUpdate<
+  K extends ITwinScopedSchemas = ITwinScopedSchemas,
+  V extends SchemaVersion<K> = SchemaVersion<K>,
+> extends MetadataSceneObjectUpdate {
+  /** iTwin Id the scene object is associated with (UUID) */
+  iTwinId: string;
+  /** Schema-specific data to update for the scene object */
+  data: SchemaData<K, V>;
+}
+
+/**
+ * Interface for updating standard scene object data (and optionally metadata)
+ *
+ * @example
+ * ```typescript
+ * const layerUpdate: StandardSceneObjectUpdate<'Layer', '1.0.0'> = {
+ *   displayName: 'Updated Layer',
+ *   data: { visible: false }
+ * };
+ * ```
+ */
+export interface StandardSceneObjectDataUpdate<
+  K extends StandardSchemas,
+  V extends SchemaVersion<K> = SchemaVersion<K>,
+> extends MetadataSceneObjectUpdate {
+  /** Schema-specific data to update for the scene object */
+  data: SchemaData<K, V>;
+}
+
+/**
+ * Union type representing all possible scene object updates
+ */
+export type SceneObjectUpdate =
+  | MetadataSceneObjectUpdate
+  | ResourceStylingObjectDataUpdate<ResourceStylingSchemas>
+  | ITwinScopedObjectDataUpdate<ITwinScopedSchemas>
+  | StandardSceneObjectDataUpdate<StandardSchemas>;
+
+export type SceneObjectUpdateById = SceneObjectUpdate & {
+  /** Id of the scene object to update (UUID) */
+  id: string;
+};
+
+/**
+ * Interface for updating multiple scene objects in bulk
+ *
+ * @example
+ * ```typescript
+ * const bulkUpdate: BulkSceneObjectUpdate = {
+ *   objects: [
+ *     { id: '<object_id_1>', displayName: 'My Object 1' },
+ *     { id: '<object_id_2>', data: { ... } }
+ *   ]
+ * };
+ * ```
  */
 export interface BulkSceneObjectUpdate {
-  /**
-   * Array of scene objects to patch.
-   */
+  /**  Array of scene objects to patch */
   objects: SceneObjectUpdateById[];
 }
