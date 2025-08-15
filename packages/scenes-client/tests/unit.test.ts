@@ -280,22 +280,23 @@ describe("Scene Object Operations", () => {
     fetchMock.mockImplementation(() =>
       createSuccessfulResponse({ objects: [] }),
     );
+    const objects = [
+      {
+        id: "object-1",
+        displayName: "UpdatedObject1",
+        data: { visible: true },
+      },
+      {
+        id: "object-2",
+        displayName: "UpdatedObject2",
+        data: { visible: true },
+      },
+    ];
     const client = new SceneClient(getAccessToken);
     await client.patchObjects({
       iTwinId: "itw-1",
       sceneId: "scene-1",
-      objects: [
-        {
-          id: "object-1",
-          displayName: "UpdatedObject1",
-          data: { visible: true },
-        },
-        {
-          id: "object-2",
-          displayName: "UpdatedObject2",
-          data: { visible: true },
-        },
-      ],
+      objects,
     });
 
     verifyFetch(fetchMock, {
@@ -305,20 +306,7 @@ describe("Scene Object Operations", () => {
         Accept: "application/vnd.bentley.itwin-platform.v1+json",
       },
       method: "PATCH",
-      body: JSON.stringify({
-        objects: [
-          {
-            id: "object-1",
-            displayName: "UpdatedObject1",
-            data: { updated: "data1" },
-          },
-          {
-            id: "object-2",
-            displayName: "UpdatedObject2",
-            data: { updated: "data2" },
-          },
-        ],
-      }),
+      body: JSON.stringify({ objects }),
     });
   });
 
