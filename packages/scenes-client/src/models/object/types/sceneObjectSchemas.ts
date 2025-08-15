@@ -360,7 +360,7 @@ export type SchemaVersion<K extends SchemaKind> =
   keyof SchemaVersionRegistry[K];
 
 /**
- * Gets the data structure for a specific schema kind and version.
+ * Defines the data structure for a specific schema kind and version.
  * Core type that provides the actual schema interface.
  *
  * @template K - The schema kind (ex: 'Layer', 'View3d')

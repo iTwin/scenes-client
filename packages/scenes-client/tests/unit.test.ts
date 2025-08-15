@@ -223,9 +223,9 @@ describe("Scene Object Operations", () => {
       objects: [
         {
           id: "1",
-          kind: "layer",
-          version: "oldversion",
-          data: { data: "" },
+          kind: "Layer",
+          version: "1.0.0",
+          data: { visible: true },
         },
       ],
     });
@@ -241,9 +241,9 @@ describe("Scene Object Operations", () => {
         objects: [
           {
             id: "1",
-            kind: "layer",
-            version: "oldversion",
-            data: { data: "" },
+            kind: "Layer",
+            version: "1.0.0",
+            data: { visible: true },
           },
         ],
       }),
@@ -549,9 +549,9 @@ const exampleSceneResponse: SceneResponse = {
       objects: [
         {
           id: "obj-1",
-          kind: "MyKind",
+          kind: "Layer",
           version: "1.0.0",
-          data: {},
+          data: { visible: true },
         },
       ],
     },
@@ -575,9 +575,9 @@ const exampleSceneListResponse: SceneListResponse = {
 const exampleSceneObjectResponse: SceneObjectResponse = {
   object: {
     id: "obj-1",
-    kind: "MyKind",
+    kind: "Layer",
     version: "1.0.0",
-    data: {},
+    data: { visible: true },
     sceneId: "scene-1",
     createdById: "user-1",
     creationTime: "2025-07-16T15:00:00.000Z",

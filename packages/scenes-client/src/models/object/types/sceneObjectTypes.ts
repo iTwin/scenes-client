@@ -1,11 +1,19 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 // THIS FILE HAS BEEN GENERATED AUTOMATICALLY. PLEASE DO NOT EDIT IT DIRECTLY.
-import type { SceneObject } from "../sceneObject.js";
-import type { SceneObjectCreate } from "../sceneObjectCreate.js";
+import type {
+  ResourceStylingObject,
+  ITwinScopedObject,
+  StandardObject,
+} from "../sceneObject.js";
+import type {
+  ResourceStylingObjectCreate,
+  ITwinScopedObjectCreate,
+  StandardObjectCreate,
+} from "../sceneObjectCreate.js";
 
 // Version-specific create type aliases
 /** CameraAnimation (v1.0.0) Scene Object Creation Type */
-export type CameraAnimationCreateV1 = SceneObjectCreate<
+export type CameraAnimationCreateV1 = StandardObjectCreate<
   "CameraAnimation",
   "1.0.0"
 >;
@@ -13,17 +21,17 @@ export type CameraAnimationCreateV1 = SceneObjectCreate<
 export type CameraAnimationCreate = CameraAnimationCreateV1;
 
 /** Cutout (v1.0.0) Scene Object Creation Type */
-export type CutoutCreateV1 = SceneObjectCreate<"Cutout", "1.0.0">;
+export type CutoutCreateV1 = StandardObjectCreate<"Cutout", "1.0.0">;
 /** Latest Cutout creation type. Currently points to 1.0.0. */
 export type CutoutCreate = CutoutCreateV1;
 
 /** Layer (v1.0.0) Scene Object Creation Type */
-export type LayerCreateV1 = SceneObjectCreate<"Layer", "1.0.0">;
+export type LayerCreateV1 = StandardObjectCreate<"Layer", "1.0.0">;
 /** Latest Layer creation type. Currently points to 1.0.0. */
 export type LayerCreate = LayerCreateV1;
 
 /** MaterialDecoration (v1.0.0) Scene Object Creation Type */
-export type MaterialDecorationCreateV1 = SceneObjectCreate<
+export type MaterialDecorationCreateV1 = StandardObjectCreate<
   "MaterialDecoration",
   "1.0.0"
 >;
@@ -31,12 +39,12 @@ export type MaterialDecorationCreateV1 = SceneObjectCreate<
 export type MaterialDecorationCreate = MaterialDecorationCreateV1;
 
 /** Movie (v1.0.0) Scene Object Creation Type */
-export type MovieCreateV1 = SceneObjectCreate<"Movie", "1.0.0">;
+export type MovieCreateV1 = StandardObjectCreate<"Movie", "1.0.0">;
 /** Latest Movie creation type. Currently points to 1.0.0. */
 export type MovieCreate = MovieCreateV1;
 
 /** RepositoryResource (v1.0.0) Scene Object Creation Type */
-export type RepositoryResourceCreateV1 = SceneObjectCreate<
+export type RepositoryResourceCreateV1 = ITwinScopedObjectCreate<
   "RepositoryResource",
   "1.0.0"
 >;
@@ -44,12 +52,12 @@ export type RepositoryResourceCreateV1 = SceneObjectCreate<
 export type RepositoryResourceCreate = RepositoryResourceCreateV1;
 
 /** View3d (v1.0.0) Scene Object Creation Type */
-export type View3dCreateV1 = SceneObjectCreate<"View3d", "1.0.0">;
+export type View3dCreateV1 = StandardObjectCreate<"View3d", "1.0.0">;
 /** Latest View3d creation type. Currently points to 1.0.0. */
 export type View3dCreate = View3dCreateV1;
 
 /** GoogleTilesStyling (v1.0.0) Scene Object Creation Type */
-export type GoogleTilesStylingCreateV1 = SceneObjectCreate<
+export type GoogleTilesStylingCreateV1 = StandardObjectCreate<
   "GoogleTilesStyling",
   "1.0.0"
 >;
@@ -57,7 +65,7 @@ export type GoogleTilesStylingCreateV1 = SceneObjectCreate<
 export type GoogleTilesStylingCreate = GoogleTilesStylingCreateV1;
 
 /** ITwinDisplayStyleOptions (v1.0.0) Scene Object Creation Type */
-export type ITwinDisplayStyleOptionsCreateV1 = SceneObjectCreate<
+export type ITwinDisplayStyleOptionsCreateV1 = StandardObjectCreate<
   "ITwinDisplayStyleOptions",
   "1.0.0"
 >;
@@ -65,7 +73,7 @@ export type ITwinDisplayStyleOptionsCreateV1 = SceneObjectCreate<
 export type ITwinDisplayStyleOptionsCreate = ITwinDisplayStyleOptionsCreateV1;
 
 /** UnrealAtmosphericStyling (v1.0.0) Scene Object Creation Type */
-export type UnrealAtmosphericStylingCreateV1 = SceneObjectCreate<
+export type UnrealAtmosphericStylingCreateV1 = StandardObjectCreate<
   "UnrealAtmosphericStyling",
   "1.0.0"
 >;
@@ -73,7 +81,7 @@ export type UnrealAtmosphericStylingCreateV1 = SceneObjectCreate<
 export type UnrealAtmosphericStylingCreate = UnrealAtmosphericStylingCreateV1;
 
 /** ExpressionStyling (v1.0.0) Scene Object Creation Type */
-export type ExpressionStylingCreateV1 = SceneObjectCreate<
+export type ExpressionStylingCreateV1 = ResourceStylingObjectCreate<
   "ExpressionStyling",
   "1.0.0"
 >;
@@ -81,7 +89,7 @@ export type ExpressionStylingCreateV1 = SceneObjectCreate<
 export type ExpressionStylingCreate = ExpressionStylingCreateV1;
 
 /** ScheduleSimulation (v1.0.0) Scene Object Creation Type */
-export type ScheduleSimulationCreateV1 = SceneObjectCreate<
+export type ScheduleSimulationCreateV1 = ResourceStylingObjectCreate<
   "ScheduleSimulation",
   "1.0.0"
 >;
@@ -89,7 +97,7 @@ export type ScheduleSimulationCreateV1 = SceneObjectCreate<
 export type ScheduleSimulationCreate = ScheduleSimulationCreateV1;
 
 /** iModelVisibility (v1.0.0) Scene Object Creation Type */
-export type iModelVisibilityCreateV1 = SceneObjectCreate<
+export type iModelVisibilityCreateV1 = ResourceStylingObjectCreate<
   "iModelVisibility",
   "1.0.0"
 >;
@@ -98,47 +106,56 @@ export type iModelVisibilityCreate = iModelVisibilityCreateV1;
 
 // Version-specific response type aliases
 /** CameraAnimation (v1.0.0) Scene Object Response Type. */
-export type CameraAnimationV1 = SceneObject<"CameraAnimation", "1.0.0">;
+export type CameraAnimationV1 = StandardObject<"CameraAnimation", "1.0.0">;
 /** Latest CameraAnimation response type. Currently points to 1.0.0. */
 export type CameraAnimation = CameraAnimationV1;
 
 /** Cutout (v1.0.0) Scene Object Response Type. */
-export type CutoutV1 = SceneObject<"Cutout", "1.0.0">;
+export type CutoutV1 = StandardObject<"Cutout", "1.0.0">;
 /** Latest Cutout response type. Currently points to 1.0.0. */
 export type Cutout = CutoutV1;
 
 /** Layer (v1.0.0) Scene Object Response Type. */
-export type LayerV1 = SceneObject<"Layer", "1.0.0">;
+export type LayerV1 = StandardObject<"Layer", "1.0.0">;
 /** Latest Layer response type. Currently points to 1.0.0. */
 export type Layer = LayerV1;
 
 /** MaterialDecoration (v1.0.0) Scene Object Response Type. */
-export type MaterialDecorationV1 = SceneObject<"MaterialDecoration", "1.0.0">;
+export type MaterialDecorationV1 = StandardObject<
+  "MaterialDecoration",
+  "1.0.0"
+>;
 /** Latest MaterialDecoration response type. Currently points to 1.0.0. */
 export type MaterialDecoration = MaterialDecorationV1;
 
 /** Movie (v1.0.0) Scene Object Response Type. */
-export type MovieV1 = SceneObject<"Movie", "1.0.0">;
+export type MovieV1 = StandardObject<"Movie", "1.0.0">;
 /** Latest Movie response type. Currently points to 1.0.0. */
 export type Movie = MovieV1;
 
 /** RepositoryResource (v1.0.0) Scene Object Response Type. */
-export type RepositoryResourceV1 = SceneObject<"RepositoryResource", "1.0.0">;
+export type RepositoryResourceV1 = ITwinScopedObject<
+  "RepositoryResource",
+  "1.0.0"
+>;
 /** Latest RepositoryResource response type. Currently points to 1.0.0. */
 export type RepositoryResource = RepositoryResourceV1;
 
 /** View3d (v1.0.0) Scene Object Response Type. */
-export type View3dV1 = SceneObject<"View3d", "1.0.0">;
+export type View3dV1 = StandardObject<"View3d", "1.0.0">;
 /** Latest View3d response type. Currently points to 1.0.0. */
 export type View3d = View3dV1;
 
 /** GoogleTilesStyling (v1.0.0) Scene Object Response Type. */
-export type GoogleTilesStylingV1 = SceneObject<"GoogleTilesStyling", "1.0.0">;
+export type GoogleTilesStylingV1 = StandardObject<
+  "GoogleTilesStyling",
+  "1.0.0"
+>;
 /** Latest GoogleTilesStyling response type. Currently points to 1.0.0. */
 export type GoogleTilesStyling = GoogleTilesStylingV1;
 
 /** ITwinDisplayStyleOptions (v1.0.0) Scene Object Response Type. */
-export type ITwinDisplayStyleOptionsV1 = SceneObject<
+export type ITwinDisplayStyleOptionsV1 = StandardObject<
   "ITwinDisplayStyleOptions",
   "1.0.0"
 >;
@@ -146,7 +163,7 @@ export type ITwinDisplayStyleOptionsV1 = SceneObject<
 export type ITwinDisplayStyleOptions = ITwinDisplayStyleOptionsV1;
 
 /** UnrealAtmosphericStyling (v1.0.0) Scene Object Response Type. */
-export type UnrealAtmosphericStylingV1 = SceneObject<
+export type UnrealAtmosphericStylingV1 = StandardObject<
   "UnrealAtmosphericStyling",
   "1.0.0"
 >;
@@ -154,17 +171,26 @@ export type UnrealAtmosphericStylingV1 = SceneObject<
 export type UnrealAtmosphericStyling = UnrealAtmosphericStylingV1;
 
 /** ExpressionStyling (v1.0.0) Scene Object Response Type. */
-export type ExpressionStylingV1 = SceneObject<"ExpressionStyling", "1.0.0">;
+export type ExpressionStylingV1 = ResourceStylingObject<
+  "ExpressionStyling",
+  "1.0.0"
+>;
 /** Latest ExpressionStyling response type. Currently points to 1.0.0. */
 export type ExpressionStyling = ExpressionStylingV1;
 
 /** ScheduleSimulation (v1.0.0) Scene Object Response Type. */
-export type ScheduleSimulationV1 = SceneObject<"ScheduleSimulation", "1.0.0">;
+export type ScheduleSimulationV1 = ResourceStylingObject<
+  "ScheduleSimulation",
+  "1.0.0"
+>;
 /** Latest ScheduleSimulation response type. Currently points to 1.0.0. */
 export type ScheduleSimulation = ScheduleSimulationV1;
 
 /** iModelVisibility (v1.0.0) Scene Object Response Type. */
-export type iModelVisibilityV1 = SceneObject<"iModelVisibility", "1.0.0">;
+export type iModelVisibilityV1 = ResourceStylingObject<
+  "iModelVisibility",
+  "1.0.0"
+>;
 /** Latest iModelVisibility response type. Currently points to 1.0.0. */
 export type iModelVisibility = iModelVisibilityV1;
 
