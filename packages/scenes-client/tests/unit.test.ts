@@ -288,12 +288,12 @@ describe("Scene Object Operations", () => {
         {
           id: "object-1",
           displayName: "UpdatedObject1",
-          data: { updated: "data1" },
+          data: { visible: true },
         },
         {
           id: "object-2",
           displayName: "UpdatedObject2",
-          data: { updated: "data2" },
+          data: { visible: true },
         },
       ],
     });
