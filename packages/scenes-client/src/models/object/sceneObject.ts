@@ -14,7 +14,7 @@ import {
 } from "./types/schemaCategories.js";
 
 /**
- * Response metadata added to all scene objects
+ * Server response metadata added to all scene objects
  */
 interface SceneObjectResponseMetadata {
   /** Unique identifier for the scene object (UUID). */
@@ -30,10 +30,8 @@ interface SceneObjectResponseMetadata {
 }
 
 /**
- * Represents scene object kinds that apply styling to a specific resource.
+ * Scene object that applies styling to a specific resource (ex: iModelVisibility, ExpressionStyling)
  * RelatedId indicates which scene object is being styled.
- * @template K - The resource styling schema kind (ex: 'iModelVisibility', 'ExpressionStyling')
- * @template V - The schema version (ex: '1.0.0')
  */
 export interface ResourceStylingObject<
   K extends ResourceStylingSchemas = ResourceStylingSchemas,
@@ -42,9 +40,7 @@ export interface ResourceStylingObject<
     SceneObjectResponseMetadata {}
 
 /**
- * Represents scene object kinds that are iTwin-scoped.
- * @template K - The iTwin scoped schema kind (ex: 'RepositoryResource')
- * @template V - The schema version (ex: '1.0.0')
+ * Scene object that is iTwin-scoped (ex: RepositoryResource)
  */
 export interface ITwinScopedObject<
   K extends ITwinScopedSchemas = ITwinScopedSchemas,
@@ -53,9 +49,7 @@ export interface ITwinScopedObject<
     SceneObjectResponseMetadata {}
 
 /**
- * Represents standard scene objects.
- * @template K - The schema kind (ex: 'Layer', 'View3d', 'GoogleTilesStyling')
- * @template V - The schema version (ex: '1.0.0')
+ * Standard scene object (ex: Layer, View3d, UnrealAtmosphericStyling)
  */
 export interface StandardObject<
   K extends StandardSchemas = StandardSchemas,
@@ -64,8 +58,8 @@ export interface StandardObject<
     SceneObjectResponseMetadata {}
 
 /**
- * Represents all possible scene object responses.
- * Automatically resolves to the appropriate interface based on the schema kind
+ * Union type representing all possible scene object responses.
+ * Automatically resolves to the appropriate interface based on schema kind
  */
 export type SceneObject =
   | StandardObject

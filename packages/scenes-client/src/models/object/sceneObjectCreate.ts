@@ -12,9 +12,8 @@ import {
 } from "./types/schemaCategories.js";
 
 /**
- * Base scene object creation interface, contains properties common to all scene objects
- * @template K - The schema kind (ex: 'Layer', 'View3d')
- * @template V - The schema version (ex: '1.0.0')
+ * Base scene object creation interface.
+ * Contains properties common to all scene objects
  */
 export interface BaseSceneObjectCreate<
   K extends SchemaKind = SchemaKind,
@@ -40,15 +39,13 @@ export interface BaseSceneObjectCreate<
  * Resource styling object creation interface.
  * Used to apply styling options to RepositoryResource objects in a scene.
  * Requires a relatedId to indicate which object is being styled.
- * @template K - The resource styling schema kind (ex: 'iModelVisibility', 'ExpressionStyling')
- * @template V - The schema version (ex: '1.0.0')
  *
  * @example
  * ```typescript
  * const expressionStyling: ResourceStylingObjectCreate = {
  *   kind: 'ExpressionStyling',
  *   version: '1.0.0',
- *   relatedId: '<uuid>',
+ *   relatedId: '<object_id>',
  *   data: { expression: 'element.category === "Wall"' }
  * };
  * ```
@@ -62,10 +59,8 @@ export interface ResourceStylingObjectCreate<
 }
 
 /**
- * iTwin-scoped creation interface.
- * Associates the object with a specific iTwin using iTwinId.
- * @template K - The iTwin scoped schema kind (ex: 'RepositoryResource')
- * @template V - The schema version (ex: '1.0.0')
+ * iTwin-scoped object creation interface.
+ * Object will be associated to a specific iTwin via iTwinId
  *
  * @example
  * ```typescript
@@ -87,19 +82,7 @@ export interface ITwinScopedObjectCreate<
 
 /**
  * Standard scene object creation interface.
- * Default object type with no extra requirements beyond base properties.
- * @template K - The standard schema kind (ex: 'Layer', 'View3d', 'GoogleTilesStyling')
- * @template V - The schema version (ex: '1.0.0')
- *
- * @example
- * ```typescript
- * const layer: StandardObjectCreate = {
- *   kind: 'Layer',
- *   version: '1.0.0',
- *   displayName: 'My Layer',
- *   data: { visible: true }
- * };
- * ```
+ * Use for most objects, no extra requirements beyond base properties
  */
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface StandardObjectCreate<
@@ -108,7 +91,7 @@ export interface StandardObjectCreate<
 > extends BaseSceneObjectCreate<K, V> {}
 
 /**
- * Represents all possible scene object creation interfaces.
+ * Union type representing all possible scene object creates.
  * Automatically resolves to the appropriate interface based on the schema kind
  */
 export type SceneObjectCreate =

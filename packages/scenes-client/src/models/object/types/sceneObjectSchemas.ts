@@ -73,8 +73,13 @@ export type hiddenLineStyle = {
   width?: number;
 };
 
-// Schema Version Registry
-export interface SchemaVersionRegistry {
+/**
+ * All schema definitions and versions supported by the Scenes API.
+ * Each schema can have multiple versions, each version defining its expected data structure.
+ *
+ * `{ [SchemaKind]: { [Version]: Definition } }`
+ */
+export interface ScenesApiSchemas {
   CameraAnimation: {
     /** Camera animation is defined by a series of 3D views with a timestamp. Interpolation of camera position is done by the application itself. */
     "1.0.0": {
@@ -348,23 +353,21 @@ export interface SchemaVersionRegistry {
 // Helper types that enforce coupling between schema kinds and versions
 
 /**
- * All schema kinds supported by the Scene API
+ * All schema kinds supported by the Scenes API
  */
-export type SchemaKind = keyof SchemaVersionRegistry;
+export type SchemaKind = keyof ScenesApiSchemas;
 
 /**
  * Available versions for a specific schema kind
- * @template K - The schema kind to get versions for
+ * @template K Schema kind to get versions for
  */
-export type SchemaVersion<K extends SchemaKind> =
-  keyof SchemaVersionRegistry[K];
+export type SchemaVersion<K extends SchemaKind> = keyof ScenesApiSchemas[K];
 
 /**
- * Defines the data structure for a specific schema kind and version.
+ * Gets the data structure for a specific schema kind and version.
  * Core type that provides the actual schema interface.
- *
- * @template K - The schema kind (ex: 'Layer', 'View3d')
- * @template V - The schema version (ex: '1.0.0')
+ * @template K Schema kind (ex: 'Layer', 'View3d')
+ * @template V Schema version (ex: '1.0.0')
  *
  * @example
  * ```typescript
@@ -384,4 +387,4 @@ export type SchemaVersion<K extends SchemaKind> =
 export type SchemaData<
   K extends SchemaKind,
   V extends SchemaVersion<K>,
-> = SchemaVersionRegistry[K][V];
+> = ScenesApiSchemas[K][V];

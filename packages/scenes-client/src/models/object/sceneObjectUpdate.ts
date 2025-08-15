@@ -20,8 +20,6 @@ export interface MetadataSceneObjectUpdate {
 
 /**
  * Interface for updating resource styling object data (and optionally metadata)
- * @template K - The resource styling schema kind (ex: 'iModelVisibility', 'ExpressionStyling')
- * @template V - The schema version (ex: '1.0.0')
  *
  * @example
  * ```typescript
@@ -42,8 +40,6 @@ export interface ResourceStylingObjectDataUpdate<
 /**
  * Interface for updating iTwin scoped object data (and optionally metadata)
  * When updating data, iTwinId is required
- * @template K - The iTwin scoped schema kind (ex: 'RepositoryResource')
- * @template V - The schema version (ex: '1.0.0')
  *
  * @example
  * ```typescript
@@ -58,7 +54,7 @@ export interface ITwinScopedObjectDataUpdate<
   K extends ITwinScopedSchemas = ITwinScopedSchemas,
   V extends SchemaVersion<K> = SchemaVersion<K>,
 > extends MetadataSceneObjectUpdate {
-  /** iTwin Id the scene object is associated with (UUID) - required when updating data */
+  /** iTwin Id the scene object is associated with (UUID) */
   iTwinId: string;
   /** Schema-specific data to update for the scene object */
   data: SchemaData<K, V>;
@@ -66,8 +62,6 @@ export interface ITwinScopedObjectDataUpdate<
 
 /**
  * Interface for updating standard scene object data (and optionally metadata)
- * @template K - The schema kind (ex: 'Layer', 'View3d', 'GoogleTilesStyling')
- * @template V - The schema version (ex: '1.0.0')
  *
  * @example
  * ```typescript
@@ -86,7 +80,7 @@ export interface StandardSceneObjectDataUpdate<
 }
 
 /**
- * Represents all possible scene object update interfaces
+ * Union type representing all possible scene object updates
  */
 export type SceneObjectUpdate =
   | MetadataSceneObjectUpdate
@@ -94,9 +88,6 @@ export type SceneObjectUpdate =
   | ITwinScopedObjectDataUpdate<ITwinScopedSchemas>
   | StandardSceneObjectDataUpdate<StandardSchemas>;
 
-/**
- * Scene object update with required ID field for bulk operations
- */
 export type SceneObjectUpdateById = SceneObjectUpdate & {
   /** Id of the scene object to update (UUID) */
   id: string;
@@ -109,8 +100,8 @@ export type SceneObjectUpdateById = SceneObjectUpdate & {
  * ```typescript
  * const bulkUpdate: BulkSceneObjectUpdate = {
  *   objects: [
- *     { id: '<object_id>', displayName: 'My Object 1', data: { ... } },
- *     { id: '<object_id>', displayName: 'My Object 2', data: { ... } }
+ *     { id: '<object_id_1>', displayName: 'My Object 1' },
+ *     { id: '<object_id_2>', data: { ... } }
  *   ]
  * };
  * ```
