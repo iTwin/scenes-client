@@ -103,7 +103,7 @@ const createResponse = await client.postScene({
   scene: {
     displayName: "Construction Site Overview",
     sceneData: {
-      objects: [],
+      objects: [ /** (optional) objects to create */ ],
     },
   },
 });
@@ -209,57 +209,73 @@ console.log(`Processed ${totalObjects} total objects`);
 #### Create Scene Objects
 
 ```ts
-import { SceneObject, SceneObjectCreate } from "@bentley/scenes-client";
+import { SceneObject, StandardObjectCreate, ITwinScopedObjectCreate ResourceStylingObjectCreate } from "@bentley/scenes-client";
 
-// Create objects in bulk
-const objectsPayload: SceneObjectCreate[] = [
-  // Add a Layer
-  {
-    id: "<layer_id>",
-    kind: "Layer",
-    version: "1.0.0",
-    displayName: "Buildings",
-    data: {
-      visible: true,
-      displayName: "Buildings",
+// Create objects with strongly typed interfaces
+const layer: StandardObjectCreate<"Layer", "1.0.0"> = {
+  id: "<layer_id>",
+  kind: "Layer",
+  version: "1.0.0",
+  displayName: "Buildings",
+  data: {
+    visible: true,
+  },
+};
+
+const iModelResource: ITwinScopedObjectCreate<"RepositoryResource", "1.0.0"> = {
+  id: "<imodel_object_id>",
+  kind: "RepositoryResource",
+  version: "1.0.0",
+  displayName: "Main Building Model",
+  parentId: "<layer_id>", // Organize under the layer
+  iTwinId: "<itwin_id>", // Required for iTwin-scoped objects
+  data: {
+    class: "iModels",
+    repositoryId: "iModels",
+    id: "<imodel_id>",
+    visible: true,
+  },
+};
+
+const iModelStyling: ResourceStylingObjectCreate<"iModelVisibility", "1.0.0"> = {
+  kind: "iModelVisibility",
+  version: "1.0.0",
+  displayName: "Hide Building Elements",
+  relatedId: "<imodel_object_id>", // References the iModel resource to style
+  data: {
+    categories: {
+      shownList: "",
+      hiddenList:
+        "+300000000A0+ED1+3*2+4+D+3*2+8+4*3+3*5+2+3*4+4+3*2+4*2+3*3+5+4+5+4+8+3*2+5+4+7F",
+    },
+    models: {
+      shownList: "",
+      hiddenList: "+20000000002",
     },
   },
-  // Add an iModel resource
-  {
-    kind: "RepositoryResource",
-    version: "1.0.0",
-    displayName: "Main Building Model",
-    parentId: "<layer_id>", // Organize under the layer
-    iTwinId: "<itwin_id>",
-    data: {
-      class: "iModels",
-      repositoryId: "iModels",
-      id: "<imodel_id>",
-      visible: true,
-    },
+};
+
+const view3d: StandardObjectCreate<"View3d", "1.0.0"> = {
+  kind: "View3d",
+  version: "1.0.0",
+  displayName: "Aerial View",
+  data: {
+    position: { x: -50.0, y: 75.0, z: 150.0 },
+    direction: { x: 0.2, y: 0.2, z: -0.96 },
+    isOrthographic: false,
+    up: { x: 0, y: 1, z: 0 },
+    aspectRatio: 1.33,
+    near: 1,
+    far: 1000,
+    ecefTransform: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
   },
-  // Add a 3D view
-  {
-    kind: "View3d",
-    version: "1.0.0",
-    displayName: "Aerial View",
-    data: {
-      position: { x: -50.0, y: 75.0, z: 150.0 },
-      direction: { x: 0.2, y: 0.2, z: -0.96 },
-      up: { x: 0, y: 1, z: 0 },
-      aspectRatio: 1.33,
-      near: 1,
-      far: 1000,
-      ecefTransform: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-    },
-  },
-];
+};
 
 // Create objects in bulk
 const createResponse = await client.postObjects({
   iTwinId: "<itwin_id>",
   sceneId: "<scene_id>",
-  objects: objectsPayload,
+  objects: [layer, view3d, iModelResource, iModelStyling],
 });
 
 console.log(`Created ${createResponse.objects.length} objects:`);
@@ -271,17 +287,22 @@ createResponse.objects.forEach((obj: SceneObject) => {
 #### Update Scene Objects
 
 ```ts
-import { SceneObjectUpdate, SceneObjectUpdateById } from "@bentley/scenes-client";
+import { SceneObjectUpdate, SceneObjectUpdateById, MetadataSceneObjectUpdate, StandardSceneObjectDataUpdate } from "@bentley/scenes-client";
 
-// Update a single object by id
-const updatePayload: SceneObjectUpdate = {
-  displayName: "Updated Object Name",
+// Update data for a specific object with type safety
+const objectUpdate: StandardSceneObjectDataUpdate<"GoogleTilesStyling", "1.0.0"> = {
+  displayName: "Updated Global Styling Options",
+  data: { // Fully typed - IntelliSense shows available properties
+    quality: 0.30000001192092896,
+    adjustment: [ 1.309999942779541, 72.0326, -75.6275 ]
+  },
 };
+
 const updateResponse = await client.patchObject({
   iTwinId: "<itwin_id>",
   sceneId: "<scene_id>",
   objectId: "<object_id>",
-  object: updatePayload,
+  object: objectUpdate,
 });
 
 console.log(`Updated object: ${updateResponse.object.displayName}`);
@@ -317,6 +338,60 @@ await client.deleteObjects({
   sceneId: "<scene_id>",
   objectIds: ["<object_id_1>", "<object_id_2>", "<object_id_3>"],
 });
+```
+
+### Type Safety
+
+This client provides strongly typed interfaces for all scene object operations, giving you compile-time validation:
+
+```ts
+import { StandardObjectCreate, ITwinScopedObjectCreate, ResourceStylingObjectCreate } from "@bentley/scenes-client";
+
+// Each schema has its own typed interface
+const camera: StandardObjectCreate<"CameraAnimation", "1.0.0"> = {
+  kind: "CameraAnimation",
+  version: "1.0.0",
+  displayName: "Site Walkthrough",
+  data: {
+    input: [0, 5, 10, 15], // TypeScript knows this should be number[]
+    output: [
+      {
+        camera: {
+          position: { x: 0, y: 0, z: 100 },
+          direction: { x: 0, y: 1, z: 0 },
+          up: { x: 0, y: 0, z: 1 },
+          // IntelliSense shows all available camera properties
+        },
+      },
+    ],
+  },
+};
+
+// iTwin-scoped objects automatically require iTwinId
+const repository: ITwinScopedObjectCreate<"RepositoryResource", "1.0.0"> = {
+  kind: "RepositoryResource",
+  version: "1.0.0",
+  iTwinId: "<itwin_id>", // TypeScript enforces this field
+  data: {
+    // IntelliSense shows RepositoryResource specific properties
+    class: "iModels",
+    repositoryId: "iModels",
+    id: "<imodel_id>",
+    visible: true,
+  },
+};
+
+// Resource styling objects automatically require relatedId
+const styling: ResourceStylingObjectCreate<"iModelVisibility", "1.0.0"> = {
+  kind: "iModelVisibility",
+  version: "1.0.0",
+  relatedId: "<repository_object_id>", // TypeScript enforces this field
+  data: {
+    // IntelliSense shows iModelVisibility specific properties
+    categories: { ... },
+    models: { ... },
+  },
+};
 ```
 
 ### Error Handling

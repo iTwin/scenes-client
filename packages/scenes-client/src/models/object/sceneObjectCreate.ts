@@ -46,7 +46,7 @@ export interface BaseSceneObjectCreate<
  *   kind: 'ExpressionStyling',
  *   version: '1.0.0',
  *   relatedId: '<object_id>',
- *   data: { expression: 'element.category === "Wall"' }
+ *   data: { stylingOptions: { styleType: "Expression", show: 'element.category === "Door"' } }
  * };
  * ```
  */

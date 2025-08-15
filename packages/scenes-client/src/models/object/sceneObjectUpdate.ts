@@ -25,7 +25,7 @@ export interface MetadataSceneObjectUpdate {
  * ```typescript
  * const stylingUpdate: ResourceStylingObjectUpdate<'ExpressionStyling', '1.0.0'> = {
  *   displayName: 'Updated Expression',
- *   data: { expression: 'element.category === "Door"' }
+ *   data: { stylingOptions: { styleType: "Expression", show: 'element.category === "Door"' } }
  * };
  * ```
  */
