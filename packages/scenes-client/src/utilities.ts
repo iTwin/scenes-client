@@ -50,3 +50,17 @@ export function* batched<T>(items: T[], batchSize: number) {
 export function isObject(v: unknown): v is Record<string, unknown> {
   return v !== null && typeof v === "object" && !Array.isArray(v);
 }
+
+/**
+ * Omit that works correctly with union types.
+ * This applies the omit operation to each union member individually, preserving type-specific properties.
+ * See https://github.com/microsoft/TypeScript/issues/54525.
+ *
+ * @example
+ * ```typescript
+ * type UnionType = { a: string; b: number } | { a: string; c: boolean };
+ * type Result = UnionOmit<UnionType, 'a'>;
+ * // Result: { b: number } | { c: boolean }
+ * ```
+ */
+export type UnionOmit<T, K extends keyof T> = T extends any ? Omit<T, K> : never;
