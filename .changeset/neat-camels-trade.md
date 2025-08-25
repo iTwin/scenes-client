@@ -2,4 +2,4 @@
 "@bentley/scenes-client": patch
 ---
 
-Change lineWeight in ExpressionStyling to allow expressionOrConditions instead of only expressionString
+Change `lineWeight` in ExpressionStyling to allow `ExpressionOrConditions` instead of only `ExpressionString`
