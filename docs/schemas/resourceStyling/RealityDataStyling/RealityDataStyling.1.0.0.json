@@ -1,0 +1,129 @@
+{
+  "$id": "/schemas/RealityDataStyling.1.0.0",
+  "description": "Defines styling options for a specific reality data resource.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "nonLocatable": {
+      "description": "If true, reality data will not be drawn when using Viewport.readPixels",
+      "type": "boolean"
+    },
+    "rgb": {
+      "description": "The color of the Feature",
+      "$ref": "/schemas/CommonTypes#/definitions/rgbColor"
+    },
+    "transparency": {
+      "description": "Transparency in the range [0.0, 1.0] where 0 indicates fully opaque and 1 indicates fully transparent.",
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "displayProps": {
+      "description": "Settings that control how a reality model - whether a ContextRealityModel or a persistent reality Model - is displayed within a Viewport.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "overrideColorRatio": {
+          "description": "If the reality model's color is overridden with another color, a ratio in the range [0.0, 1.0] with which to mix the two colors together. A ratio of 0 uses only the reality model's color, a ratio of 1 uses only the override color, and a ratio of 0.5 mixes the two colors equally.",
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "pointCloud": {
+          "description": "Settings that control how a point cloud reality model is displayed within a Viewport.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "shape": {
+              "description": "The shape drawn for each point in the cloud.",
+              "enum": [ "square", "round" ]
+            },
+            "sizeMode": {
+              "description": "Specifies how the sizes of the individual points within a point cloud are computed. Pixel: Each point is an exact number of pixels in diameter. Voxel: Each point is the size of a 'voxel' in meters",
+              "enum": [ "voxel", "pixel" ]
+            },
+            "pixelSettings": {
+              "description": "Settings that control how points are displayed when 'sizeMode' is 'pixel'.",
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "size": {
+                  "description": "The radius of each point in pixels The maximum size will vary based on the graphics hardware in use, but typically is limited to 32 or 64 pixels.",
+                  "type": "number",
+                  "minimum": 0.0
+                }
+              }
+            },
+            "voxelSettings": {
+              "description": "Settings that control how points are displayed when 'sizeMode' is 'voxel'.",
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "scale": {
+                  "description": "Scale factor applied to the size of each point.",
+                  "type": "number",
+                  "minimum": 0.0
+                },
+                "minPixelsPerVoxel": {
+                  "description": "Minimum radius of each point in pixels.",
+                  "type": "number",
+                  "minimum": 0.0
+                },
+                "maxPixelsPerVoxel": {
+                  "description": "Maximum radius of each point in pixels.",
+                  "type": "number",
+                  "minimum": 0.0
+                }
+              }
+            },
+            "eyeDome": {
+              "description": "Settings that control the Eye Dome Lighting (EDL) effect applied to a point cloud.",
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "mode": {
+                  "description": "Off: EDL is not calculated. On: EDL is calculated using a single pass. Full: EDL is calculated with full algorithm including optional filtering.",
+                  "$ref": "/schemas/CommonTypes#/definitions/safeString",
+                  "enum": [ "off", "on", "full" ]
+                },
+                "strength": {
+                  "description": "Increasing this value increases contrast on slopes and edges.",
+                  "type": "number",
+                  "minimum": 0.0
+                },
+                "radius": {
+                  "description": "Increase the thickness of contours from eye dome lighting.",
+                  "type": "number",
+                  "minimum": 0.0
+                },
+                "filter": {
+                  "description": "Flag for whether or not to apply filtering pass in the Eye Dome Lighting (EDL) effect. It only applies if edlMode is 'full'.",
+                  "type": "number",
+                  "minimum": 0.0
+                },
+                "mixWts1": {
+                  "description": "Weighting value in the range [0.0, 1.0] to apply to the full image when combining it with the half and quarter sized ones.",
+                  "type": "number",
+                  "minimum": 0.0,
+                  "maximum": 1.0
+                },
+                "mixWts2": {
+                  "description": "Weighting value in the range [0.0, 1.0] to apply to the half sized image when combining it with the full and quarter sized ones.",
+                  "type": "number",
+                  "minimum": 0.0,
+                  "maximum": 1.0
+                },
+                "mixWts4": {
+                  "description": "Weighting value in the range [0.0, 1.0] to apply to the quarter sized image when combining it with the full and half sized one.",
+                  "type": "number",
+                  "minimum": 0.0,
+                  "maximum": 1.0
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
