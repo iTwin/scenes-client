@@ -305,7 +305,7 @@ export interface ScenesApiSchemas {
             defines?: { [key: string]: ExpressionString };
             show?: ExpressionOrConditions;
             color: ExpressionOrConditions;
-            lineWeight?: ExpressionString;
+            lineWeight?: ExpressionOrConditions;
             lineColor?: ExpressionOrConditions;
           }
         | {
