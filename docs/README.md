@@ -248,9 +248,9 @@ Scene object schemas are organized into three categories based on their purpose 
 
 | Category | Purpose | Dependencies | Examples |
 |----------|---------|--------------|----------|
-| 🏗️ **Core** | Independent  objects providing core fucntionality  | None | Layer, RepositoryResource, View3d |
+| 🏗️ **Core** | Independent  objects providing core functionality  | None | Layer, RepositoryResource, View3d |
 | 🌍 **Global Styling** | Scene-wide styling options | None | GoogleTilesStyling, UnrealAtmosphericStyling |
-| 🎨 **Resource Styling** | Resource-specific styling options | Requires `RepositoryResource` linked via `relatedId` | iModelVisibility |
+| 🎨 **Resource Styling** | Resource-specific styling options | Requires `RepositoryResource` linked via `relatedId` | iModelVisibility, RealityDataStyling |
 
 ---
 
