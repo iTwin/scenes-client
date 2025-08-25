@@ -36,7 +36,7 @@
               "$ref": "/schemas/CommonTypes#/definitions/expressionOrConditions"
             },
             "lineWeight": {
-              "$ref": "/schemas/CommonTypes#/definitions/expressionString",
+              "$ref": "/schemas/CommonTypes#/definitions/expressionOrConditions",
               "description": "Expression that determines the feature's line weight/thickness"
             },
             "lineColor": {
