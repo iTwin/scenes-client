@@ -1,5 +1,19 @@
 # @bentley/scenes-client
 
+## 0.4.0
+
+### Minor Changes
+
+- 700aa76: Add RealityDataStyling v1.0.0 schema support
+  - Update `SceneApiSchemas` interface to include RealityDataStyling v1.0.0 schema
+  - Add create types (`RealityDataStylingCreate`/`RealityDataStylingCreateV1`) and response types (`RealityDataStyling`/`RealityDataStylingV1`)
+
+### Patch Changes
+
+- 5824870: Change `lineWeight` in ExpressionStyling to allow `ExpressionOrConditions` instead of only `ExpressionString`
+- 5247c5e: Fix SceneObjectMinimal losing schema-specific properties.
+  Add UnionOmit to preserve type safety when omitting fields from union types.
+
 ## 0.3.0
 
 ### Minor Changes
