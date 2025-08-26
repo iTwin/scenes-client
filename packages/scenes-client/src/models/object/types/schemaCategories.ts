@@ -5,7 +5,8 @@ import type { SchemaKind } from "./sceneObjectSchemas.js";
 export type ResourceStylingSchemas =
   | "ExpressionStyling"
   | "ScheduleSimulation"
-  | "iModelVisibility";
+  | "iModelVisibility"
+  | "RealityDataStyling";
 
 /** Schemas that define iTwin-scoped resources */
 export type ITwinScopedSchemas = "RepositoryResource";

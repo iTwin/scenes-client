@@ -103,6 +103,14 @@ export type iModelVisibilityCreateV1 = ResourceStylingObjectCreate<
 /** Latest iModelVisibility creation type. Currently points to 1.0.0. */
 export type iModelVisibilityCreate = iModelVisibilityCreateV1;
 
+/** RealityDataStyling (v1.0.0) Scene Object Creation Type */
+export type RealityDataStylingCreateV1 = ResourceStylingObjectCreate<
+  "RealityDataStyling",
+  "1.0.0"
+>;
+/** Latest RealityDataStyling creation type. Currently points to 1.0.0. */
+export type RealityDataStylingCreate = RealityDataStylingCreateV1;
+
 // Version-specific response type aliases
 /** CameraAnimation (v1.0.0) Scene Object Response Type. */
 export type CameraAnimationV1 = StandardObject<"CameraAnimation", "1.0.0">;
@@ -193,6 +201,14 @@ export type iModelVisibilityV1 = ResourceStylingObject<
 /** Latest iModelVisibility response type. Currently points to 1.0.0. */
 export type iModelVisibility = iModelVisibilityV1;
 
+/** RealityDataStyling (v1.0.0) Scene Object Response Type. */
+export type RealityDataStylingV1 = ResourceStylingObject<
+  "RealityDataStyling",
+  "1.0.0"
+>;
+/** Latest RealityDataStyling response type. Currently points to 1.0.0. */
+export type RealityDataStyling = RealityDataStylingV1;
+
 /** Union of all scene object creation types. */
 export type SceneObjectCreateType =
   | CameraAnimationCreateV1
@@ -207,7 +223,8 @@ export type SceneObjectCreateType =
   | UnrealAtmosphericStylingCreateV1
   | ExpressionStylingCreateV1
   | ScheduleSimulationCreateV1
-  | iModelVisibilityCreateV1;
+  | iModelVisibilityCreateV1
+  | RealityDataStylingCreateV1;
 
 /** Union of all scene object types */
 export type SceneObjectType =
@@ -223,4 +240,5 @@ export type SceneObjectType =
   | UnrealAtmosphericStylingV1
   | ExpressionStylingV1
   | ScheduleSimulationV1
-  | iModelVisibilityV1;
+  | iModelVisibilityV1
+  | RealityDataStylingV1;

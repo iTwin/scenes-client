@@ -348,6 +348,60 @@ export interface ScenesApiSchemas {
       quality?: number;
     };
   };
+  RealityDataStyling: {
+    /** Defines styling options for a specific reality data resource. */
+    "1.0.0": {
+      /** If true, reality data will not be drawn when using Viewport.readPixels */
+      nonLocatable?: boolean;
+      /** The color of the Feature */
+      rgb?: RgbColor;
+      /** Transparency in the range [0.0, 1.0] where 0 indicates fully opaque and 1 indicates fully transparent. */
+      transparency?: number;
+      /** Settings that control how a reality model - whether a ContextRealityModel or a persistent reality Model - is displayed within a Viewport. */
+      displayProps?: {
+        /** If the reality model's color is overridden with another color, a ratio in the range [0.0, 1.0] with which to mix the two colors together. A ratio of 0 uses only the reality model's color, a ratio of 1 uses only the override color, and a ratio of 0.5 mixes the two colors equally. */
+        overrideColorRatio?: number;
+        /** Settings that control how a point cloud reality model is displayed within a Viewport. */
+        pointCloud?: {
+          /** The shape drawn for each point in the cloud. */
+          shape?: "square" | "round";
+          /** Specifies how the sizes of the individual points within a point cloud are computed. Pixel: Each point is an exact number of pixels in diameter. Voxel: Each point is the size of a 'voxel' in meters */
+          sizeMode?: "voxel" | "pixel";
+          /** Settings that control how points are displayed when 'sizeMode' is 'pixel'. */
+          pixelSettings?: {
+            /** The radius of each point in pixels The maximum size will vary based on the graphics hardware in use, but typically is limited to 32 or 64 pixels. */
+            size?: number;
+          };
+          /** Settings that control how points are displayed when 'sizeMode' is 'voxel'. */
+          voxelSettings?: {
+            /** Scale factor applied to the size of each point. */
+            scale?: number;
+            /** Minimum radius of each point in pixels. */
+            minPixelsPerVoxel?: number;
+            /** Maximum radius of each point in pixels. */
+            maxPixelsPerVoxel?: number;
+          };
+          /** Settings that control the Eye Dome Lighting (EDL) effect applied to a point cloud. */
+          eyeDome?: {
+            /** Off: EDL is not calculated. On: EDL is calculated using a single pass. Full: EDL is calculated with full algorithm including optional filtering. */
+            mode?: "off" | "on" | "full";
+            /** Increasing this value increases contrast on slopes and edges. */
+            strength?: number;
+            /** Increase the thickness of contours from eye dome lighting. */
+            radius?: number;
+            /** Flag for whether or not to apply filtering pass in the Eye Dome Lighting (EDL) effect. It only applies if edlMode is 'full'. */
+            filter?: number;
+            /** Weighting value in the range [0.0, 1.0] to apply to the full image when combining it with the half and quarter sized ones. */
+            mixWts1?: number;
+            /** Weighting value in the range [0.0, 1.0] to apply to the half sized image when combining it with the full and quarter sized ones. */
+            mixWts2?: number;
+            /** Weighting value in the range [0.0, 1.0] to apply to the quarter sized image when combining it with the full and half sized one. */
+            mixWts4?: number;
+          };
+        };
+      };
+    };
+  };
 }
 
 // Helper types that enforce coupling between schema kinds and versions
