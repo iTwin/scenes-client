@@ -1,9 +1,9 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
-import { isObject } from "../../utilities.js";
+import { isObject, UnionOmit } from "../../utilities.js";
 import { SceneObject } from "./sceneObject.js";
 import { isSceneObjectCreate } from "./sceneObjectCreate.js";
 
-export type SceneObjectMinimal = Omit<
+export type SceneObjectMinimal = UnionOmit<
   SceneObject,
   "sceneId" | "createdById" | "creationTime" | "lastModified"
 >;
