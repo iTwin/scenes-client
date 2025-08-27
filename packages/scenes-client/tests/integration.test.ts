@@ -1,5 +1,5 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { SceneClient } from "../src/client.js";
 import { SceneCreate, SceneObjectCreate, ScenesApiError } from "../src/models";
 
@@ -20,7 +20,6 @@ const CLIENT_ID = requireMetaEnv("VITE_CLIENT_ID");
 const CLIENT_SECRET = requireMetaEnv("VITE_CLIENT_SECRET");
 const ITWIN_ID = requireMetaEnv("VITE_ITWIN_ID");
 const IMODEL_ID = requireMetaEnv("VITE_IMODEL_ID");
-const SCENE_ID = requireMetaEnv("VITE_SCENE_ID");
 
 const LAYER_OBJ: SceneObjectCreate = {
   kind: "Layer",
@@ -153,12 +152,31 @@ describe("Scenes operation", () => {
 });
 
 describe("Scenes Objects operations", () => {
-  let obj1: string, obj2: string;
+  let obj1: string, obj2: string, sceneId: string;
+
+  beforeAll(async () => {
+    const res = await client.postScene({
+      iTwinId: ITWIN_ID,
+      scene: TEST_SCENES[1],
+    });
+    expect(res.scene?.id).toBeDefined();
+    sceneId = res.scene.id;
+  });
+
+  afterAll(async () => {
+    await client.deleteScene({ iTwinId: ITWIN_ID, sceneId });
+    await expect(
+      client.getScene({ iTwinId: ITWIN_ID, sceneId }),
+    ).rejects.toMatchObject({
+      status: 404,
+      code: "SceneNotFound",
+    } as ScenesApiError);
+  });
 
   it("create multiple objects", async () => {
     const multi = await client.postObjects({
       iTwinId: ITWIN_ID,
-      sceneId: SCENE_ID,
+      sceneId,
       objects: [LAYER_OBJ, REPO_OBJ],
     });
 
@@ -180,7 +198,7 @@ describe("Scenes Objects operations", () => {
   it("patch object", async () => {
     const p1 = await client.patchObject({
       iTwinId: ITWIN_ID,
-      sceneId: SCENE_ID,
+      sceneId,
       objectId: obj1,
       object: { displayName: "Layer1Up" },
     });
@@ -190,7 +208,7 @@ describe("Scenes Objects operations", () => {
   it("patches objects", async () => {
     const p1 = await client.patchObjects({
       iTwinId: ITWIN_ID,
-      sceneId: SCENE_ID,
+      sceneId,
       objects: [
         {
           id: obj1,
@@ -202,7 +220,7 @@ describe("Scenes Objects operations", () => {
 
     const pAll = await client.patchObjects({
       iTwinId: ITWIN_ID,
-      sceneId: SCENE_ID,
+      sceneId,
       objects: [
         { id: obj1, displayName: "Layer1Again" },
         { id: obj2, displayName: "ResrcUp" },
@@ -216,7 +234,7 @@ describe("Scenes Objects operations", () => {
   it("get single object", async () => {
     const res = await client.getObject({
       iTwinId: ITWIN_ID,
-      sceneId: SCENE_ID,
+      sceneId,
       objectId: obj1,
     });
 
@@ -228,7 +246,7 @@ describe("Scenes Objects operations", () => {
   it("get objects paged", async () => {
     const res = await client.getAllObjects({
       iTwinId: ITWIN_ID,
-      sceneId: SCENE_ID,
+      sceneId,
     });
 
     let found = false;
@@ -248,13 +266,13 @@ describe("Scenes Objects operations", () => {
   it("delete object", async () => {
     await client.deleteObjects({
       iTwinId: ITWIN_ID,
-      sceneId: SCENE_ID,
+      sceneId,
       objectIds: [obj1, obj2],
     });
     await expect(
       client.getObject({
         iTwinId: ITWIN_ID,
-        sceneId: SCENE_ID,
+        sceneId,
         objectId: obj2,
       }),
     ).rejects.toMatchObject({ code: "SceneObjectNotFound" } as ScenesApiError);
