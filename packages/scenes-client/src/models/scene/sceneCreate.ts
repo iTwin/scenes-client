@@ -14,13 +14,12 @@ export interface SceneDataCreate {
 export interface SceneCreate {
   /** Optional identifier for the scene object (UUID) */
   id?: string;
-
   /** User defined display name of the scene */
   displayName: string;
-
+  /** Optional detailed description of the scene */
+  description?: string;
   /** Optional parent Id for the scene (UUID) */
   parentId?: string;
-
   /** Scene informational objects */
   sceneData?: SceneDataCreate;
 }
