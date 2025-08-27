@@ -1,5 +1,11 @@
 # @bentley/scenes-client
 
+## 0.4.1
+
+### Patch Changes
+
+- 80cab4e: Add optional `description` field to Scene interfaces. Enables detailed scene descriptions alongside display names.
+
 ## 0.4.0
 
 ### Minor Changes
