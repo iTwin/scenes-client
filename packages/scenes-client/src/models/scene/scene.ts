@@ -10,6 +10,8 @@ export interface Scene {
   parentId?: string;
   /** User defined display name of the scene */
   displayName: string;
+  /** Optional detailed description of the scene */
+  description?: string;
   /** Scene informational objects. */
   sceneData: SceneData;
   /** Indicates sceneData was filtered because the user lacks necessary permissions to view all objects. */

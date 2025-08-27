@@ -127,10 +127,14 @@ describe("Scenes Operations", () => {
       createSuccessfulResponse(exampleSceneResponse),
     );
     const client = new SceneClient(getAccessToken);
+    const updateData = {
+      displayName: "Updated Scene",
+      description: "Updated Description",
+    };
     await client.patchScene({
       iTwinId: "itw-1",
       sceneId: "scene-1",
-      scene: { displayName: "Updated Scene" },
+      scene: updateData,
     });
 
     verifyFetch(fetchMock, {
@@ -140,7 +144,7 @@ describe("Scenes Operations", () => {
         Accept: "application/vnd.bentley.itwin-platform.v1+json",
       },
       method: "PATCH",
-      body: JSON.stringify({ displayName: "Updated Scene" }),
+      body: JSON.stringify(updateData),
     });
   });
 
@@ -529,6 +533,7 @@ const exampleSceneResponse: SceneResponse = {
   scene: {
     id: "scene-1",
     displayName: "Example Scene",
+    description: "Some Description XYZ123",
     iTwinId: "itwin-1",
     createdById: "user-1",
     creationTime: "2025-07-16T15:00:00.000Z",
@@ -551,6 +556,7 @@ const exampleSceneListResponse: SceneListResponse = {
     {
       id: "scene-1",
       displayName: "Example Scene",
+      description: "Some Description XYZ123",
       iTwinId: "itwin-1",
       createdById: "user-1",
       creationTime: "2025-07-16T15:00:00.000Z",

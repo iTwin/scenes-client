@@ -126,10 +126,11 @@ describe("Scenes operation", () => {
     const upd = await client.patchScene({
       iTwinId: ITWIN_ID,
       sceneId: sceneAId,
-      scene: { displayName: "UpdatedA" },
+      scene: { displayName: "UpdatedA", description: "UpdateB" },
     });
 
     expect(upd.scene.displayName).toBe("UpdatedA");
+    expect(upd.scene.description).toBe("UpdateB");
   });
 
   it("delete scene", async () => {
