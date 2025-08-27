@@ -127,7 +127,10 @@ describe("Scenes Operations", () => {
       createSuccessfulResponse(exampleSceneResponse),
     );
     const client = new SceneClient(getAccessToken);
-    const updateData = { displayName: "Updated Scene", description: "Updated Description" };
+    const updateData = {
+      displayName: "Updated Scene",
+      description: "Updated Description",
+    };
     await client.patchScene({
       iTwinId: "itw-1",
       sceneId: "scene-1",
