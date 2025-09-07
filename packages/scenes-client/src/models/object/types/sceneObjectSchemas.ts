@@ -140,6 +140,8 @@ export interface ScenesApiSchemas {
     "1.0.0": {
       /** Whether the layer is turned on or off */
       visible: boolean;
+      /** Id of the iTwin this repository resource is associated with */
+      iTwinId: Guid;
       /** Id of the repository. Should be the same as class for internal repos and a GUID for custom repos */
       repositoryId: SafeString;
       /** Id of the individual resource */

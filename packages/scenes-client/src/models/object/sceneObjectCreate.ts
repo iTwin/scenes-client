@@ -6,7 +6,6 @@ import {
   SchemaVersion,
 } from "./types/sceneObjectSchemas.js";
 import {
-  ITwinScopedSchemas,
   ResourceStylingSchemas,
   StandardSchemas,
 } from "./types/schemaCategories.js";
@@ -59,28 +58,6 @@ export interface ResourceStylingObjectCreate<
 }
 
 /**
- * iTwin-scoped object creation interface.
- * Object will be associated to a specific iTwin via iTwinId
- *
- * @example
- * ```typescript
- * const repository: ITwinScopedObjectCreate = {
- *   kind: 'RepositoryResource',
- *   version: '1.0.0',
- *   iTwinId: '<iTwin_id>',
- *   data: { repositoryId: '<repo_id>',  id: '<resource_id>', class: '<repo_class>', visible: true }
- * };
- * ```
- */
-export interface ITwinScopedObjectCreate<
-  K extends ITwinScopedSchemas = ITwinScopedSchemas,
-  V extends SchemaVersion<K> = SchemaVersion<K>,
-> extends BaseSceneObjectCreate<K, V> {
-  /** iTwin Id the scene object is associated with (UUID) */
-  iTwinId: string;
-}
-
-/**
  * Standard scene object creation interface.
  * Use for most objects, no extra requirements beyond base properties
  */
@@ -96,8 +73,7 @@ export interface StandardObjectCreate<
  */
 export type SceneObjectCreate =
   | StandardObjectCreate
-  | ResourceStylingObjectCreate
-  | ITwinScopedObjectCreate;
+  | ResourceStylingObjectCreate;
 
 /**
  * Interface for creating multiple scene objects
@@ -125,7 +101,6 @@ export function isSceneObjectCreate(v: unknown): v is SceneObjectCreate {
     typeof v.version === "string" &&
     typeof v.kind === "string" &&
     (v.parentId === undefined || typeof v.parentId === "string") &&
-    (v.iTwinId === undefined || typeof v.iTwinId === "string") &&
     (v.relatedId === undefined || typeof v.relatedId === "string") &&
     isObject(v.data)
   );

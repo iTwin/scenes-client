@@ -30,8 +30,8 @@ const LAYER_OBJ: SceneObjectCreate = {
 const REPO_OBJ: SceneObjectCreate = {
   kind: "RepositoryResource",
   version: "1.0.0",
-  iTwinId: ITWIN_ID,
   data: {
+    iTwinId: ITWIN_ID,
     visible: true,
     id: IMODEL_ID,
     class: "iModels",

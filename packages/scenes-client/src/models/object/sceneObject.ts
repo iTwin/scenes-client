@@ -3,12 +3,10 @@ import { isObject } from "../../utilities.js";
 import {
   isSceneObjectCreate,
   ResourceStylingObjectCreate,
-  ITwinScopedObjectCreate,
   StandardObjectCreate,
 } from "./sceneObjectCreate.js";
 import { SchemaVersion } from "./types/sceneObjectSchemas.js";
 import {
-  ITwinScopedSchemas,
   ResourceStylingSchemas,
   StandardSchemas,
 } from "./types/schemaCategories.js";
@@ -40,16 +38,7 @@ export interface ResourceStylingObject<
     SceneObjectResponseMetadata {}
 
 /**
- * Scene object that is iTwin-scoped (ex: RepositoryResource)
- */
-export interface ITwinScopedObject<
-  K extends ITwinScopedSchemas = ITwinScopedSchemas,
-  V extends SchemaVersion<K> = SchemaVersion<K>,
-> extends Omit<ITwinScopedObjectCreate<K, V>, "id">,
-    SceneObjectResponseMetadata {}
-
-/**
- * Standard scene object (ex: Layer, View3d, UnrealAtmosphericStyling)
+ * Standard scene object (ex: Layer, RepositoryResource, View3d, UnrealAtmosphericStyling)
  */
 export interface StandardObject<
   K extends StandardSchemas = StandardSchemas,
@@ -61,10 +50,7 @@ export interface StandardObject<
  * Union type representing all possible scene object responses.
  * Automatically resolves to the appropriate interface based on schema kind
  */
-export type SceneObject =
-  | StandardObject
-  | ResourceStylingObject
-  | ITwinScopedObject;
+export type SceneObject = StandardObject | ResourceStylingObject;
 
 export function isSceneObject(v: unknown): v is SceneObject {
   return (

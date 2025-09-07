@@ -26,9 +26,9 @@ Scene objects are:
 {
   "kind": "Layer",
   "version": "1.0.0",
+  "displayName": "Exton Campus - Main Building",
   "data": {
-    "visible": true,
-    "displayName": "Exton Campus - Main Building"
+    "visible": true
   }
 }
 ```
@@ -43,8 +43,8 @@ Scene objects are:
   "displayName": "Main Building Model",
   "kind": "RepositoryResource",
   "version": "1.0.0",
-  "iTwinId": "fa6e86b2-da9a-4fdc-a1bd-4a707b696d32",
   "data": {
+    "iTwinId": "fa6e86b2-da9a-4fdc-a1bd-4a707b696d32",
     "class": "iModels",
     "repositoryId": "iModels",
     "id": "c2fdfb84-bedb-409d-8527-fe519c85abe2",
@@ -131,9 +131,9 @@ Scene: "Construction Site Overview"
         "id": "709f6a9d-d791-4e6c-9154-1b8fffbab3c1",
         "kind": "Layer",
         "version": "1.0.0",
+        "displayName": "Buildings",
         "data": {
-          "visible": true,
-          "displayName": "Buildings"
+          "visible": true
         }
       },
 
@@ -144,8 +144,8 @@ Scene: "Construction Site Overview"
         "kind": "RepositoryResource",
         "version": "1.0.0",
         "parentId": "709f6a9d-d791-4e6c-9154-1b8fffbab3c1", // References Buildings Layer
-        "iTwinId": "64060a14-d545-4fff-b3b0-4c31291e7a00",
         "data": {
+          "iTwinId": "64060a14-d545-4fff-b3b0-4c31291e7a00",
           "class": "iModels",
           "repositoryId": "iModels",
           "id": "ba9bdbbf-59f9-41aa-a4e3-6fbd8d6bd068",
@@ -178,9 +178,9 @@ Scene: "Construction Site Overview"
         "id": "3bc3a0c0-75e8-498b-901a-7290f57f7b40",
         "kind": "Layer",
         "version": "1.0.0",
+        "displayName": "Utilities",
         "data": {
-          "visible": true,
-          "displayName": "Utilities"
+          "visible": true
         }
       },
 
@@ -191,8 +191,8 @@ Scene: "Construction Site Overview"
         "kind": "RepositoryResource",
         "version": "1.0.0",
         "parentId": "3bc3a0c0-75e8-498b-901a-7290f57f7b40", // References Utilities Layer
-        "iTwinId": "64060a14-d545-4fff-b3b0-4c31291e7a00",
         "data": {
+          "iTwinId": "64060a14-d545-4fff-b3b0-4c31291e7a00",
           "class": "iModels",
           "repositoryId": "iModels",
           "id": "6bbcf593-6160-4d83-9c07-1a69e4cc29fb",

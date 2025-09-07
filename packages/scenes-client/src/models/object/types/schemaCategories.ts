@@ -8,11 +8,5 @@ export type ResourceStylingSchemas =
   | "iModelVisibility"
   | "RealityDataStyling";
 
-/** Schemas that define iTwin-scoped resources */
-export type ITwinScopedSchemas = "RepositoryResource";
-
 /** Standard schemas without additional metadata requirements */
-export type StandardSchemas = Exclude<
-  SchemaKind,
-  ResourceStylingSchemas | ITwinScopedSchemas
->;
+export type StandardSchemas = Exclude<SchemaKind, ResourceStylingSchemas>;
