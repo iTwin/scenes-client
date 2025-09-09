@@ -1,12 +1,7 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
-import type {
-  ResourceStylingObject,
-  ITwinScopedObject,
-  StandardObject,
-} from "../sceneObject.js";
+import type { ResourceStylingObject, StandardObject } from "../sceneObject.js";
 import type {
   ResourceStylingObjectCreate,
-  ITwinScopedObjectCreate,
   StandardObjectCreate,
 } from "../sceneObjectCreate.js";
 
@@ -43,7 +38,7 @@ export type MovieCreateV1 = StandardObjectCreate<"Movie", "1.0.0">;
 export type MovieCreate = MovieCreateV1;
 
 /** RepositoryResource (v1.0.0) Scene Object Creation Type */
-export type RepositoryResourceCreateV1 = ITwinScopedObjectCreate<
+export type RepositoryResourceCreateV1 = StandardObjectCreate<
   "RepositoryResource",
   "1.0.0"
 >;
@@ -141,7 +136,7 @@ export type MovieV1 = StandardObject<"Movie", "1.0.0">;
 export type Movie = MovieV1;
 
 /** RepositoryResource (v1.0.0) Scene Object Response Type. */
-export type RepositoryResourceV1 = ITwinScopedObject<
+export type RepositoryResourceV1 = StandardObject<
   "RepositoryResource",
   "1.0.0"
 >;

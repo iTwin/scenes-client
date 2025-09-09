@@ -223,15 +223,15 @@ const layer: LayerCreate = {
   },
 };
 
-// Note: RepositoryResourceCreate is an alias for ITwinScopedObjectCreate<"RepositoryResource", "1.0.0">
+// Note: RepositoryResourceCreate is an alias for StandardObjectCreate<"RepositoryResource", "1.0.0">
 const iModelResource: RepositoryResourceCreate = {
   id: "<imodel_object_id>",
   kind: "RepositoryResource",
   version: "1.0.0",
   displayName: "Main Building Model",
   parentId: "<layer_id>", // Organize under the layer
-  iTwinId: "<itwin_id>", // Required for iTwin-scoped objects
   data: {
+    iTwinId: "<itwin_id>",
     class: "iModels",
     repositoryId: "iModels",
     id: "<imodel_id>",
@@ -291,10 +291,10 @@ createResponse.objects.forEach((obj: SceneObject) => {
 #### Update Scene Objects
 
 ```ts
-import { SceneObjectUpdate, SceneObjectUpdateById, MetadataSceneObjectUpdate, StandardSceneObjectDataUpdate } from "@bentley/scenes-client";
+import { SceneObjectUpdate, SceneObjectUpdateById } from "@bentley/scenes-client";
 
 // Update data for a specific object with type safety
-const objectUpdate: StandardSceneObjectDataUpdate<"GoogleTilesStyling", "1.0.0"> = {
+const objectUpdate: SceneObjectUpdate<"GoogleTilesStyling", "1.0.0"> = {
   displayName: "Updated Global Styling Options",
   data: { // Fully typed - IntelliSense shows available properties
     quality: 0.30000001192092896,
@@ -349,7 +349,7 @@ await client.deleteObjects({
 This client provides strongly typed interfaces for all scene object operations, giving you compile-time validation:
 
 ```ts
-import { StandardObjectCreate, ITwinScopedObjectCreate, ResourceStylingObjectCreate } from "@bentley/scenes-client";
+import { StandardObjectCreate, ResourceStylingObjectCreate } from "@bentley/scenes-client";
 
 // Each schema has its own typed interface
 const camera: StandardObjectCreate<"CameraAnimation", "1.0.0"> = {
@@ -368,20 +368,6 @@ const camera: StandardObjectCreate<"CameraAnimation", "1.0.0"> = {
         },
       },
     ],
-  },
-};
-
-// iTwin-scoped objects automatically require iTwinId
-const repository: ITwinScopedObjectCreate<"RepositoryResource", "1.0.0"> = {
-  kind: "RepositoryResource",
-  version: "1.0.0",
-  iTwinId: "<itwin_id>", // TypeScript enforces this field
-  data: {
-    // IntelliSense shows RepositoryResource specific properties
-    class: "iModels",
-    repositoryId: "iModels",
-    id: "<imodel_id>",
-    visible: true,
   },
 };
 
