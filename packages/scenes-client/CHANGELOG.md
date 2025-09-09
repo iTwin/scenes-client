@@ -1,5 +1,16 @@
 # @bentley/scenes-client
 
+## 0.5.0
+
+### Minor Changes
+
+- ad1998e: Move `iTwinId` from metadata to `RepositoryResource` schema
+
+  **Breaking Changes:**
+  - Remove `ITwinScopedObjectCreate` and `ITwinScopedObject` interfaces
+  - Add `iTwinId` as required field in `RepositoryResource` schema data
+  - Consolidate object update interfaces into single `SceneObjectUpdate` interface for all kinds
+
 ## 0.4.1
 
 ### Patch Changes
