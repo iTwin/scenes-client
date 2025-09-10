@@ -1,5 +1,4 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
-
 import { isObject } from "../../utilities.js";
 import {
   isSceneObjectMinimal,

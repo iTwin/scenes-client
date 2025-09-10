@@ -14,7 +14,9 @@ export type ITwinParams = { iTwinId: string };
 export type SceneParams = ITwinParams & { sceneId: string };
 export type ObjectParams = SceneParams & { objectId: string };
 
-export type GetSceneParams = SceneParams & Pick<GetObjectsOptions, "orderBy">;
+export type GetSceneParams = SceneParams;
+export type GetSceneInfoParams = SceneParams &
+  Pick<GetObjectsOptions, "orderBy">;
 export type GetScenesParams = ITwinParams & Omit<GetScenesOptions, "delayMs">;
 export type GetAllScenesParams = ITwinParams & GetScenesOptions;
 export type PostSceneParams = ITwinParams & { scene: SceneCreate };

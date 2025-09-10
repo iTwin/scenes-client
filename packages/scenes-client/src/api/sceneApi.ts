@@ -13,25 +13,30 @@ import {
   DeleteSceneParams,
   GetScenesParams,
   handleErrorResponse,
+  SceneObject,
+  SceneInfoResponse,
+  isSceneInfoResponse,
+  GetSceneInfoParams,
+  GET_OBJECTS_DEFAULTS,
 } from "../models/index.js";
 import { iteratePagedEndpoint } from "../utilities.js";
 import { callApi, AuthArgs } from "./apiFetch.js";
+import { getAllObjects } from "./sceneObjectApi.js";
 
 /**
- * Fetches a single scene by its ID.
+ * Fetches a single scene by its ID (minimal representation with object links).
  * @param params - {@link GetSceneParams}
- * @returns Scene details.
+ * @returns Scene metadata and relevant links.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
 export async function getScene({
   sceneId,
-  orderBy,
   iTwinId,
   getAccessToken,
   baseUrl,
 }: GetSceneParams & AuthArgs): Promise<SceneResponse> {
   return callApi<SceneResponse>({
-    endpoint: `/${sceneId}?iTwinId=${iTwinId}&orderBy=${orderBy}`,
+    endpoint: `/${sceneId}?iTwinId=${iTwinId}`,
     getAccessToken,
     postProcess: async (response) => {
       if (!response.ok) {
@@ -54,6 +59,56 @@ export async function getScene({
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
     },
   });
+}
+
+/**
+ * Fetches complete scene information including all objects (full representation).
+ * @param params - {@link GetSceneInfoParams}
+ * @returns Scene metadata plus complete object info.
+ * @throws {ScenesApiError} If the API call fails or the response format is invalid.
+ */
+export async function getSceneInfo({
+  sceneId,
+  orderBy,
+  iTwinId,
+  getAccessToken,
+  baseUrl,
+}: GetSceneInfoParams & AuthArgs): Promise<SceneInfoResponse> {
+  const args = { sceneId, iTwinId, getAccessToken, baseUrl };
+  const opts = {
+    top: GET_OBJECTS_DEFAULTS.top,
+    skip: GET_OBJECTS_DEFAULTS.skip,
+    delayMs: GET_OBJECTS_DEFAULTS.delayMs,
+    orderBy: orderBy ?? GET_OBJECTS_DEFAULTS.orderBy,
+  };
+
+  const collectObjects = async () => {
+    const objects: SceneObject[] = [];
+    let isPartial: boolean | undefined;
+
+    const iterable = getAllObjects(args, opts);
+    for await (const page of iterable) {
+      objects.push(...page.objects);
+      // Extract isPartial from the first page (sceneContext is consistent across all pages)
+      if (isPartial === undefined) {
+        isPartial = page.sceneContext.isPartial;
+      }
+    }
+    return { objects, isPartial };
+  };
+
+  const [minimalScene, { objects, isPartial }] = await Promise.all([
+    getScene(args),
+    collectObjects(),
+  ]);
+
+  return {
+    scene: {
+      ...minimalScene.scene,
+      isPartial,
+      sceneData: { objects },
+    },
+  };
 }
 
 /**
@@ -152,8 +207,8 @@ export async function postScene({
   scene,
   getAccessToken,
   baseUrl,
-}: PostSceneParams & AuthArgs): Promise<SceneResponse> {
-  return callApi<SceneResponse>({
+}: PostSceneParams & AuthArgs): Promise<SceneInfoResponse> {
+  return callApi<SceneInfoResponse>({
     endpoint: `?iTwinId=${iTwinId}`,
     getAccessToken,
     baseUrl,
@@ -162,7 +217,7 @@ export async function postScene({
         await handleErrorResponse(response);
       }
       const responseJson = await response.json();
-      if (!isSceneResponse(responseJson)) {
+      if (!isSceneInfoResponse(responseJson)) {
         throw new ScenesApiError(
           {
             code: "InvalidResponse",

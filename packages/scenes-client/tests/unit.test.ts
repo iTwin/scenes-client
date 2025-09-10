@@ -14,6 +14,7 @@ import {
   GET_SCENES_DEFAULTS,
   OrderByProperties,
   PagingLinks,
+  SceneInfoResponse,
   SceneListResponse,
   SceneObjectListResponse,
   SceneObjectPagedResponse,
@@ -38,10 +39,49 @@ describe("Scenes Operations", () => {
     await client.getScene({
       iTwinId: "itw-1",
       sceneId: "scene-1",
-      orderBy: OrderByProperties.NAME,
     });
     verifyFetch(fetchMock, {
-      url: `${BASE_DOMAIN}/scene-1?iTwinId=itw-1&orderBy=displayName`,
+      url: `${BASE_DOMAIN}/scene-1?iTwinId=itw-1`,
+      headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
+    });
+  });
+
+  it("getSceneInfo()", async () => {
+    fetchMock.mockImplementation((url: string) => {
+      if (url.includes("/objects?")) {
+        // Mock the getAllObjects call
+        return createSuccessfulResponse(exampleSceneObjectPagedResponse);
+      } else {
+        // Mock the getScene call
+        return createSuccessfulResponse(exampleSceneResponse);
+      }
+    });
+
+    const client = new SceneClient(getAccessToken);
+    const result = await client.getSceneInfo({
+      iTwinId: "itw-1",
+      sceneId: "scene-1",
+      orderBy: OrderByProperties.NAME,
+    });
+
+    // Verify returned SceneInfoResponse format
+    expect(result).toMatchObject({
+      scene: {
+        ...exampleSceneResponse.scene,
+        isPartial: exampleSceneObjectPagedResponse.sceneContext.isPartial,
+        sceneData: { objects: exampleSceneObjectPagedResponse.objects },
+      },
+    });
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    // First internal call should have been to get the scene
+    verifyNthFetch(fetchMock, 1, {
+      url: `${BASE_DOMAIN}/scene-1?iTwinId=itw-1`,
+      headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
+    });
+    // Second internal call should have been to get the objects
+    verifyNthFetch(fetchMock, 2, {
+      url: `${BASE_DOMAIN}/scene-1/objects?iTwinId=itw-1&$top=100&$skip=0&orderBy=displayName`,
       headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
     });
   });
@@ -97,7 +137,7 @@ describe("Scenes Operations", () => {
 
   it("postScene()", async () => {
     fetchMock.mockImplementation(() =>
-      createSuccessfulResponse(exampleSceneResponse),
+      createSuccessfulResponse(exampleSceneInfoResponse),
     );
     const client = new SceneClient(getAccessToken);
     await client.postScene({
@@ -525,11 +565,27 @@ function verifyFetch(mock: ReturnType<typeof vi.fn>, args: VerifyFetchArgs) {
   });
 }
 
+function verifyNthFetch(
+  mock: ReturnType<typeof vi.fn>,
+  n: number,
+  args: VerifyFetchArgs,
+) {
+  expect(mock).toHaveBeenNthCalledWith(n, args.url, {
+    method: args.method,
+    headers: {
+      Authorization: "test_auth_token",
+      ...args.headers,
+    },
+    ...(args.body !== undefined ? { body: args.body } : {}),
+  });
+}
+
 // mock responses
 const links: PagingLinks = {
   self: { href: "/scenes?page=1" },
 };
-const exampleSceneResponse: SceneResponse = {
+
+const exampleSceneInfoResponse: SceneInfoResponse = {
   scene: {
     id: "scene-1",
     displayName: "Example Scene",
@@ -547,6 +603,23 @@ const exampleSceneResponse: SceneResponse = {
           data: { visible: true },
         },
       ],
+    },
+  },
+};
+
+const exampleSceneResponse: SceneResponse = {
+  scene: {
+    id: "scene-1",
+    displayName: "Example Scene",
+    description: "Some Description XYZ123",
+    iTwinId: "itwin-1",
+    createdById: "user-1",
+    creationTime: "2025-07-16T15:00:00.000Z",
+    lastModified: "2025-07-16T15:00:00.000Z",
+    sceneData: {
+      objects: {
+        href: `${BASE_DOMAIN}/scene-1/objects?iTwinId=itwin-1`,
+      },
     },
   },
 };
@@ -586,4 +659,9 @@ const exampleSceneObjectListResponse: SceneObjectListResponse = {
 const exampleSceneObjectPagedResponse: SceneObjectPagedResponse = {
   ...exampleSceneObjectListResponse,
   _links: links,
+  sceneContext: {
+    displayName: exampleSceneResponse.scene.displayName,
+    lastModified: exampleSceneResponse.scene.lastModified,
+    isPartial: true,
+  },
 };

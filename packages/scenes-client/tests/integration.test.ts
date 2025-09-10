@@ -87,7 +87,7 @@ describe("Scenes operation", () => {
     expect(sceneBId).toBeDefined();
   });
 
-  it("get scene by id", async () => {
+  it("get scene and objects by id", async () => {
     // Use the ID saved from the createScene test
     const res = await client.getScene({ iTwinId: ITWIN_ID, sceneId: sceneAId });
 
@@ -96,13 +96,24 @@ describe("Scenes operation", () => {
     expect(res.scene.displayName).toBe("TestSceneA");
     expect(res.scene.iTwinId).toBe(ITWIN_ID);
 
-    // Verify the sceneData.objects array contains both objects
-    expect(res.scene.sceneData.objects).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining(LAYER_OBJ),
-        expect.objectContaining(REPO_OBJ),
-      ]),
+    // Verify the sceneData.objects link
+    expect(res.scene.sceneData?.objects).toBeDefined();
+    expect(res.scene.sceneData.objects.href).toEqual(
+      `${HOST_URL}/${sceneAId}/objects?iTwinId=${ITWIN_ID}`,
     );
+  });
+
+  it("get scene metadata by id", async () => {
+    // Use the ID saved from the createScene test
+    const res = await client.getSceneInfo({
+      iTwinId: ITWIN_ID,
+      sceneId: sceneAId,
+    });
+
+    // Basic identity checks
+    expect(res.scene.id).toBe(sceneAId);
+    expect(res.scene.displayName).toBe("TestSceneA");
+    expect(res.scene.iTwinId).toBe(ITWIN_ID);
   });
 
   it("get scenes paged", async () => {
