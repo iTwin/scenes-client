@@ -10,11 +10,14 @@ export * from "./object/types/sceneObjectTypes.js";
 export * from "./object/types/schemaCategories.js";
 
 export * from "./scene/getScenesOptions.js";
-export * from "./scene/sceneWithLinks.js";
+export * from "./scene/scene.js";
+export * from "./scene/sceneContext.js";
 export * from "./scene/sceneCreate.js";
 export * from "./scene/sceneData.js";
+export * from "./scene/sceneDataLinks.js";
 export * from "./scene/sceneMinimal.js";
 export * from "./scene/sceneUpdate.js";
+export * from "./scene/sceneWithLinks.js";
 
 export * from "./apiParams.js";
 export * from "./apiResponse.js";
