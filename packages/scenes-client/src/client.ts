@@ -72,7 +72,7 @@ export class SceneClient {
    * @param params.iTwinId – The iTwin's unique identifier.
    * @param params.sceneId – The scene's unique identifier.
    * @param params.orderBy – Property to sort the returned sceneData.objects (optional, defaults to kind).
-   * @returns SceneInfoResponse containing the Scene's details and its objects.
+   * @returns SceneResponse containing the Scene's details and its objects.
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async getScene(params: GetSceneParams): Promise<SceneResponse> {
@@ -89,7 +89,7 @@ export class SceneClient {
    * Fetch a single scene by its ID (minimal representation including links).
    * @param params.iTwinId – The iTwin's unique identifier.
    * @param params.sceneId – The scene's unique identifier.
-   * @returns SceneResponse containing the Scene's details.
+   * @returns SceneMetadataResponse containing the Scene's metadata and links.
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async getSceneMetadata(

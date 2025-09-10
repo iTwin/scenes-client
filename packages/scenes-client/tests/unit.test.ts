@@ -14,7 +14,6 @@ import {
   GET_SCENES_DEFAULTS,
   OrderByProperties,
   PagingLinks,
-  SceneInfoResponse,
   SceneListResponse,
   SceneObjectListResponse,
   SceneObjectPagedResponse,
@@ -64,7 +63,7 @@ describe("Scenes Operations", () => {
       orderBy: OrderByProperties.NAME,
     });
 
-    // Verify returned SceneInfoResponse format
+    // Verify returned SceneResponse format
     expect(result).toMatchObject({
       scene: {
         ...exampleSceneResponse.scene,
@@ -585,7 +584,7 @@ const links: PagingLinks = {
   self: { href: "/scenes?page=1" },
 };
 
-const exampleSceneInfoResponse: SceneInfoResponse = {
+const exampleSceneInfoResponse: SceneResponse = {
   scene: {
     id: "scene-1",
     displayName: "Example Scene",
@@ -607,7 +606,7 @@ const exampleSceneInfoResponse: SceneInfoResponse = {
   },
 };
 
-const exampleSceneResponse: SceneResponse = {
+const exampleSceneResponse: SceneMetadataResponse = {
   scene: {
     id: "scene-1",
     displayName: "Example Scene",
