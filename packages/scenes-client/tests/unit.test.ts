@@ -31,12 +31,12 @@ afterAll(() => vi.unstubAllGlobals());
 afterEach(() => fetchMock.mockReset());
 
 describe("Scenes Operations", () => {
-  it("getScene()", async () => {
+  it("getSceneMetadata()", async () => {
     fetchMock.mockImplementation(() =>
       createSuccessfulResponse(exampleSceneResponse),
     );
     const client = new SceneClient(getAccessToken);
-    await client.getScene({
+    await client.getSceneMetadata({
       iTwinId: "itw-1",
       sceneId: "scene-1",
     });
@@ -46,7 +46,7 @@ describe("Scenes Operations", () => {
     });
   });
 
-  it("getSceneInfo()", async () => {
+  it("getScene()", async () => {
     fetchMock.mockImplementation((url: string) => {
       if (url.includes("/objects?")) {
         // Mock the getAllObjects call
@@ -58,7 +58,7 @@ describe("Scenes Operations", () => {
     });
 
     const client = new SceneClient(getAccessToken);
-    const result = await client.getSceneInfo({
+    const result = await client.getScene({
       iTwinId: "itw-1",
       sceneId: "scene-1",
       orderBy: OrderByProperties.NAME,

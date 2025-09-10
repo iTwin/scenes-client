@@ -7,7 +7,7 @@ import {
   patchScene,
   deleteScene,
   getScenes,
-  getSceneInfo,
+  getSceneMetadata,
 } from "./api/sceneApi.js";
 import {
   postObjects,
@@ -42,8 +42,8 @@ import {
   GetScenesParams,
   GetObjectsParams,
   PatchObjectParam,
-  SceneInfoResponse,
-  GetSceneInfoParams,
+  GetSceneMetadataParams,
+  SceneMetadataResponse,
 } from "./models/index.js";
 
 type AccessTokenFn = () => Promise<string>;
@@ -68,22 +68,6 @@ export class SceneClient {
   }
 
   /**
-   * Fetch a single scene by its ID (minimal representation).
-   * @param params.iTwinId – The iTwin's unique identifier.
-   * @param params.sceneId – The scene's unique identifier.
-   * @returns SceneResponse containing the Scene's details.
-   * @throws {ScenesApiError} If the API call fails or the response format is invalid.
-   */
-  async getScene(params: GetSceneParams): Promise<SceneResponse> {
-    return getScene({
-      iTwinId: params.iTwinId,
-      sceneId: params.sceneId,
-      getAccessToken: this.getAccessToken,
-      baseUrl: this.baseUrl,
-    });
-  }
-
-  /**
    * Fetch a single scene by ID (full representation including objects).
    * @param params.iTwinId – The iTwin's unique identifier.
    * @param params.sceneId – The scene's unique identifier.
@@ -91,11 +75,29 @@ export class SceneClient {
    * @returns SceneInfoResponse containing the Scene's details and its objects.
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
-  async getSceneInfo(params: GetSceneInfoParams): Promise<SceneInfoResponse> {
-    return getSceneInfo({
+  async getScene(params: GetSceneParams): Promise<SceneResponse> {
+    return getScene({
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,
       orderBy: params.orderBy ?? GET_OBJECTS_DEFAULTS.orderBy,
+      getAccessToken: this.getAccessToken,
+      baseUrl: this.baseUrl,
+    });
+  }
+
+  /**
+   * Fetch a single scene by its ID (minimal representation including links).
+   * @param params.iTwinId – The iTwin's unique identifier.
+   * @param params.sceneId – The scene's unique identifier.
+   * @returns SceneResponse containing the Scene's details.
+   * @throws {ScenesApiError} If the API call fails or the response format is invalid.
+   */
+  async getSceneMetadata(
+    params: GetSceneMetadataParams,
+  ): Promise<SceneMetadataResponse> {
+    return getSceneMetadata({
+      iTwinId: params.iTwinId,
+      sceneId: params.sceneId,
       getAccessToken: this.getAccessToken,
       baseUrl: this.baseUrl,
     });
@@ -154,7 +156,7 @@ export class SceneClient {
    * @returns SceneResponse containing the created Scene's details.
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
-  async postScene(params: PostSceneParams): Promise<SceneInfoResponse> {
+  async postScene(params: PostSceneParams): Promise<SceneResponse> {
     return postScene({
       iTwinId: params.iTwinId,
       scene: params.scene,
@@ -171,7 +173,7 @@ export class SceneClient {
    * @returns  SceneResponse containing the updated Scene's details.
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
-  async patchScene(params: PatchSceneParams): Promise<SceneResponse> {
+  async patchScene(params: PatchSceneParams): Promise<SceneMetadataResponse> {
     return patchScene({
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,

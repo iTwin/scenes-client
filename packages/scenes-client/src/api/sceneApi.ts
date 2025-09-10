@@ -14,10 +14,10 @@ import {
   GetScenesParams,
   handleErrorResponse,
   SceneObject,
-  SceneInfoResponse,
-  isSceneInfoResponse,
-  GetSceneInfoParams,
   GET_OBJECTS_DEFAULTS,
+  GetSceneMetadataParams,
+  isSceneMetadataResponse,
+  SceneMetadataResponse,
 } from "../models/index.js";
 import { iteratePagedEndpoint } from "../utilities.js";
 import { callApi, AuthArgs } from "./apiFetch.js";
@@ -29,13 +29,13 @@ import { getAllObjects } from "./sceneObjectApi.js";
  * @returns Scene metadata and relevant links.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
-export async function getScene({
+export async function getSceneMetadata({
   sceneId,
   iTwinId,
   getAccessToken,
   baseUrl,
-}: GetSceneParams & AuthArgs): Promise<SceneResponse> {
-  return callApi<SceneResponse>({
+}: GetSceneMetadataParams & AuthArgs): Promise<SceneMetadataResponse> {
+  return callApi<SceneMetadataResponse>({
     endpoint: `/${sceneId}?iTwinId=${iTwinId}`,
     getAccessToken,
     postProcess: async (response) => {
@@ -43,7 +43,7 @@ export async function getScene({
         await handleErrorResponse(response);
       }
       const responseJson = await response.json();
-      if (!isSceneResponse(responseJson)) {
+      if (!isSceneMetadataResponse(responseJson)) {
         throw new ScenesApiError(
           {
             code: "InvalidResponse",
@@ -62,18 +62,18 @@ export async function getScene({
 }
 
 /**
- * Fetches complete scene information including all objects (full representation).
+ * Fetches a single scene and all its all objects by ID.
  * @param params - {@link GetSceneInfoParams}
- * @returns Scene metadata plus complete object info.
+ * @returns Scene details.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
-export async function getSceneInfo({
+export async function getScene({
   sceneId,
   orderBy,
   iTwinId,
   getAccessToken,
   baseUrl,
-}: GetSceneInfoParams & AuthArgs): Promise<SceneInfoResponse> {
+}: GetSceneParams & AuthArgs): Promise<SceneResponse> {
   const args = { sceneId, iTwinId, getAccessToken, baseUrl };
   const opts = {
     top: GET_OBJECTS_DEFAULTS.top,
@@ -98,7 +98,7 @@ export async function getSceneInfo({
   };
 
   const [minimalScene, { objects, isPartial }] = await Promise.all([
-    getScene(args),
+    getSceneMetadata(args),
     collectObjects(),
   ]);
 
@@ -207,8 +207,8 @@ export async function postScene({
   scene,
   getAccessToken,
   baseUrl,
-}: PostSceneParams & AuthArgs): Promise<SceneInfoResponse> {
-  return callApi<SceneInfoResponse>({
+}: PostSceneParams & AuthArgs): Promise<SceneResponse> {
+  return callApi<SceneResponse>({
     endpoint: `?iTwinId=${iTwinId}`,
     getAccessToken,
     baseUrl,
@@ -217,7 +217,7 @@ export async function postScene({
         await handleErrorResponse(response);
       }
       const responseJson = await response.json();
-      if (!isSceneInfoResponse(responseJson)) {
+      if (!isSceneResponse(responseJson)) {
         throw new ScenesApiError(
           {
             code: "InvalidResponse",
@@ -242,7 +242,7 @@ export async function postScene({
 }
 
 /**
- * Updates an existing scene.
+ * Updates an existing scene's metadata.
  * @param params - {@link PatchSceneParams}
  * @returns Updated scene details.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
@@ -253,8 +253,8 @@ export async function patchScene({
   scene,
   getAccessToken,
   baseUrl,
-}: PatchSceneParams & AuthArgs): Promise<SceneResponse> {
-  return callApi<SceneResponse>({
+}: PatchSceneParams & AuthArgs): Promise<SceneMetadataResponse> {
+  return callApi<SceneMetadataResponse>({
     endpoint: `/${sceneId}?iTwinId=${iTwinId}`,
     getAccessToken,
     baseUrl,
@@ -263,7 +263,7 @@ export async function patchScene({
         await handleErrorResponse(response);
       }
       const responseJson = await response.json();
-      if (!isSceneResponse(responseJson)) {
+      if (!isSceneMetadataResponse(responseJson)) {
         throw new ScenesApiError(
           {
             code: "InvalidResponse",

@@ -4,8 +4,8 @@ import { isObject } from "../utilities.js";
 import { isSceneObject, SceneObject } from "./object/sceneObject.js";
 import { isScene, Scene } from "./scene/scene.js";
 import { isSceneContext, SceneContext } from "./scene/sceneContext.js";
-import { isSceneInfo, SceneInfo } from "./scene/sceneInfo.js";
 import { isSceneMinimal, SceneMinimal } from "./scene/sceneMinimal.js";
+import { isSceneWithLinks, SceneWithLinks } from "./scene/sceneWithLinks.js";
 
 /** Generic href link */
 export interface Link {
@@ -19,14 +19,14 @@ export interface PagingLinks {
   next?: Link;
 }
 
-/** Scene response with metadata and relevant links */
+/** Full scene response with complete information including objects */
 export interface SceneResponse {
   scene: Scene;
 }
 
-/** Scene response with complete information including objects */
-export interface SceneInfoResponse {
-  scene: SceneInfo;
+/** Scene response with metadata and links to resources */
+export interface SceneMetadataResponse {
+  scene: SceneWithLinks;
 }
 
 /** Scene list response model */
@@ -69,8 +69,10 @@ export function isSceneResponse(v: unknown): v is SceneResponse {
   return isObject(v) && isScene(v.scene);
 }
 
-export function isSceneInfoResponse(v: unknown): v is SceneInfoResponse {
-  return isObject(v) && isSceneInfo(v.scene);
+export function isSceneMetadataResponse(
+  v: unknown,
+): v is SceneMetadataResponse {
+  return isObject(v) && isSceneWithLinks(v.scene);
 }
 
 export function isSceneListResponse(v: unknown): v is SceneListResponse {
