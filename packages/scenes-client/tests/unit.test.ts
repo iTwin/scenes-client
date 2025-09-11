@@ -33,7 +33,7 @@ afterEach(() => fetchMock.mockReset());
 describe("Scenes Operations", () => {
   it("getSceneMetadata()", async () => {
     fetchMock.mockImplementation(() =>
-      createSuccessfulResponse(exampleSceneResponse),
+      createSuccessfulResponse(exampleSceneMetadataResponse),
     );
     const client = new SceneClient(getAccessToken);
     await client.getSceneMetadata({
@@ -53,7 +53,7 @@ describe("Scenes Operations", () => {
         return createSuccessfulResponse(exampleSceneObjectPagedResponse);
       } else {
         // Mock the getScene call
-        return createSuccessfulResponse(exampleSceneResponse);
+        return createSuccessfulResponse(exampleSceneMetadataResponse);
       }
     });
 
@@ -67,7 +67,7 @@ describe("Scenes Operations", () => {
     // Verify returned SceneResponse format
     expect(result).toMatchObject({
       scene: {
-        ...exampleSceneResponse.scene,
+        ...exampleSceneMetadataResponse.scene,
         isPartial: exampleSceneObjectPagedResponse.sceneContext.isPartial,
         sceneData: { objects: exampleSceneObjectPagedResponse.objects },
       },
@@ -136,7 +136,7 @@ describe("Scenes Operations", () => {
 
   it("postScene()", async () => {
     fetchMock.mockImplementation(() =>
-      createSuccessfulResponse(exampleSceneInfoResponse),
+      createSuccessfulResponse(exampleSceneResponse),
     );
     const client = new SceneClient(getAccessToken);
     await client.postScene({
@@ -163,7 +163,7 @@ describe("Scenes Operations", () => {
 
   it("patchScene()", async () => {
     fetchMock.mockImplementation(() =>
-      createSuccessfulResponse(exampleSceneResponse),
+      createSuccessfulResponse(exampleSceneMetadataResponse),
     );
     const client = new SceneClient(getAccessToken);
     const updateData = {
@@ -580,7 +580,7 @@ const links: PagingLinks = {
   self: { href: "/scenes?page=1" },
 };
 
-const exampleSceneInfoResponse: SceneResponse = {
+const exampleSceneResponse: SceneResponse = {
   scene: {
     id: "scene-1",
     displayName: "Example Scene",
@@ -602,7 +602,7 @@ const exampleSceneInfoResponse: SceneResponse = {
   },
 };
 
-const exampleSceneResponse: SceneMetadataResponse = {
+const exampleSceneMetadataResponse: SceneMetadataResponse = {
   scene: {
     id: "scene-1",
     displayName: "Example Scene",
