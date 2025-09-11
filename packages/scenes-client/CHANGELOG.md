@@ -1,5 +1,17 @@
 # @bentley/scenes-client
 
+## 0.6.0
+
+### Minor Changes
+
+- fe72919: - Update `getScene()` method to fetch all objects using pagination
+  - Add `getSceneMetadata()` method for fetching scene metadata with object links
+  - Add `SceneWithLinks` interface as the new return type for GET/PATCH scene endpoints
+  - Add `SceneContext` to `SceneObjectPagedResponse`, which gives context about the scene for requested objects
+
+  **Breaking change:**
+  - `updateScene()` now returns `SceneWithLinks` (scene metadata + links) instead of full scene with objects
+
 ## 0.5.0
 
 ### Minor Changes
