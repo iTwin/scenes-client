@@ -1,7 +1,7 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 import { isObject } from "../../utilities.js";
 
-/** Metadata about the scene context for API object responses */
+/** Context about the scene for requested objects */
 export interface SceneContext {
   /** User defined display name of the scene */
   displayName: string;

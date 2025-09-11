@@ -15,6 +15,7 @@ import {
   OrderByProperties,
   PagingLinks,
   SceneListResponse,
+  SceneMetadataResponse,
   SceneObjectListResponse,
   SceneObjectPagedResponse,
   SceneObjectResponse,
@@ -72,17 +73,16 @@ describe("Scenes Operations", () => {
       },
     });
 
-    expect(fetchMock).toHaveBeenCalledTimes(2);
-    // First internal call should have been to get the scene
-    verifyNthFetch(fetchMock, 1, {
-      url: `${BASE_DOMAIN}/scene-1?iTwinId=itw-1`,
-      headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
-    });
-    // Second internal call should have been to get the objects
-    verifyNthFetch(fetchMock, 2, {
-      url: `${BASE_DOMAIN}/scene-1/objects?iTwinId=itw-1&$top=100&$skip=0&orderBy=displayName`,
-      headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
-    });
+    verifyFetch(fetchMock, [
+      {
+        url: `${BASE_DOMAIN}/scene-1?iTwinId=itw-1`,
+        headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
+      },
+      {
+        url: `${BASE_DOMAIN}/scene-1/objects?iTwinId=itw-1&$top=100&$skip=0&orderBy=displayName`,
+        headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
+      },
+    ]);
   });
 
   it("getScenes()", async () => {
@@ -552,30 +552,26 @@ interface VerifyFetchArgs {
   body?: string;
 }
 
-function verifyFetch(mock: ReturnType<typeof vi.fn>, args: VerifyFetchArgs) {
-  expect(mock).toHaveBeenCalledTimes(1);
-  expect(mock).toHaveBeenCalledWith(args.url, {
-    method: args.method,
-    headers: {
-      Authorization: "test_auth_token",
-      ...args.headers,
-    },
-    ...(args.body !== undefined ? { body: args.body } : {}),
-  });
-}
-
-function verifyNthFetch(
+function verifyFetch(
   mock: ReturnType<typeof vi.fn>,
-  n: number,
-  args: VerifyFetchArgs,
+  args: VerifyFetchArgs | VerifyFetchArgs[],
 ) {
-  expect(mock).toHaveBeenNthCalledWith(n, args.url, {
-    method: args.method,
-    headers: {
-      Authorization: "test_auth_token",
-      ...args.headers,
-    },
-    ...(args.body !== undefined ? { body: args.body } : {}),
+  const argsArray = Array.isArray(args) ? args : [args];
+
+  // Verify total call count
+  expect(mock).toHaveBeenCalledTimes(argsArray.length);
+
+  // Verify each call
+  argsArray.forEach((args, index) => {
+    const callNumber = index + 1;
+    expect(mock).toHaveBeenNthCalledWith(callNumber, args.url, {
+      method: args.method,
+      headers: {
+        Authorization: "test_auth_token",
+        ...args.headers,
+      },
+      ...(args.body !== undefined ? { body: args.body } : {}),
+    });
   });
 }
 
