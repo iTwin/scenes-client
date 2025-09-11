@@ -13,32 +13,37 @@ import {
   DeleteSceneParams,
   GetScenesParams,
   handleErrorResponse,
+  SceneObject,
+  GET_OBJECTS_DEFAULTS,
+  GetSceneMetadataParams,
+  isSceneMetadataResponse,
+  SceneMetadataResponse,
 } from "../models/index.js";
 import { iteratePagedEndpoint } from "../utilities.js";
 import { callApi, AuthArgs } from "./apiFetch.js";
+import { getAllObjects } from "./sceneObjectApi.js";
 
 /**
- * Fetches a single scene by its ID.
+ * Fetches a single scene by its ID (minimal representation with object links).
  * @param params - {@link GetSceneParams}
- * @returns Scene details.
+ * @returns Scene metadata and relevant links.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
-export async function getScene({
+export async function getSceneMetadata({
   sceneId,
-  orderBy,
   iTwinId,
   getAccessToken,
   baseUrl,
-}: GetSceneParams & AuthArgs): Promise<SceneResponse> {
-  return callApi<SceneResponse>({
-    endpoint: `/${sceneId}?iTwinId=${iTwinId}&orderBy=${orderBy}`,
+}: GetSceneMetadataParams & AuthArgs): Promise<SceneMetadataResponse> {
+  return callApi<SceneMetadataResponse>({
+    endpoint: `/${sceneId}?iTwinId=${iTwinId}`,
     getAccessToken,
     postProcess: async (response) => {
       if (!response.ok) {
         await handleErrorResponse(response);
       }
       const responseJson = await response.json();
-      if (!isSceneResponse(responseJson)) {
+      if (!isSceneMetadataResponse(responseJson)) {
         throw new ScenesApiError(
           {
             code: "InvalidResponse",
@@ -54,6 +59,56 @@ export async function getScene({
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
     },
   });
+}
+
+/**
+ * Fetches a single scene and all its all objects by ID.
+ * @param params - {@link GetSceneInfoParams}
+ * @returns Scene details.
+ * @throws {ScenesApiError} If the API call fails or the response format is invalid.
+ */
+export async function getScene({
+  sceneId,
+  orderBy,
+  iTwinId,
+  getAccessToken,
+  baseUrl,
+}: GetSceneParams & AuthArgs): Promise<SceneResponse> {
+  const args = { sceneId, iTwinId, getAccessToken, baseUrl };
+  const opts = {
+    top: GET_OBJECTS_DEFAULTS.top,
+    skip: GET_OBJECTS_DEFAULTS.skip,
+    delayMs: GET_OBJECTS_DEFAULTS.delayMs,
+    orderBy: orderBy ?? GET_OBJECTS_DEFAULTS.orderBy,
+  };
+
+  const collectObjects = async () => {
+    const objects: SceneObject[] = [];
+    let isPartial: boolean | undefined;
+
+    const iterable = getAllObjects(args, opts);
+    for await (const page of iterable) {
+      objects.push(...page.objects);
+      // Extract isPartial from the first page (sceneContext is consistent across all pages)
+      if (isPartial === undefined) {
+        isPartial = page.sceneContext.isPartial;
+      }
+    }
+    return { objects, isPartial };
+  };
+
+  const [minimalScene, { objects, isPartial }] = await Promise.all([
+    getSceneMetadata(args),
+    collectObjects(),
+  ]);
+
+  return {
+    scene: {
+      ...minimalScene.scene,
+      isPartial,
+      sceneData: { objects },
+    },
+  };
 }
 
 /**
@@ -187,7 +242,7 @@ export async function postScene({
 }
 
 /**
- * Updates an existing scene.
+ * Updates an existing scene's metadata.
  * @param params - {@link PatchSceneParams}
  * @returns Updated scene details.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
@@ -198,8 +253,8 @@ export async function patchScene({
   scene,
   getAccessToken,
   baseUrl,
-}: PatchSceneParams & AuthArgs): Promise<SceneResponse> {
-  return callApi<SceneResponse>({
+}: PatchSceneParams & AuthArgs): Promise<SceneMetadataResponse> {
+  return callApi<SceneMetadataResponse>({
     endpoint: `/${sceneId}?iTwinId=${iTwinId}`,
     getAccessToken,
     baseUrl,
@@ -208,7 +263,7 @@ export async function patchScene({
         await handleErrorResponse(response);
       }
       const responseJson = await response.json();
-      if (!isSceneResponse(responseJson)) {
+      if (!isSceneMetadataResponse(responseJson)) {
         throw new ScenesApiError(
           {
             code: "InvalidResponse",

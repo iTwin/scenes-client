@@ -3,7 +3,9 @@
 import { isObject } from "../utilities.js";
 import { isSceneObject, SceneObject } from "./object/sceneObject.js";
 import { isScene, Scene } from "./scene/scene.js";
+import { isSceneContext, SceneContext } from "./scene/sceneContext.js";
 import { isSceneMinimal, SceneMinimal } from "./scene/sceneMinimal.js";
+import { isSceneWithLinks, SceneWithLinks } from "./scene/sceneWithLinks.js";
 
 /** Generic href link */
 export interface Link {
@@ -17,9 +19,14 @@ export interface PagingLinks {
   next?: Link;
 }
 
-/** Scene response model */
+/** Full scene response with complete information including objects */
 export interface SceneResponse {
   scene: Scene;
+}
+
+/** Scene response with metadata and links to resources */
+export interface SceneMetadataResponse {
+  scene: SceneWithLinks;
 }
 
 /** Scene list response model */
@@ -40,6 +47,7 @@ export interface SceneObjectListResponse {
 
 /** Scene object list response model for paginated responses */
 export interface SceneObjectPagedResponse extends SceneObjectListResponse {
+  sceneContext: SceneContext;
   _links: PagingLinks;
 }
 
@@ -59,6 +67,12 @@ export function isPagingLinks(v: unknown): v is PagingLinks {
 
 export function isSceneResponse(v: unknown): v is SceneResponse {
   return isObject(v) && isScene(v.scene);
+}
+
+export function isSceneMetadataResponse(
+  v: unknown,
+): v is SceneMetadataResponse {
+  return isObject(v) && isSceneWithLinks(v.scene);
 }
 
 export function isSceneListResponse(v: unknown): v is SceneListResponse {
@@ -86,5 +100,10 @@ export function isSceneObjectListResponse(
 export function isSceneObjectPagedResponse(
   v: unknown,
 ): v is SceneObjectPagedResponse {
-  return isObject(v) && isSceneObjectListResponse(v) && isPagingLinks(v._links);
+  return (
+    isObject(v) &&
+    isSceneObjectListResponse(v) &&
+    isPagingLinks(v._links) &&
+    isSceneContext(v.sceneContext)
+  );
 }

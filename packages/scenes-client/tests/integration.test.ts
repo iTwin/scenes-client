@@ -105,6 +105,25 @@ describe("Scenes operation", () => {
     );
   });
 
+  it("get scene metadata by id", async () => {
+    // Use the ID saved from the createScene test
+    const res = await client.getSceneMetadata({
+      iTwinId: ITWIN_ID,
+      sceneId: sceneAId,
+    });
+
+    // Basic identity checks
+    expect(res.scene.id).toBe(sceneAId);
+    expect(res.scene.displayName).toBe("TestSceneA");
+    expect(res.scene.iTwinId).toBe(ITWIN_ID);
+
+    // Verify the sceneData.objects link
+    expect(res.scene.sceneData?.objects).toBeDefined();
+    expect(res.scene.sceneData.objects.href).toEqual(
+      `${HOST_URL}/${sceneAId}/objects?iTwinId=${ITWIN_ID}`,
+    );
+  });
+
   it("get scenes paged", async () => {
     const res = await client.getAllScenes({ iTwinId: ITWIN_ID });
 

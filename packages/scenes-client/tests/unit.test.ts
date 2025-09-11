@@ -15,6 +15,7 @@ import {
   OrderByProperties,
   PagingLinks,
   SceneListResponse,
+  SceneMetadataResponse,
   SceneObjectListResponse,
   SceneObjectPagedResponse,
   SceneObjectResponse,
@@ -30,20 +31,58 @@ afterAll(() => vi.unstubAllGlobals());
 afterEach(() => fetchMock.mockReset());
 
 describe("Scenes Operations", () => {
-  it("getScene()", async () => {
+  it("getSceneMetadata()", async () => {
     fetchMock.mockImplementation(() =>
-      createSuccessfulResponse(exampleSceneResponse),
+      createSuccessfulResponse(exampleSceneMetadataResponse),
     );
     const client = new SceneClient(getAccessToken);
-    await client.getScene({
+    await client.getSceneMetadata({
+      iTwinId: "itw-1",
+      sceneId: "scene-1",
+    });
+    verifyFetch(fetchMock, {
+      url: `${BASE_DOMAIN}/scene-1?iTwinId=itw-1`,
+      headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
+    });
+  });
+
+  it("getScene()", async () => {
+    fetchMock.mockImplementation((url: string) => {
+      if (url.includes("/objects?")) {
+        // Mock the getAllObjects call
+        return createSuccessfulResponse(exampleSceneObjectPagedResponse);
+      } else {
+        // Mock the getScene call
+        return createSuccessfulResponse(exampleSceneMetadataResponse);
+      }
+    });
+
+    const client = new SceneClient(getAccessToken);
+    const result = await client.getScene({
       iTwinId: "itw-1",
       sceneId: "scene-1",
       orderBy: OrderByProperties.NAME,
     });
-    verifyFetch(fetchMock, {
-      url: `${BASE_DOMAIN}/scene-1?iTwinId=itw-1&orderBy=displayName`,
-      headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
+
+    // Verify returned SceneResponse format
+    expect(result).toMatchObject({
+      scene: {
+        ...exampleSceneMetadataResponse.scene,
+        isPartial: exampleSceneObjectPagedResponse.sceneContext.isPartial,
+        sceneData: { objects: exampleSceneObjectPagedResponse.objects },
+      },
     });
+
+    verifyFetch(fetchMock, [
+      {
+        url: `${BASE_DOMAIN}/scene-1?iTwinId=itw-1`,
+        headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
+      },
+      {
+        url: `${BASE_DOMAIN}/scene-1/objects?iTwinId=itw-1&$top=100&$skip=0&orderBy=displayName`,
+        headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
+      },
+    ]);
   });
 
   it("getScenes()", async () => {
@@ -124,7 +163,7 @@ describe("Scenes Operations", () => {
 
   it("patchScene()", async () => {
     fetchMock.mockImplementation(() =>
-      createSuccessfulResponse(exampleSceneResponse),
+      createSuccessfulResponse(exampleSceneMetadataResponse),
     );
     const client = new SceneClient(getAccessToken);
     const updateData = {
@@ -513,15 +552,26 @@ interface VerifyFetchArgs {
   body?: string;
 }
 
-function verifyFetch(mock: ReturnType<typeof vi.fn>, args: VerifyFetchArgs) {
-  expect(mock).toHaveBeenCalledTimes(1);
-  expect(mock).toHaveBeenCalledWith(args.url, {
-    method: args.method,
-    headers: {
-      Authorization: "test_auth_token",
-      ...args.headers,
-    },
-    ...(args.body !== undefined ? { body: args.body } : {}),
+function verifyFetch(
+  mock: ReturnType<typeof vi.fn>,
+  args: VerifyFetchArgs | VerifyFetchArgs[],
+) {
+  const argsArray = Array.isArray(args) ? args : [args];
+
+  // Verify total call count
+  expect(mock).toHaveBeenCalledTimes(argsArray.length);
+
+  // Verify each call
+  argsArray.forEach((args, index) => {
+    const callNumber = index + 1;
+    expect(mock).toHaveBeenNthCalledWith(callNumber, args.url, {
+      method: args.method,
+      headers: {
+        Authorization: "test_auth_token",
+        ...args.headers,
+      },
+      ...(args.body !== undefined ? { body: args.body } : {}),
+    });
   });
 }
 
@@ -529,6 +579,7 @@ function verifyFetch(mock: ReturnType<typeof vi.fn>, args: VerifyFetchArgs) {
 const links: PagingLinks = {
   self: { href: "/scenes?page=1" },
 };
+
 const exampleSceneResponse: SceneResponse = {
   scene: {
     id: "scene-1",
@@ -547,6 +598,23 @@ const exampleSceneResponse: SceneResponse = {
           data: { visible: true },
         },
       ],
+    },
+  },
+};
+
+const exampleSceneMetadataResponse: SceneMetadataResponse = {
+  scene: {
+    id: "scene-1",
+    displayName: "Example Scene",
+    description: "Some Description XYZ123",
+    iTwinId: "itwin-1",
+    createdById: "user-1",
+    creationTime: "2025-07-16T15:00:00.000Z",
+    lastModified: "2025-07-16T15:00:00.000Z",
+    sceneData: {
+      objects: {
+        href: `${BASE_DOMAIN}/scene-1/objects?iTwinId=itwin-1`,
+      },
     },
   },
 };
@@ -586,4 +654,9 @@ const exampleSceneObjectListResponse: SceneObjectListResponse = {
 const exampleSceneObjectPagedResponse: SceneObjectPagedResponse = {
   ...exampleSceneObjectListResponse,
   _links: links,
+  sceneContext: {
+    displayName: exampleSceneResponse.scene.displayName,
+    lastModified: exampleSceneResponse.scene.lastModified,
+    isPartial: true,
+  },
 };
