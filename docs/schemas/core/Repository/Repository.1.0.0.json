@@ -1,0 +1,29 @@
+{
+  "$id": "/schemas/Repository.1.0.0",
+  "description": "Reference to a single repository",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "visible": {
+      "type": "boolean",
+      "description": "Whether the layer is turned on or off"
+    },
+    "iTwinId": {
+      "$ref": "/schemas/CommonTypes#/definitions/guid",
+      "description": "Id of the iTwin this repository is associated with"
+    },
+    "repositoryId": {
+      "$ref": "/schemas/CommonTypes#/definitions/safeString",
+      "description": "Id of the repository. Should be the same as class for internal repos and a GUID for external repos"
+    },
+    "class": {
+      "$ref": "/schemas/CommonTypes#/definitions/safeString",
+      "description": "Class of the repository, such as GeographicInformationSystem"
+    },
+    "subClass": {
+      "$ref": "/schemas/CommonTypes#/definitions/safeString",
+      "description": "SubClass of the repository if applicable, such as WebMapService or ArcGIS"
+    }
+  },
+  "required": [ "visible", "iTwinId", "repositoryId", "class"]
+}
