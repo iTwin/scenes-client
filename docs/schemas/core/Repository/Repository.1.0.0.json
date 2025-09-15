@@ -18,11 +18,11 @@
     },
     "class": {
       "$ref": "/schemas/CommonTypes#/definitions/safeString",
-      "description": "Class of the repository, such as GeographicInformationSystem"
+      "description": "Class of the repository, such as IndexedMedia or Forms"
     },
     "subClass": {
       "$ref": "/schemas/CommonTypes#/definitions/safeString",
-      "description": "SubClass of the repository if applicable, such as WebMapService or ArcGIS"
+      "description": "SubClass of the repository if applicable"
     }
   },
   "required": [ "visible", "iTwinId", "repositoryId", "class"]
