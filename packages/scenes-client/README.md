@@ -209,7 +209,7 @@ console.log(`Processed ${totalObjects} total objects`);
 #### Create Scene Objects
 
 ```ts
-import { SceneObject, iModelVisibilityCreate, LayerCreate, RepositoryResourceCreate, View3dCreate } from "@bentley/scenes-client";
+import { SceneObject, iModelVisibilityCreate, LayerCreate, RepositoryCreate, RepositoryResourceCreate, View3dCreate } from "@bentley/scenes-client";
 
 // Create objects with strongly typed interfaces
 // Note: LayerCreate is an alias for StandardObjectCreate<"Layer", "1.0.0">
@@ -258,7 +258,7 @@ const iModelStyling: iModelVisibilityCreate = {
   },
 };
 
-// Note: iModelVisibilityCreate is an alias for StandardObjectCreate<"View3d", "1.0.0">
+// Note: View3dCreate is an alias for StandardObjectCreate<"View3d", "1.0.0">
 const view3d: View3dCreate = {
   kind: "View3d",
   version: "1.0.0",
@@ -275,11 +275,24 @@ const view3d: View3dCreate = {
   },
 };
 
+// Note: RepositoryCreate is an alias for StandardObjectCreate<"Repository", "1.0.0">
+const formsRepository: RepositoryCreate = {
+  kind: "Repository",
+  version: "1.0.0",
+  displayName: "iTwin A Forms",
+  data: {
+    visible: true,
+    iTwinId: "<itwin_id>",
+    repositoryId: "Forms",
+    class: "Forms",
+  },
+};
+
 // Create objects in bulk
 const createResponse = await client.postObjects({
   iTwinId: "<itwin_id>",
   sceneId: "<scene_id>",
-  objects: [layer, view3d, iModelResource, iModelStyling],
+  objects: [layer, view3d, iModelResource, iModelStyling, formsRepository],
 });
 
 console.log(`Created ${createResponse.objects.length} objects:`);

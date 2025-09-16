@@ -31,6 +31,11 @@ export type MovieCreateV1 = StandardObjectCreate<"Movie", "1.0.0">;
 /** Latest Movie creation type. Currently points to 1.0.0. */
 export type MovieCreate = MovieCreateV1;
 
+/** Repository (v1.0.0) Scene Object Creation Type */
+export type RepositoryCreateV1 = StandardObjectCreate<"Repository", "1.0.0">;
+/** Latest Repository creation type. Currently points to 1.0.0. */
+export type RepositoryCreate = RepositoryCreateV1;
+
 /** RepositoryResource (v1.0.0) Scene Object Creation Type */
 export type RepositoryResourceCreateV1 = StandardObjectCreate<"RepositoryResource", "1.0.0">;
 /** Latest RepositoryResource creation type. Currently points to 1.0.0. */
@@ -108,6 +113,11 @@ export type MovieV1 = StandardObject<"Movie", "1.0.0">;
 /** Latest Movie response type. Currently points to 1.0.0. */
 export type Movie = MovieV1;
 
+/** Repository (v1.0.0) Scene Object Response Type. */
+export type RepositoryV1 = StandardObject<"Repository", "1.0.0">;
+/** Latest Repository response type. Currently points to 1.0.0. */
+export type Repository = RepositoryV1;
+
 /** RepositoryResource (v1.0.0) Scene Object Response Type. */
 export type RepositoryResourceV1 = StandardObject<"RepositoryResource", "1.0.0">;
 /** Latest RepositoryResource response type. Currently points to 1.0.0. */
@@ -160,6 +170,7 @@ export type SceneObjectCreateType =
   | LayerCreateV1
   | MaterialDecorationCreateV1
   | MovieCreateV1
+  | RepositoryCreateV1
   | RepositoryResourceCreateV1
   | View3dCreateV1
   | GoogleTilesStylingCreateV1
@@ -177,6 +188,7 @@ export type SceneObjectType =
   | LayerV1
   | MaterialDecorationV1
   | MovieV1
+  | RepositoryV1
   | RepositoryResourceV1
   | View3dV1
   | GoogleTilesStylingV1

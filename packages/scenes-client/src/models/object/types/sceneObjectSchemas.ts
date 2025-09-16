@@ -137,6 +137,21 @@ export interface ScenesApiSchemas {
       animations: Guid[];
     };
   };
+  Repository: {
+    /** Reference to a single repository */
+    "1.0.0": {
+      /** Whether the layer is turned on or off */
+      visible: boolean;
+      /** Id of the iTwin this repository is associated with */
+      iTwinId: Guid;
+      /** Id of the repository. Should be the same as class for internal repos and a GUID for custom repos */
+      repositoryId: SafeString;
+      /** Class of the repository, such as IndexedMedia or Forms */
+      class: SafeString;
+      /** SubClass of the repository if applicable */
+      subClass?: SafeString;
+    };
+  };
   RepositoryResource: {
     /** Reference to a single repository resource */
     "1.0.0": {
