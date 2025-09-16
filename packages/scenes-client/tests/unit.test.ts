@@ -2,15 +2,7 @@
  * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
-import {
-  describe,
-  it,
-  expect,
-  beforeAll,
-  afterAll,
-  afterEach,
-  vi,
-} from "vitest";
+import { describe, it, expect, beforeAll, afterAll, afterEach, vi } from "vitest";
 import { SceneClient } from "../src/client";
 import {
   GET_SCENES_DEFAULTS,
@@ -34,9 +26,7 @@ afterEach(() => fetchMock.mockReset());
 
 describe("Scenes Operations", () => {
   it("getSceneMetadata()", async () => {
-    fetchMock.mockImplementation(() =>
-      createSuccessfulResponse(exampleSceneMetadataResponse),
-    );
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleSceneMetadataResponse));
     const client = new SceneClient(getAccessToken);
     await client.getSceneMetadata({
       iTwinId: "itw-1",
@@ -88,9 +78,7 @@ describe("Scenes Operations", () => {
   });
 
   it("getScenes()", async () => {
-    fetchMock.mockImplementation(() =>
-      createSuccessfulResponse(exampleSceneListResponse),
-    );
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleSceneListResponse));
     const client = new SceneClient(getAccessToken);
     const scenes = await client.getScenes({
       iTwinId: "itw-1",
@@ -106,9 +94,7 @@ describe("Scenes Operations", () => {
   });
 
   it("getAllScenes()", async () => {
-    fetchMock.mockImplementation(() =>
-      createSuccessfulResponse(exampleSceneListResponse),
-    );
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleSceneListResponse));
     const client = new SceneClient(getAccessToken);
     const it = await client.getAllScenes({ iTwinId: "itw-1" });
     await it.next();
@@ -120,9 +106,7 @@ describe("Scenes Operations", () => {
   });
 
   it("getAllScenes() respects top & skip params", async () => {
-    fetchMock.mockImplementation(() =>
-      createSuccessfulResponse(exampleSceneListResponse),
-    );
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleSceneListResponse));
     const client = new SceneClient(getAccessToken);
     const it = await client.getAllScenes({
       iTwinId: "itw-1",
@@ -137,9 +121,7 @@ describe("Scenes Operations", () => {
   });
 
   it("postScene()", async () => {
-    fetchMock.mockImplementation(() =>
-      createSuccessfulResponse(exampleSceneResponse),
-    );
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleSceneResponse));
     const client = new SceneClient(getAccessToken);
     await client.postScene({
       iTwinId: "itw-1",
@@ -164,9 +146,7 @@ describe("Scenes Operations", () => {
   });
 
   it("patchScene()", async () => {
-    fetchMock.mockImplementation(() =>
-      createSuccessfulResponse(exampleSceneMetadataResponse),
-    );
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleSceneMetadataResponse));
     const client = new SceneClient(getAccessToken);
     const updateData = {
       displayName: "Updated Scene",
@@ -204,9 +184,7 @@ describe("Scenes Operations", () => {
 
 describe("Scene Object Operations", () => {
   it("getObject()", async () => {
-    fetchMock.mockImplementation(() =>
-      createSuccessfulResponse(exampleSceneObjectResponse),
-    );
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleSceneObjectResponse));
     const client = new SceneClient(getAccessToken);
     await client.getObject({
       iTwinId: "itw-1",
@@ -221,9 +199,7 @@ describe("Scene Object Operations", () => {
   });
 
   it("getObjects()", async () => {
-    fetchMock.mockImplementation(() =>
-      createSuccessfulResponse(exampleSceneObjectListResponse),
-    );
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleSceneObjectListResponse));
     const client = new SceneClient(getAccessToken);
     const objects = await client.getObjects({
       iTwinId: "itw-1",
@@ -241,9 +217,7 @@ describe("Scene Object Operations", () => {
   });
 
   it("getAllObjects()", async () => {
-    fetchMock.mockImplementation(() =>
-      createSuccessfulResponse(exampleSceneObjectPagedResponse),
-    );
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleSceneObjectPagedResponse));
     const client = new SceneClient(getAccessToken);
     const it = await client.getAllObjects({
       iTwinId: "itw-1",
@@ -258,9 +232,7 @@ describe("Scene Object Operations", () => {
   });
 
   it("postObjects()", async () => {
-    fetchMock.mockImplementation(() =>
-      createSuccessfulResponse(exampleSceneObjectListResponse),
-    );
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleSceneObjectListResponse));
     const client = new SceneClient(getAccessToken);
     await client.postObjects({
       iTwinId: "itw-1",
@@ -296,9 +268,7 @@ describe("Scene Object Operations", () => {
   });
 
   it("patchObject()", async () => {
-    fetchMock.mockImplementation(() =>
-      createSuccessfulResponse(exampleSceneObjectResponse),
-    );
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleSceneObjectResponse));
     const client = new SceneClient(getAccessToken);
     await client.patchObject({
       iTwinId: "itw-1",
@@ -322,9 +292,7 @@ describe("Scene Object Operations", () => {
   });
 
   it("patchObjects()", async () => {
-    fetchMock.mockImplementation(() =>
-      createSuccessfulResponse({ objects: [] }),
-    );
+    fetchMock.mockImplementation(() => createSuccessfulResponse({ objects: [] }));
     const objects = [
       {
         id: "object-1",
@@ -420,8 +388,7 @@ describe("Error Handling", () => {
     },
     {
       name: "scene deletion",
-      method: () =>
-        client.deleteScene({ iTwinId: "itw-1", sceneId: "scene-1" }),
+      method: () => client.deleteScene({ iTwinId: "itw-1", sceneId: "scene-1" }),
     },
     {
       name: "object operations",
@@ -462,9 +429,7 @@ describe("Error Handling", () => {
   });
 
   it("should throw ScenesApiError for invalid response format", async () => {
-    fetchMock.mockImplementation(() =>
-      createSuccessfulResponse({ invalidProperty: "invalid" }),
-    );
+    fetchMock.mockImplementation(() => createSuccessfulResponse({ invalidProperty: "invalid" }));
 
     // Test methods that expect specific response formats
     const formatTestCases = testCases.filter(
@@ -477,9 +442,7 @@ describe("Error Handling", () => {
       } catch (error) {
         expect(error).toBeInstanceOf(ScenesApiError);
         expect((error as ScenesApiError).code).toBe("InvalidResponse");
-        expect((error as ScenesApiError).message).toMatch(
-          /unexpected response format/i,
-        );
+        expect((error as ScenesApiError).message).toMatch(/unexpected response format/i);
       }
     }
   });
@@ -554,10 +517,7 @@ interface VerifyFetchArgs {
   body?: string;
 }
 
-function verifyFetch(
-  mock: ReturnType<typeof vi.fn>,
-  args: VerifyFetchArgs | VerifyFetchArgs[],
-) {
+function verifyFetch(mock: ReturnType<typeof vi.fn>, args: VerifyFetchArgs | VerifyFetchArgs[]) {
   const argsArray = Array.isArray(args) ? args : [args];
 
   // Verify total call count

@@ -66,6 +66,4 @@ export function isObject(v: unknown): v is Record<string, unknown> {
  * // Result: { b: number } | { c: boolean }
  * ```
  */
-export type UnionOmit<T, K extends keyof T> = T extends unknown
-  ? Omit<T, K>
-  : never;
+export type UnionOmit<T, K extends keyof T> = T extends unknown ? Omit<T, K> : never;
