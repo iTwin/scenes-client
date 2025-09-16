@@ -1,5 +1,7 @@
-// Copyright (c) Bentley Systems, Incorporated. All rights reserved.
-// THIS FILE HAS BEEN GENERATED AUTOMATICALLY. PLEASE DO NOT EDIT IT DIRECTLY.
+/*---------------------------------------------------------------------------------------------
+ * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+ * See LICENSE.md in the project root for license terms and full copyright notice.
+ *--------------------------------------------------------------------------------------------*/
 
 // CommonTypes interfaces
 /** GUID string */
@@ -455,7 +457,4 @@ export type SchemaVersion<K extends SchemaKind> = keyof ScenesApiSchemas[K];
  * }
  * ```
  */
-export type SchemaData<
-  K extends SchemaKind,
-  V extends SchemaVersion<K>,
-> = ScenesApiSchemas[K][V];
+export type SchemaData<K extends SchemaKind, V extends SchemaVersion<K>> = ScenesApiSchemas[K][V];

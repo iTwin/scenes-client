@@ -1,4 +1,7 @@
-// Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+/*---------------------------------------------------------------------------------------------
+ * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+ * See LICENSE.md in the project root for license terms and full copyright notice.
+ *--------------------------------------------------------------------------------------------*/
 import {
   SceneListResponse,
   ScenesApiError,
@@ -165,35 +168,31 @@ export function getAllScenes(
   const { top, delayMs, skip } = opts;
   const initialUrl = `${baseUrl}?iTwinId=${iTwinId}&$top=${top}&$skip=${skip}`;
 
-  return iteratePagedEndpoint<SceneListResponse>(
-    initialUrl,
-    delayMs,
-    async (url) => {
-      return callApi<SceneListResponse>({
-        baseUrl: url,
-        getAccessToken: getAccessToken,
-        additionalHeaders: {
-          Accept: "application/vnd.bentley.itwin-platform.v1+json",
-        },
-        postProcess: async (response) => {
-          if (!response.ok) {
-            await handleErrorResponse(response);
-          }
-          const responseJson = await response.json();
-          if (!isSceneListResponse(responseJson)) {
-            throw new ScenesApiError(
-              {
-                code: "InvalidResponse",
-                message: "Error fetching scenes: unexpected response format",
-              },
-              response.status,
-            );
-          }
-          return responseJson;
-        },
-      });
-    },
-  );
+  return iteratePagedEndpoint<SceneListResponse>(initialUrl, delayMs, async (url) => {
+    return callApi<SceneListResponse>({
+      baseUrl: url,
+      getAccessToken: getAccessToken,
+      additionalHeaders: {
+        Accept: "application/vnd.bentley.itwin-platform.v1+json",
+      },
+      postProcess: async (response) => {
+        if (!response.ok) {
+          await handleErrorResponse(response);
+        }
+        const responseJson = await response.json();
+        if (!isSceneListResponse(responseJson)) {
+          throw new ScenesApiError(
+            {
+              code: "InvalidResponse",
+              message: "Error fetching scenes: unexpected response format",
+            },
+            response.status,
+          );
+        }
+        return responseJson;
+      },
+    });
+  });
 }
 
 /**
@@ -230,9 +229,7 @@ export async function postScene({
     },
     fetchOptions: {
       method: "POST",
-      body: JSON.stringify(scene, (_, value) =>
-        value === undefined ? null : value,
-      ),
+      body: JSON.stringify(scene, (_, value) => (value === undefined ? null : value)),
     },
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -276,9 +273,7 @@ export async function patchScene({
     },
     fetchOptions: {
       method: "PATCH",
-      body: JSON.stringify(scene, (_, value) =>
-        value === undefined ? null : value,
-      ),
+      body: JSON.stringify(scene, (_, value) => (value === undefined ? null : value)),
     },
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
