@@ -7,7 +7,7 @@ headerPlugin.rules.header.meta.schema = false; // this makes header plugin compa
 
 export default tseslint.config(
   {
-    files: ['src/**/*.ts', 'tests/**/*.ts', '*.d.ts'],
+    files: ["src/**/*.ts", "tests/**/*.ts", "*.d.ts"],
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
@@ -43,7 +43,16 @@ export default tseslint.config(
       "no-eval": "error",
       "quotes": ["error", "double"],
       "import/order": ["error", { alphabetize: { order: "asc" } }],
-      "header/header": ["error", "line", [" Copyright (c) Bentley Systems, Incorporated. All rights reserved."]],
+      "header/header": [
+        "error",
+        "block",
+        [
+          "---------------------------------------------------------------------------------------------",
+          " * Copyright (c) Bentley Systems, Incorporated. All rights reserved.",
+          " * See LICENSE.md in the project root for license terms and full copyright notice.",
+          " *--------------------------------------------------------------------------------------------",
+        ],
+      ],
       "@typescript-eslint/no-non-null-assertion": "warn",
       "@typescript-eslint/return-await": "warn",
       "@typescript-eslint/switch-exhaustiveness-check": "warn",
