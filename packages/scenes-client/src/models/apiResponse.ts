@@ -69,37 +69,23 @@ export function isSceneResponse(v: unknown): v is SceneResponse {
   return isObject(v) && isScene(v.scene);
 }
 
-export function isSceneMetadataResponse(
-  v: unknown,
-): v is SceneMetadataResponse {
+export function isSceneMetadataResponse(v: unknown): v is SceneMetadataResponse {
   return isObject(v) && isSceneWithLinks(v.scene);
 }
 
 export function isSceneListResponse(v: unknown): v is SceneListResponse {
-  return (
-    isObject(v) &&
-    Array.isArray(v.scenes) &&
-    v.scenes.every((scene) => isSceneMinimal(scene))
-  );
+  return isObject(v) && Array.isArray(v.scenes) && v.scenes.every((scene) => isSceneMinimal(scene));
 }
 
 export function isSceneObjectResponse(v: unknown): v is SceneObjectResponse {
   return isObject(v) && isSceneObject(v.object);
 }
 
-export function isSceneObjectListResponse(
-  v: unknown,
-): v is SceneObjectListResponse {
-  return (
-    isObject(v) &&
-    Array.isArray(v.objects) &&
-    v.objects.every((obj) => isSceneObject(obj))
-  );
+export function isSceneObjectListResponse(v: unknown): v is SceneObjectListResponse {
+  return isObject(v) && Array.isArray(v.objects) && v.objects.every((obj) => isSceneObject(obj));
 }
 
-export function isSceneObjectPagedResponse(
-  v: unknown,
-): v is SceneObjectPagedResponse {
+export function isSceneObjectPagedResponse(v: unknown): v is SceneObjectPagedResponse {
   return (
     isObject(v) &&
     isSceneObjectListResponse(v) &&

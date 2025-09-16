@@ -3,9 +3,7 @@ import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { SceneClient } from "../src/client.js";
 import { SceneCreate, SceneObjectCreate, ScenesApiError } from "../src/models";
 
-function requireMetaEnv<K extends keyof ImportMetaEnv>(
-  key: K,
-): ImportMetaEnv[K] {
+function requireMetaEnv<K extends keyof ImportMetaEnv>(key: K): ImportMetaEnv[K] {
   const v = import.meta.env[key];
   if (!v) {
     throw new Error(`Missing env var ${key}`);
@@ -154,17 +152,13 @@ describe("Scenes operation", () => {
 
   it("delete scene", async () => {
     await client.deleteScene({ iTwinId: ITWIN_ID, sceneId: sceneAId });
-    await expect(
-      client.getScene({ iTwinId: ITWIN_ID, sceneId: sceneAId }),
-    ).rejects.toMatchObject({
+    await expect(client.getScene({ iTwinId: ITWIN_ID, sceneId: sceneAId })).rejects.toMatchObject({
       status: 404,
       code: "SceneNotFound",
     } as ScenesApiError);
 
     await client.deleteScene({ iTwinId: ITWIN_ID, sceneId: sceneBId });
-    await expect(
-      client.getScene({ iTwinId: ITWIN_ID, sceneId: sceneBId }),
-    ).rejects.toMatchObject({
+    await expect(client.getScene({ iTwinId: ITWIN_ID, sceneId: sceneBId })).rejects.toMatchObject({
       status: 404,
       code: "SceneNotFound",
     } as ScenesApiError);
@@ -185,9 +179,7 @@ describe("Scenes Objects operations", () => {
 
   afterAll(async () => {
     await client.deleteScene({ iTwinId: ITWIN_ID, sceneId });
-    await expect(
-      client.getScene({ iTwinId: ITWIN_ID, sceneId }),
-    ).rejects.toMatchObject({
+    await expect(client.getScene({ iTwinId: ITWIN_ID, sceneId })).rejects.toMatchObject({
       status: 404,
       code: "SceneNotFound",
     } as ScenesApiError);

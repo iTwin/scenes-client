@@ -1,14 +1,7 @@
 // Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 import { isObject } from "../../utilities.js";
-import {
-  SchemaData,
-  SchemaKind,
-  SchemaVersion,
-} from "./types/sceneObjectSchemas.js";
-import {
-  ResourceStylingSchemas,
-  StandardSchemas,
-} from "./types/schemaCategories.js";
+import { SchemaData, SchemaKind, SchemaVersion } from "./types/sceneObjectSchemas.js";
+import { ResourceStylingSchemas, StandardSchemas } from "./types/schemaCategories.js";
 
 /**
  * Base scene object creation interface.
@@ -71,9 +64,7 @@ export interface StandardObjectCreate<
  * Union type representing all possible scene object creates.
  * Automatically resolves to the appropriate interface based on the schema kind
  */
-export type SceneObjectCreate =
-  | StandardObjectCreate
-  | ResourceStylingObjectCreate;
+export type SceneObjectCreate = StandardObjectCreate | ResourceStylingObjectCreate;
 
 /**
  * Interface for creating multiple scene objects

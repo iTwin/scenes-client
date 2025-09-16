@@ -440,7 +440,4 @@ export type SchemaVersion<K extends SchemaKind> = keyof ScenesApiSchemas[K];
  * }
  * ```
  */
-export type SchemaData<
-  K extends SchemaKind,
-  V extends SchemaVersion<K>,
-> = ScenesApiSchemas[K][V];
+export type SchemaData<K extends SchemaKind, V extends SchemaVersion<K>> = ScenesApiSchemas[K][V];

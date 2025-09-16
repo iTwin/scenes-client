@@ -2,10 +2,7 @@
 
 import { GetObjectsOptions } from "./object/getObjectsOptions.js";
 import { BulkSceneObjectCreate } from "./object/sceneObjectCreate.js";
-import {
-  BulkSceneObjectUpdate,
-  SceneObjectUpdate,
-} from "./object/sceneObjectUpdate.js";
+import { BulkSceneObjectUpdate, SceneObjectUpdate } from "./object/sceneObjectUpdate.js";
 import { GetScenesOptions } from "./scene/getScenesOptions.js";
 import { SceneCreate } from "./scene/sceneCreate.js";
 import { SceneUpdate } from "./scene/sceneUpdate.js";
