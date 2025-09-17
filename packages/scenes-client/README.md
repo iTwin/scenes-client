@@ -417,7 +417,7 @@ try {
 
 ## Issues
 
-Please report bugs, feature requests, or questions using the [GitHub Issues](../../issues) page.
+Please report bugs, feature requests, or questions using the [GitHub Issues](https://github.com/iTwin/scenes-client/issues) page.
 
 ---
 
