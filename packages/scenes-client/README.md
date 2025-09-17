@@ -1,4 +1,4 @@
-# @bentley/scenes-client
+# @itwin/scenes-client
 
 ## About
 
