@@ -2,6 +2,7 @@
  * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
+import { SupportedRepository } from "./supportedRepositories.js";
 
 // CommonTypes interfaces
 /** GUID string */
@@ -147,7 +148,7 @@ export interface ScenesApiSchemas {
       /** Id of the repository. Should be the same as class for internal repos and a GUID for custom repos */
       repositoryId: SafeString;
       /** Class of the repository, such as IndexedMedia or Forms */
-      class: SafeString;
+      class: SupportedRepository;
       /** SubClass of the repository if applicable */
       subClass?: SafeString;
     };

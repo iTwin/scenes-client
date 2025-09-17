@@ -11,6 +11,7 @@ export * from "./object/sceneObjectUpdate.js";
 export * from "./object/types/sceneObjectSchemas.js";
 export * from "./object/types/sceneObjectTypes.js";
 export * from "./object/types/schemaCategories.js";
+export * from "./object/types/supportedRepositories.js";
 
 export * from "./scene/getScenesOptions.js";
 export * from "./scene/scene.js";
