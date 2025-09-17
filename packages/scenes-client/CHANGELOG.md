@@ -1,5 +1,13 @@
 # @bentley/scenes-client
 
+## 0.7.1
+
+### Patch Changes
+
+- 38bca3b: Add list of supported repository classes for "Repository" objects
+  - Added `SUPPORTED_REPOSITORIES` constant and `SupportedRepository` type.
+  - Added `isSupportedRepository()` function to check if a repository class is supported.
+
 ## 0.7.0
 
 ### Minor Changes
