@@ -60,8 +60,7 @@ pnpm run typecheck:client         # Type check
 ### Integration Test Setup
 
 1. Create an `.env` file in the [scenes-client/tests](packages/scenes-client/tests) folder based on [.env.template](packages/scenes-client/tests/.env.template)
-2. Set `HOST_URL` to your local host or use `https://dev-api.bentley.com/scenes`
-3. Run tests using the commands above or use the [Vitest extension](https://marketplace.visualstudio.com/items?itemName=vitest.explorer) in VS Code
+2. Run tests using the commands above or use the [Vitest extension](https://marketplace.visualstudio.com/items?itemName=vitest.explorer) in VS Code
 
 ## Contributing
 
