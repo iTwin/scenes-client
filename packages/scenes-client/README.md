@@ -19,10 +19,7 @@ pnpm add @itwin/scenes-client
 ```ts
 import { SceneClient } from "@itwin/scenes-client";
 
-const client = new SceneClient(
-  async () => "<itwin_platform_auth_token>",
-  "<HOST_URL>", // Optional, defaults to "https://api.bentley.com/scenes"
-);
+const client = new SceneClient(async () => "<itwin_platform_auth_token>");
 ```
 
 ---
