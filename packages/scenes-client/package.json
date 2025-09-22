@@ -1,10 +1,16 @@
 {
-  "name": "@bentley/scenes-client",
-  "version": "0.6.0",
+  "name": "@itwin/scenes-client",
+  "version": "0.0.0",
   "description": "Client-side code for managing scenes",
-  "publishConfig": {
-    "registry": "https://pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/",
-    "access": "restricted"
+  "license": "MIT",
+  "author": {
+    "name": "Bentley Systems, Inc.",
+    "url": "https://www.bentley.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iTwin/scenes-client",
+    "directory": "packages/scenes-client"
   },
   "scripts": {
     "build": "tsc 1>&2",
@@ -14,11 +20,6 @@
     "lint": "eslint src tests",
     "typecheck": "tsc --noEmit"
   },
-  "author": {
-    "name": "Bentley Systems, Inc.",
-    "url": "https://www.bentley.com"
-  },
-  "license": "MIT",
   "type": "module",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",

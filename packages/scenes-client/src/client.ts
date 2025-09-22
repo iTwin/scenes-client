@@ -1,5 +1,7 @@
-// Copyright (c) Bentley Systems, Incorporated. All rights reserved.
-
+/*---------------------------------------------------------------------------------------------
+ * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+ * See LICENSE.md in the project root for license terms and full copyright notice.
+ *--------------------------------------------------------------------------------------------*/
 import {
   getScene,
   getAllScenes,
@@ -59,10 +61,7 @@ export class SceneClient {
    * @param getAccessToken – Async function to retrieve an access token.
    * @param baseUrl – Optional base URL for the API. Defaults to production.
    */
-  constructor(
-    getAccessToken: AccessTokenFn,
-    baseUrl: string = DEFAULT_BASE_URL,
-  ) {
+  constructor(getAccessToken: AccessTokenFn, baseUrl: string = DEFAULT_BASE_URL) {
     this.getAccessToken = getAccessToken;
     this.baseUrl = baseUrl;
   }
@@ -92,9 +91,7 @@ export class SceneClient {
    * @returns SceneMetadataResponse containing the Scene's metadata and links.
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
-  async getSceneMetadata(
-    params: GetSceneMetadataParams,
-  ): Promise<SceneMetadataResponse> {
+  async getSceneMetadata(params: GetSceneMetadataParams): Promise<SceneMetadataResponse> {
     return getSceneMetadata({
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,
@@ -278,9 +275,7 @@ export class SceneClient {
    * @returns Created scene objects details in list.
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
-  async postObjects(
-    params: PostObjectsParams,
-  ): Promise<SceneObjectListResponse> {
+  async postObjects(params: PostObjectsParams): Promise<SceneObjectListResponse> {
     return postObjects({
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,
@@ -318,9 +313,7 @@ export class SceneClient {
    * @returns Updated scene objects details.
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
-  async patchObjects(
-    params: PatchObjectsParams,
-  ): Promise<SceneObjectListResponse> {
+  async patchObjects(params: PatchObjectsParams): Promise<SceneObjectListResponse> {
     return patchObjects({
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,

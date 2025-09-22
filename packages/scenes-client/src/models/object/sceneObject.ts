@@ -1,4 +1,7 @@
-// Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+/*---------------------------------------------------------------------------------------------
+ * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+ * See LICENSE.md in the project root for license terms and full copyright notice.
+ *--------------------------------------------------------------------------------------------*/
 import { isObject } from "../../utilities.js";
 import {
   isSceneObjectCreate,
@@ -6,10 +9,7 @@ import {
   StandardObjectCreate,
 } from "./sceneObjectCreate.js";
 import { SchemaVersion } from "./types/sceneObjectSchemas.js";
-import {
-  ResourceStylingSchemas,
-  StandardSchemas,
-} from "./types/schemaCategories.js";
+import { ResourceStylingSchemas, StandardSchemas } from "./types/schemaCategories.js";
 
 /**
  * Server response metadata added to all scene objects

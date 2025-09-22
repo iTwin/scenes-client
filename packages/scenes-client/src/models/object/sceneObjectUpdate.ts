@@ -1,9 +1,8 @@
-// Copyright (c) Bentley Systems, Incorporated. All rights reserved.
-import {
-  SchemaData,
-  SchemaKind,
-  SchemaVersion,
-} from "./types/sceneObjectSchemas.js";
+/*---------------------------------------------------------------------------------------------
+ * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+ * See LICENSE.md in the project root for license terms and full copyright notice.
+ *--------------------------------------------------------------------------------------------*/
+import { SchemaData, SchemaKind, SchemaVersion } from "./types/sceneObjectSchemas.js";
 
 /**
  * Interface for updating scene objects

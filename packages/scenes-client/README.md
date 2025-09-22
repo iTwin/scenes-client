@@ -1,4 +1,4 @@
-# @bentley/scenes-client
+# @itwin/scenes-client
 
 ## About
 
@@ -7,9 +7,9 @@ This package provides a TypeScript client and types for interacting with the [Sc
 ## Installation
 
 ```bash
-npm install @bentley/scenes-client
+npm install @itwin/scenes-client
 # or
-pnpm add @bentley/scenes-client
+pnpm add @itwin/scenes-client
 ```
 
 ## Usage
@@ -17,12 +17,9 @@ pnpm add @bentley/scenes-client
 ### Basic Client Setup
 
 ```ts
-import { SceneClient } from "@bentley/scenes-client";
+import { SceneClient } from "@itwin/scenes-client";
 
-const client = new SceneClient(
-  async () => "<itwin_platform_auth_token>",
-  "<HOST_URL>", // Optional, defaults to "https://api.bentley.com/scenes"
-);
+const client = new SceneClient(async () => "<itwin_platform_auth_token>");
 ```
 
 ---
@@ -32,7 +29,7 @@ const client = new SceneClient(
 #### Get a Scene
 
 ```ts
-import { OrderByProperties } from "@bentley/scenes-client";
+import { OrderByProperties } from "@itwin/scenes-client";
 
 const sceneResponse = await client.getScene({
   iTwinId: "<itwin_id>",
@@ -58,7 +55,7 @@ console.log(sceneResponse.scene);
 #### Get List of Scenes for an iTwin
 
 ```ts
-import { SceneMinimal } from "@bentley/scenes-client";
+import { SceneMinimal } from "@itwin/scenes-client";
 
 // Get a single page of scenes (for UI pagination)
 const listResponse = await client.getScenes({
@@ -76,7 +73,7 @@ listResponse.scenes.forEach((scene: SceneMinimal) => {
 #### Get All Scenes with Iterator
 
 ```ts
-import { SceneMinimal } from "@bentley/scenes-client";
+import { SceneMinimal } from "@itwin/scenes-client";
 
 // Get all scenes using async iterator
 const allScenesIterator = await client.getAllScenes({
@@ -103,7 +100,9 @@ const createResponse = await client.postScene({
   scene: {
     displayName: "Construction Site Overview",
     sceneData: {
-      objects: [ /** (optional) objects to create */ ],
+      objects: [
+        /** (optional) objects to create */
+      ],
     },
   },
 });
@@ -166,7 +165,7 @@ console.log(objectResponse.object);
 #### Get List of Objects in a Scene
 
 ```ts
-import { OrderByProperties, SceneObject } from "@bentley/scenes-client";
+import { OrderByProperties, SceneObject } from "@itwin/scenes-client";
 
 // Get a single page of objects (for UI pagination)
 const listResponse = await client.getObjects({
@@ -186,7 +185,7 @@ listResponse.objects.forEach((object: SceneObject) => {
 #### Get All Objects with Iterator
 
 ```ts
-import { SceneObject } from "@bentley/scenes-client";
+import { SceneObject } from "@itwin/scenes-client";
 
 // Get all objects in a scene using async iterator
 const allObjectsIterator = await client.getAllObjects({
@@ -209,7 +208,14 @@ console.log(`Processed ${totalObjects} total objects`);
 #### Create Scene Objects
 
 ```ts
-import { SceneObject, iModelVisibilityCreate, LayerCreate, RepositoryResourceCreate, View3dCreate } from "@bentley/scenes-client";
+import {
+  SceneObject,
+  iModelVisibilityCreate,
+  LayerCreate,
+  RepositoryCreate,
+  RepositoryResourceCreate,
+  View3dCreate,
+} from "@itwin/scenes-client";
 
 // Create objects with strongly typed interfaces
 // Note: LayerCreate is an alias for StandardObjectCreate<"Layer", "1.0.0">
@@ -248,8 +254,7 @@ const iModelStyling: iModelVisibilityCreate = {
   data: {
     categories: {
       shownList: "",
-      hiddenList:
-        "+300000000A0+ED1+3*2+4+D+3*2+8+4*3+3*5+2+3*4+4+3*2+4*2+3*3+5+4+5+4+8+3*2+5+4+7F",
+      hiddenList: "+300000000A0+ED1+3*2+4+D+3*2+8+4*3+3*5+2+3*4+4+3*2+4*2+3*3+5+4+5+4+8+3*2+5+4+7F",
     },
     models: {
       shownList: "",
@@ -258,7 +263,7 @@ const iModelStyling: iModelVisibilityCreate = {
   },
 };
 
-// Note: iModelVisibilityCreate is an alias for StandardObjectCreate<"View3d", "1.0.0">
+// Note: View3dCreate is an alias for StandardObjectCreate<"View3d", "1.0.0">
 const view3d: View3dCreate = {
   kind: "View3d",
   version: "1.0.0",
@@ -275,11 +280,24 @@ const view3d: View3dCreate = {
   },
 };
 
+// Note: RepositoryCreate is an alias for StandardObjectCreate<"Repository", "1.0.0">
+const formsRepository: RepositoryCreate = {
+  kind: "Repository",
+  version: "1.0.0",
+  displayName: "iTwin A Forms",
+  data: {
+    visible: true,
+    iTwinId: "<itwin_id>",
+    repositoryId: "Forms",
+    class: "Forms",
+  },
+};
+
 // Create objects in bulk
 const createResponse = await client.postObjects({
   iTwinId: "<itwin_id>",
   sceneId: "<scene_id>",
-  objects: [layer, view3d, iModelResource, iModelStyling],
+  objects: [layer, view3d, iModelResource, iModelStyling, formsRepository],
 });
 
 console.log(`Created ${createResponse.objects.length} objects:`);
@@ -291,14 +309,15 @@ createResponse.objects.forEach((obj: SceneObject) => {
 #### Update Scene Objects
 
 ```ts
-import { SceneObjectUpdate, SceneObjectUpdateById } from "@bentley/scenes-client";
+import { SceneObjectUpdate, SceneObjectUpdateById } from "@itwin/scenes-client";
 
 // Update data for a specific object with type safety
 const objectUpdate: SceneObjectUpdate<"GoogleTilesStyling", "1.0.0"> = {
   displayName: "Updated Global Styling Options",
-  data: { // Fully typed - IntelliSense shows available properties
+  data: {
+    // Fully typed - IntelliSense shows available properties
     quality: 0.30000001192092896,
-    adjustment: [ 1.309999942779541, 72.0326, -75.6275 ]
+    adjustment: [1.309999942779541, 72.0326, -75.6275],
   },
 };
 
@@ -349,7 +368,7 @@ await client.deleteObjects({
 This client provides strongly typed interfaces for all scene object operations, giving you compile-time validation:
 
 ```ts
-import { StandardObjectCreate, ResourceStylingObjectCreate } from "@bentley/scenes-client";
+import { StandardObjectCreate, ResourceStylingObjectCreate } from "@itwin/scenes-client";
 
 // Each schema has its own typed interface
 const camera: StandardObjectCreate<"CameraAnimation", "1.0.0"> = {
@@ -387,7 +406,7 @@ const styling: ResourceStylingObjectCreate<"iModelVisibility", "1.0.0"> = {
 ### Error Handling
 
 ```ts
-import { SceneApiError } from "@bentley/scenes-client";
+import { SceneApiError } from "@itwin/scenes-client";
 
 try {
   const scene = await client.getScene({
@@ -404,7 +423,7 @@ try {
 
 ## Issues
 
-Please report bugs, feature requests, or questions using the [GitHub Issues](../../issues) page.
+Please report bugs, feature requests, or questions using the [GitHub Issues](https://github.com/iTwin/scenes-client/issues) page.
 
 ---
 

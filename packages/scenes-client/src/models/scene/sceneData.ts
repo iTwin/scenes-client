@@ -1,9 +1,9 @@
-// Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+/*---------------------------------------------------------------------------------------------
+ * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+ * See LICENSE.md in the project root for license terms and full copyright notice.
+ *--------------------------------------------------------------------------------------------*/
 import { isObject } from "../../utilities.js";
-import {
-  isSceneObjectMinimal,
-  SceneObjectMinimal,
-} from "../object/sceneObjectMinimal.js";
+import { isSceneObjectMinimal, SceneObjectMinimal } from "../object/sceneObjectMinimal.js";
 
 /** Container for scene objects and related data returned by the API */
 export interface SceneData {
@@ -13,8 +13,6 @@ export interface SceneData {
 
 export function isSceneData(v: unknown): v is SceneData {
   return (
-    isObject(v) &&
-    Array.isArray(v.objects) &&
-    v.objects.every((obj) => isSceneObjectMinimal(obj))
+    isObject(v) && Array.isArray(v.objects) && v.objects.every((obj) => isSceneObjectMinimal(obj))
   );
 }

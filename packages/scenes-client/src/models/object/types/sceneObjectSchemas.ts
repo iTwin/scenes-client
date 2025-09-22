@@ -1,5 +1,8 @@
-// Copyright (c) Bentley Systems, Incorporated. All rights reserved.
-// THIS FILE HAS BEEN GENERATED AUTOMATICALLY. PLEASE DO NOT EDIT IT DIRECTLY.
+/*---------------------------------------------------------------------------------------------
+ * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+ * See LICENSE.md in the project root for license terms and full copyright notice.
+ *--------------------------------------------------------------------------------------------*/
+import { SupportedRepository } from "./supportedRepositories.js";
 
 // CommonTypes interfaces
 /** GUID string */
@@ -133,6 +136,21 @@ export interface ScenesApiSchemas {
     "1.0.0": {
       /** Series of CameraAnimations in the movie. */
       animations: Guid[];
+    };
+  };
+  Repository: {
+    /** Reference to a single repository */
+    "1.0.0": {
+      /** Whether the layer is turned on or off */
+      visible: boolean;
+      /** Id of the iTwin this repository is associated with */
+      iTwinId: Guid;
+      /** Id of the repository. Should be the same as class for internal repos and a GUID for custom repos */
+      repositoryId: SafeString;
+      /** Class of the repository, such as IndexedMedia or Forms */
+      class: SupportedRepository;
+      /** SubClass of the repository if applicable */
+      subClass?: SafeString;
     };
   };
   RepositoryResource: {
@@ -440,7 +458,4 @@ export type SchemaVersion<K extends SchemaKind> = keyof ScenesApiSchemas[K];
  * }
  * ```
  */
-export type SchemaData<
-  K extends SchemaKind,
-  V extends SchemaVersion<K>,
-> = ScenesApiSchemas[K][V];
+export type SchemaData<K extends SchemaKind, V extends SchemaVersion<K>> = ScenesApiSchemas[K][V];

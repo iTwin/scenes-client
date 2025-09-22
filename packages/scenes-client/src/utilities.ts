@@ -1,4 +1,7 @@
-// Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+/*---------------------------------------------------------------------------------------------
+ * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+ * See LICENSE.md in the project root for license terms and full copyright notice.
+ *--------------------------------------------------------------------------------------------*/
 import { PagingLinks } from "./models/index.js";
 
 /**
@@ -63,6 +66,4 @@ export function isObject(v: unknown): v is Record<string, unknown> {
  * // Result: { b: number } | { c: boolean }
  * ```
  */
-export type UnionOmit<T, K extends keyof T> = T extends unknown
-  ? Omit<T, K>
-  : never;
+export type UnionOmit<T, K extends keyof T> = T extends unknown ? Omit<T, K> : never;
