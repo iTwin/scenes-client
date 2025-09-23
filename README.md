@@ -1,6 +1,8 @@
 # Scenes
 
+[![latest version](https://img.shields.io/github/v/release/iTwin/scenes-client?label=latest)](https://github.com/iTwin/scenes-client/releases/latest)
 [![CI](https://github.com/iTwin/scenes-client/actions/workflows/CI.yaml/badge.svg)](https://github.com/iTwin/scenes-client/actions/workflows/CI.yaml)
+[![CodeQL](https://github.com/iTwin/scenes-client/actions/workflows/codeql-analysis.yaml/badge.svg)](https://github.com/iTwin/scenes-client/actions/workflows/codeql-analysis.yaml)
 
 ## About
 
