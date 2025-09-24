@@ -184,9 +184,7 @@ export async function postObjects({
       },
       fetchOptions: {
         method: "POST",
-        body: JSON.stringify({ objects: batch }, (_, value) =>
-          value === undefined ? null : value,
-        ),
+        body: JSON.stringify({ objects: batch }),
       },
       additionalHeaders: {
         Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -237,7 +235,7 @@ export async function patchObject({
     },
     fetchOptions: {
       method: "PATCH",
-      body: JSON.stringify(object, (_, value) => (value === undefined ? null : value)),
+      body: JSON.stringify(object),
     },
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -284,9 +282,7 @@ export async function patchObjects({
       },
       fetchOptions: {
         method: "PATCH",
-        body: JSON.stringify({ objects: batch }, (_, value) =>
-          value === undefined ? null : value,
-        ),
+        body: JSON.stringify({ objects: batch }),
       },
       additionalHeaders: {
         Accept: "application/vnd.bentley.itwin-platform.v1+json",

@@ -229,7 +229,7 @@ export async function postScene({
     },
     fetchOptions: {
       method: "POST",
-      body: JSON.stringify(scene, (_, value) => (value === undefined ? null : value)),
+      body: JSON.stringify(scene),
     },
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -273,7 +273,7 @@ export async function patchScene({
     },
     fetchOptions: {
       method: "PATCH",
-      body: JSON.stringify(scene, (_, value) => (value === undefined ? null : value)),
+      body: JSON.stringify(scene),
     },
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
