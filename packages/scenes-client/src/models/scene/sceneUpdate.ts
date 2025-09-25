@@ -6,8 +6,8 @@
 export interface SceneUpdate {
   /** User defined display name of the scene */
   displayName?: string;
-  /** Optional detailed description of the scene */
-  description?: string;
-  /** Optional parent Id for the scene (UUID) */
-  parentId?: string;
+  /** Optional detailed description of the scene. Pass `null` to remove. */
+  description?: string | null;
+  /** Optional parent Id for the scene (UUID). Pass `null` to remove. */
+  parentId?: string | null;
 }

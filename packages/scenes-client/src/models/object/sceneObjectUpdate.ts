@@ -19,12 +19,12 @@ export interface SceneObjectUpdate<
   K extends SchemaKind = SchemaKind,
   V extends SchemaVersion<K> = SchemaVersion<K>,
 > {
-  /** Display name for the scene object */
-  displayName?: string;
-  /** Number for the scene object's order in lists */
-  order?: number;
-  /** Parent Id for the scene object (UUID) */
-  parentId?: string;
+  /** Optional display name for the scene object. Pass `null` to remove. */
+  displayName?: string | null;
+  /** Optional number for the scene object's order in lists. Pass `null` to remove. */
+  order?: number | null;
+  /** Optional parent Id for the scene object (UUID). Pass `null` to remove. */
+  parentId?: string | null;
   /** Schema-specific data to update for the scene object */
   data?: SchemaData<K, V>;
 }

@@ -41,7 +41,11 @@ const REPO_OBJ: SceneObjectCreate = {
 };
 
 const TEST_SCENES: SceneCreate[] = [
-  { displayName: "TestSceneA", sceneData: { objects: [LAYER_OBJ, REPO_OBJ] } },
+  {
+    displayName: "TestSceneA",
+    description: "DescriptionA",
+    sceneData: { objects: [LAYER_OBJ, REPO_OBJ] },
+  },
   { displayName: "TestSceneB", sceneData: { objects: [LAYER_OBJ, REPO_OBJ] } },
 ];
 
@@ -95,6 +99,7 @@ describe("Scenes operation", () => {
     // Basic identity checks
     expect(res.scene.id).toBe(sceneAId);
     expect(res.scene.displayName).toBe("TestSceneA");
+    expect(res.scene.description).toBe("DescriptionA");
     expect(res.scene.iTwinId).toBe(ITWIN_ID);
 
     // Verify the sceneData.objects array contains both objects
@@ -151,6 +156,15 @@ describe("Scenes operation", () => {
 
     expect(upd.scene.displayName).toBe("UpdatedA");
     expect(upd.scene.description).toBe("UpdateB");
+
+    const upd2 = await client.patchScene({
+      iTwinId: ITWIN_ID,
+      sceneId: sceneAId,
+      scene: { displayName: undefined, description: null },
+    });
+
+    expect(upd2.scene.displayName).toBe("UpdatedA"); // ignored displayName
+    expect(upd2.scene.description).toBe(undefined); // removed optional description
   });
 
   it("delete scene", async () => {
@@ -215,9 +229,19 @@ describe("Scenes Objects operations", () => {
       iTwinId: ITWIN_ID,
       sceneId,
       objectId: obj1,
-      object: { displayName: "Layer1Up" },
+      object: { displayName: undefined, order: 2 },
     });
-    expect(p1.object.displayName).toBe("Layer1Up");
+    expect(p1.object.displayName).toBe("TestLayer"); // ignored displayName
+    expect(p1.object.order).toBe(2); // updated order
+
+    const p2 = await client.patchObject({
+      iTwinId: ITWIN_ID,
+      sceneId,
+      objectId: obj1,
+      object: { displayName: null, order: null },
+    });
+    expect(p2.object.displayName).toBe(undefined); // removed displayName
+    expect(p2.object.order).toBe(undefined); // removed order
   });
 
   it("patches objects", async () => {
