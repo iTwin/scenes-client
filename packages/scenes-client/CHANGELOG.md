@@ -1,5 +1,13 @@
 # @itwin/scenes-client
 
+## 0.0.3
+
+### Patch Changes
+
+- fb0f436: Improve TS inference for scene object data based on kind
+  - Fix `SceneObject`, `SceneObjectMinimal`, and `SceneObjectCreate` types so the `data` field is properly inferred from the `kind` attribute.
+  - Improves type safety and editor autocomplete for consumers.
+
 ## 0.0.2
 
 ### Patch Changes
