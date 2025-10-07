@@ -64,10 +64,17 @@ export interface StandardObjectCreate<
 > extends BaseSceneObjectCreate<K, V> {}
 
 /**
- * Union type representing all possible scene object creates.
+ * Type representing all possible scene object creates.
  * Automatically resolves to the appropriate interface based on the schema kind
  */
-export type SceneObjectCreate = StandardObjectCreate | ResourceStylingObjectCreate;
+export type SceneObjectCreate<
+  K extends SchemaKind = SchemaKind,
+  V extends SchemaVersion<K> = SchemaVersion<K>,
+> = K extends ResourceStylingSchemas
+  ? ResourceStylingObjectCreate<K, V>
+  : K extends StandardSchemas
+    ? StandardObjectCreate<K, V>
+    : never;
 
 /**
  * Interface for creating multiple scene objects

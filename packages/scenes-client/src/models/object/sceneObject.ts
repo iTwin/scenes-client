@@ -8,7 +8,7 @@ import {
   ResourceStylingObjectCreate,
   StandardObjectCreate,
 } from "./sceneObjectCreate.js";
-import { SchemaVersion } from "./types/sceneObjectSchemas.js";
+import { SchemaKind, SchemaVersion } from "./types/sceneObjectSchemas.js";
 import { ResourceStylingSchemas, StandardSchemas } from "./types/schemaCategories.js";
 
 /**
@@ -47,10 +47,17 @@ export interface StandardObject<
     SceneObjectResponseMetadata {}
 
 /**
- * Union type representing all possible scene object responses.
+ * Type representing all possible scene object responses.
  * Automatically resolves to the appropriate interface based on schema kind
  */
-export type SceneObject = StandardObject | ResourceStylingObject;
+export type SceneObject<
+  K extends SchemaKind = SchemaKind,
+  V extends SchemaVersion<K> = SchemaVersion<K>,
+> = K extends ResourceStylingSchemas
+  ? ResourceStylingObject<K, V>
+  : K extends StandardSchemas
+    ? StandardObject<K, V>
+    : never;
 
 export function isSceneObject(v: unknown): v is SceneObject {
   return (
