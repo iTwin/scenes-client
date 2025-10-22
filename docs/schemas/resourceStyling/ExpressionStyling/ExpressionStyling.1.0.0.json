@@ -70,7 +70,7 @@
                     "description": "Value of the attribute to match",
                     "oneOf": [
                       {
-                        "$ref": "/schemas/CommonTypes#/definitions/expressionString"
+                        "$ref": "/schemas/CommonTypes#/definitions/restrictedString"
                       },
                       {
                         "type": "number"
