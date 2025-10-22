@@ -17,6 +17,11 @@
       "pattern": "^[a-zA-Z0-9 ?!@+-.:=_/]*$",
       "description": "String containing only web safe characters"
     },
+    "restrictedString": {
+      "type": "string",
+      "pattern": "^(?!.*([jJ][aA][vV][aA][sS][cC][rR][iI][pP][tT]:|<\\s*[sS][cC][rR][iI][pP][tT]|[dD][aA][tT][aA]:|<[iI][fF][rR][aA][mM][eE]|[oO][nN]\\w+=)).*$",
+      "description": "Free-text string that blocks a small set of potentially dangerous patterns (<script, javascript:, data:, <iframe, inline on event handlers). Frontend should treat this as untrusted input and escape or sanitize it before rendering."
+    },
     "expressionString": {
       "type": "string",
       "isJsep": true,
