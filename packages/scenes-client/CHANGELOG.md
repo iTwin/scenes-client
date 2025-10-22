@@ -1,5 +1,13 @@
 # @itwin/scenes-client
 
+## 0.0.4
+
+### Patch Changes
+
+- 6ad365f: - Add `RestrictedString` type alias with TSDoc explaining expected format and note on sanitization
+  - Change `ExpressionStyling.stylingOptions` category `rule.value` type to `RestrictedString`
+  - No runtime behavior changes
+
 ## 0.0.3
 
 ### Patch Changes
