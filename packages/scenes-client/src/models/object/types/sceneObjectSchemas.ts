@@ -17,6 +17,9 @@ export type SafeString = string;
 /** A JavaScript (JSEP) expression for frontend rendering that excludes potentially dangerous constructs. It's up to the frontend to validate and execute this expression safely. */
 export type ExpressionString = string;
 
+/** Free-text string that blocks a small set of potentially dangerous patterns (<script, javascript:, data:, <iframe, inline on event handlers). Frontend should treat this as untrusted input and escape or sanitize it before rendering. */
+export type RestrictedString = string;
+
 /** Expression that determines styling conditions or a single expression. */
 export type ExpressionOrConditions =
   | ExpressionString
@@ -332,7 +335,7 @@ export interface ScenesApiSchemas {
             styleType: "Category";
             rules: {
               name: SafeString;
-              value: ExpressionString | number | boolean;
+              value: RestrictedString | number | boolean;
               symbology: {
                 lineColor: ColorDef;
                 fillColor: ColorDef;
