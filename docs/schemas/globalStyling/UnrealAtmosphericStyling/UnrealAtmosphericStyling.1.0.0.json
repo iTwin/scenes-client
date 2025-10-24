@@ -21,6 +21,12 @@
           "minimum": -90,
           "maximum": 90
         },
+        "sunIntensity": {
+          "description": "Intensity of the sun for shadows",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
         "heliodonLongitude": {
           "description": "Geographic longitude for simulating sun position",
           "type": "number",
@@ -70,6 +76,16 @@
         "useHeliodon": {
           "description": "Enable or disable the heliodon system (sun simulation)",
           "type": "boolean"
+        },
+        "HDRIImage": {
+          "description": "Name of the HDR image to apply to the background",
+          "$ref": "/schemas/CommonTypes#/definitions/safeString"
+        },
+        "HDRIZRotation": {
+          "description": "Rotation of the HDR image",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 360
         }
       },
       "required": [
