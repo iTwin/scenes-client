@@ -306,6 +306,7 @@ export interface ScenesApiSchemas {
       atmosphere: {
         sunAzimuth: number;
         sunPitch: number;
+        sunIntensity?: number;
         heliodonLongitude: number;
         heliodonLatitude: number;
         heliodonDate: DateTime;
@@ -315,6 +316,8 @@ export interface ScenesApiSchemas {
         fog: number;
         exposure: number;
         useHeliodon: boolean;
+        HDRIImage?: SafeString;
+        HDRIZRotation?: number;
       };
     };
   };
