@@ -48,11 +48,15 @@
         {
           "type": "object",
           "additionalProperties": false,
-          "required": [ "styleType", "rules" ],
+          "required": [ "styleType", "default", "rules" ],
           "properties": {
             "styleType": {
               "enum": [ "Category" ],
               "description": "Specifies the type of styling: 'Expression' or 'Category'. This is used to differentiate between different styling methods."
+            },
+            "default": {
+              "$ref": "#/definitions/featureSymbology",
+              "description": "Default symbology settings to apply when no attribute rules match."
             },
             "rules": {
               "type": "array",
@@ -81,28 +85,8 @@
                     ]
                   },
                   "symbology": {
-                    "type": "object",
-                    "description": "Symbology settings to apply when the rule matches",
-                    "additionalProperties": false,
-                    "required": [ "lineColor", "fillColor", "weight" ],
-                    "properties": {
-                      "lineColor": {
-                        "$ref": "/schemas/CommonTypes#/definitions/colorDef",
-                        "description": "Color of the feature's lines"
-                      },
-                      "fillColor": {
-                        "$ref": "/schemas/CommonTypes#/definitions/colorDef",
-                        "description": "Fill color of the feature"
-                      },
-                      "weight": {
-                        "type": "number",
-                        "description": "Thickness of the feature's lines"
-                      },
-                      "linePixels": {
-                        "$ref": "/schemas/CommonTypes#/definitions/linePixels",
-                        "description": "Line pattern for the feature's lines"
-                      }
-                    }
+                    "$ref": "#/definitions/featureSymbology",
+                    "description": "Symbology settings to apply when a rule matches or to describe appearance."
                   }
                 }
               }
@@ -110,6 +94,32 @@
           }
         }
       ]
+    }
+  },
+  "definitions": {
+    "featureSymbology": {
+      "type": "object",
+      "description": "Symbology settings to apply to an attributed feature",
+      "additionalProperties": false,
+      "required": [ "lineColor", "fillColor", "weight" ],
+      "properties": {
+        "lineColor": {
+          "$ref": "/schemas/CommonTypes#/definitions/colorDef",
+          "description": "Color of the feature's lines"
+        },
+        "fillColor": {
+          "$ref": "/schemas/CommonTypes#/definitions/colorDef",
+          "description": "Fill color of the feature"
+        },
+        "weight": {
+          "type": "number",
+          "description": "Thickness of the feature's lines"
+        },
+        "linePixels": {
+          "$ref": "/schemas/CommonTypes#/definitions/linePixels",
+          "description": "Line pattern for the feature's lines"
+        }
+      }
     }
   }
 }
