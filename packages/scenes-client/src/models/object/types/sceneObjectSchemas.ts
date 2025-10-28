@@ -79,6 +79,14 @@ export type HiddenLineStyle = {
   width?: number;
 };
 
+/** Symbology settings to apply to an attributed feature */
+export type FeatureSymbology = {
+  lineColor: ColorDef;
+  fillColor: ColorDef;
+  weight: number;
+  linePixels?: LinePixels;
+};
+
 /**
  * All schema definitions and versions supported by the Scenes API.
  * Each schema can have multiple versions, each version defining its expected data structure.
@@ -336,15 +344,11 @@ export interface ScenesApiSchemas {
           }
         | {
             styleType: "Category";
+            default: FeatureSymbology;
             rules: {
               name: SafeString;
               value: RestrictedString | number | boolean;
-              symbology: {
-                lineColor: ColorDef;
-                fillColor: ColorDef;
-                weight: number;
-                linePixels?: LinePixels;
-              };
+              symbology: FeatureSymbology;
             }[];
           };
     };
