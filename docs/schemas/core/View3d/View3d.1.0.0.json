@@ -32,6 +32,14 @@
       "type": "number",
       "description": "Far plane distance"
     },
+    "fov": {
+      "type": "number",
+      "description": "Angle of the field of view in radians for perspective views"
+    },
+    "width": {
+      "type": "number",
+      "description": "Width of the frustum in meters for orthographic views"
+    },
     "ecefTransform": {
       "$ref": "/schemas/CommonTypes#/definitions/transform",
       "description": "Earth-Centered, Earth-Fixed transform"
