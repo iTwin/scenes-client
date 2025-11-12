@@ -6,7 +6,7 @@
   "properties": {
     "visible": {
       "type": "boolean",
-      "description": "Whether the layer is turned on or off"
+      "description": "Whether the layer is turned on or off. DEPRECATED: Use visible field in object metadata instead."
     },
     "iTwinId": {
       "$ref": "/schemas/CommonTypes#/definitions/guid",
@@ -25,5 +25,5 @@
       "description": "SubClass of the repository if applicable"
     }
   },
-  "required": [ "visible", "iTwinId", "repositoryId", "class"]
+  "required": [ "iTwinId", "repositoryId", "class"]
 }
