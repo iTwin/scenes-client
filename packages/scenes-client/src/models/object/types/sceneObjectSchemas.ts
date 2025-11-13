@@ -198,6 +198,10 @@ export interface ScenesApiSchemas {
       near: number;
       /** Far plane distance */
       far: number;
+      /** Angle of the field of view in radians for perspective views */
+      fov?: number;
+      /** Width of the frustum in meters for orthographic views */
+      width?: number;
       /** Earth-Centered, Earth-Fixed transform */
       ecefTransform: Transform;
     };
