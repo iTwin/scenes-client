@@ -129,10 +129,13 @@ export interface ScenesApiSchemas {
     };
   };
   Layer: {
-    /** Layers organize scene content and control data visibility. They are not limited to contain specific data types. */
+    /** Layers organize scene content. They are not limited to contain specific data types. */
     "1.0.0": {
-      /** Whether the layer is turned on or off */
-      visible: boolean;
+      /**
+       * Whether the layer is turned on or off
+       * @deprecated Use visible field in scene object metadata instead.
+       */
+      visible?: boolean;
     };
   };
   MaterialDecoration: {
@@ -152,8 +155,11 @@ export interface ScenesApiSchemas {
   Repository: {
     /** Reference to a single repository */
     "1.0.0": {
-      /** Whether the layer is turned on or off */
-      visible: boolean;
+      /**
+       * Whether the layer is turned on or off
+       * @deprecated Use visible field in scene object metadata instead.
+       */
+      visible?: boolean;
       /** Id of the iTwin this repository is associated with */
       iTwinId: Guid;
       /** Id of the repository. Should be the same as class for internal repos and a GUID for custom repos */
@@ -167,8 +173,11 @@ export interface ScenesApiSchemas {
   RepositoryResource: {
     /** Reference to a single repository resource */
     "1.0.0": {
-      /** Whether the layer is turned on or off */
-      visible: boolean;
+      /**
+       * Whether the layer is turned on or off
+       * @deprecated Use visible field in scene object metadata instead.
+       */
+      visible?: boolean;
       /** Id of the iTwin this repository resource is associated with */
       iTwinId: Guid;
       /** Id of the repository. Should be the same as class for internal repos and a GUID for custom repos */

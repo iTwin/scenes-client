@@ -26,14 +26,15 @@ const LAYER_OBJ: SceneObjectCreate = {
   kind: "Layer",
   version: "1.0.0",
   displayName: "TestLayer",
-  data: { visible: true },
+  visible: true,
+  data: {},
 };
 const REPO_OBJ: SceneObjectCreate = {
   kind: "RepositoryResource",
   version: "1.0.0",
+  visible: true,
   data: {
     iTwinId: ITWIN_ID,
-    visible: true,
     id: IMODEL_ID,
     class: "iModels",
     repositoryId: "iModels",

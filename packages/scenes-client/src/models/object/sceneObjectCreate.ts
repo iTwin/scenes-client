@@ -26,6 +26,8 @@ export interface BaseSceneObjectCreate<
   displayName?: string;
   /** Optional order in lists */
   order?: number;
+  /** Optional initial visibility state for the scene object */
+  visible?: boolean;
   /** Optional parent Id (UUID) */
   parentId?: string;
 }
@@ -99,6 +101,7 @@ export function isSceneObjectCreate(v: unknown): v is SceneObjectCreate {
     (v.id === undefined || typeof v.id === "string") &&
     (v.displayName === undefined || typeof v.displayName === "string") &&
     (v.order === undefined || typeof v.order === "number") &&
+    (v.visible === undefined || typeof v.visible === "boolean") &&
     typeof v.version === "string" &&
     typeof v.kind === "string" &&
     (v.parentId === undefined || typeof v.parentId === "string") &&

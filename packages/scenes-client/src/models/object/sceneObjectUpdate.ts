@@ -25,6 +25,8 @@ export interface SceneObjectUpdate<
   order?: number | null;
   /** Optional parent Id for the scene object (UUID). Pass `null` to remove. */
   parentId?: string | null;
+  /** Optional visibility state for the scene object. Pass `null` to remove. */
+  visible?: boolean | null;
   /** Schema-specific data to update for the scene object */
   data?: SchemaData<K, V>;
 }
