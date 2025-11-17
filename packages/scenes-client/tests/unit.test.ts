@@ -602,7 +602,7 @@ const exampleSceneObjectResponse: SceneObjectResponse = {
     kind: "Layer",
     version: "1.0.0",
     visible: true,
-    data: { someProperty: "someValue" },
+    data: {},
     sceneId: "scene-1",
     createdById: "user-1",
     creationTime: "2025-07-16T15:00:00.000Z",
