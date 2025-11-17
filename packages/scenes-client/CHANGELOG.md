@@ -1,5 +1,18 @@
 # @itwin/scenes-client
 
+## 0.2.0
+
+### Minor Changes
+
+- 44d7ff7: Add optional frustum properties to `View3d` SceneObject types
+  - Non-breaking. New optional properties:
+    - `fov` – angle of the field of view in radians for perspective views
+    - `width` – width of the frustum in meters for orthographic views
+
+- 7468e29: Normalize visibility flag across scene objects
+  - Add optional top-level `visible` flag to all scene object types, to indicate if the object should be shown or hidden.
+  - Mark `visible` as deprecated in `Layer`, `Repository`, and `RepositoryResource` object types. Consumers should use `visible` in object metadata instead.
+
 ## 0.1.0
 
 ### Minor Changes
