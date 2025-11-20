@@ -14,7 +14,7 @@
     },
     "safeString": {
       "type": "string",
-      "pattern": "^[a-zA-Z0-9 ?!@+-.:=_/]*$",
+      "pattern": "^[a-zA-Z0-9 ?!@+-.:=_/#]*$",
       "description": "String containing only web safe characters"
     },
     "restrictedString": {
