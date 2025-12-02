@@ -366,6 +366,13 @@ export interface ScenesApiSchemas {
           };
     };
   };
+  GISStyling: {
+    /** Defines styling options for a specific GeographicInformationSystem (GIS) resource.*/
+    "1.0.0": {
+      /** Transparency in the range [0.0, 1.0] where 0 indicates fully opaque and 1 indicates fully transparent. */
+      transparency?: number;
+    };
+  };
   ScheduleSimulation: {
     /** 4D scheduling simulation for a specific iModel. */
     "1.0.0": {
