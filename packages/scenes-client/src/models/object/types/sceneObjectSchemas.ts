@@ -389,6 +389,19 @@ export interface ScenesApiSchemas {
       adjustment?: number[];
       /** Quality of iModel rendering */
       quality?: number;
+      /** Per-model category visibility overrides. Allows category visibility to be overridden in the context of individual models, taking precedence over the category's global visibility state. The override affects all subcategories within the overridden category. */
+      perModelCategoryVisibility?: {
+        /** Id of the model for which the override applies. */
+        modelId: Id64;
+        /** Id of the category whose visibility is overridden. */
+        categoryId: Id64;
+        /** Whether the category is visible in the context of the model. */
+        visible: boolean;
+      }[];
+      /** Compressed Id64 Set of elements that should always be rendered, regardless of category and subcategory visibility. */
+      alwaysDrawn?: CompressedId64Set;
+      /** Compressed Id64 Set of elements that should never be rendered. This set takes precedence over the alwaysDrawn set. */
+      neverDrawn?: CompressedId64Set;
     };
   };
   RealityDataStyling: {
