@@ -7,6 +7,7 @@ import type { SchemaKind } from "./sceneObjectSchemas.js";
 /** Schemas that define resource-specific styling options */
 export type ResourceStylingSchemas =
   | "ExpressionStyling"
+  | "GISStyling"
   | "ScheduleSimulation"
   | "iModelVisibility"
   | "RealityDataStyling";

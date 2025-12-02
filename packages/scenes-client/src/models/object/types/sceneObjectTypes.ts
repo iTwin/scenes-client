@@ -72,6 +72,11 @@ export type ExpressionStylingCreateV1 = ResourceStylingObjectCreate<"ExpressionS
 /** Latest ExpressionStyling creation type. Currently points to 1.0.0. */
 export type ExpressionStylingCreate = ExpressionStylingCreateV1;
 
+/** GISStyling (v1.0.0) Scene Object Creation Type */
+export type GISStylingCreateV1 = ResourceStylingObjectCreate<"GISStyling", "1.0.0">;
+/** Latest GISStyling creation type. Currently points to 1.0.0. */
+export type GISStylingCreate = GISStylingCreateV1;
+
 /** ScheduleSimulation (v1.0.0) Scene Object Creation Type */
 export type ScheduleSimulationCreateV1 = ResourceStylingObjectCreate<"ScheduleSimulation", "1.0.0">;
 /** Latest ScheduleSimulation creation type. Currently points to 1.0.0. */
@@ -148,6 +153,11 @@ export type ExpressionStylingV1 = ResourceStylingObject<"ExpressionStyling", "1.
 /** Latest ExpressionStyling response type. Currently points to 1.0.0. */
 export type ExpressionStyling = ExpressionStylingV1;
 
+/** GISStyling (v1.0.0) Scene Object Response Type. */
+export type GISStylingV1 = ResourceStylingObject<"GISStyling", "1.0.0">;
+/** Latest GISStyling response type. Currently points to 1.0.0. */
+export type GISStyling = GISStylingV1;
+
 /** ScheduleSimulation (v1.0.0) Scene Object Response Type. */
 export type ScheduleSimulationV1 = ResourceStylingObject<"ScheduleSimulation", "1.0.0">;
 /** Latest ScheduleSimulation response type. Currently points to 1.0.0. */
@@ -177,6 +187,7 @@ export type SceneObjectCreateType =
   | ITwinDisplayStyleOptionsCreateV1
   | UnrealAtmosphericStylingCreateV1
   | ExpressionStylingCreateV1
+  | GISStylingCreateV1
   | ScheduleSimulationCreateV1
   | iModelVisibilityCreateV1
   | RealityDataStylingCreateV1;
@@ -195,6 +206,7 @@ export type SceneObjectType =
   | ITwinDisplayStyleOptionsV1
   | UnrealAtmosphericStylingV1
   | ExpressionStylingV1
+  | GISStylingV1
   | ScheduleSimulationV1
   | iModelVisibilityV1
   | RealityDataStylingV1;
