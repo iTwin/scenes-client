@@ -48,6 +48,37 @@
       "type": "number",
       "minimum": 0.0,
       "maximum": 1.0
+    },
+    "perModelCategoryVisibility": {
+      "description": "Per-model category visibility overrides. Allows category visibility to be overridden in the context of individual models, taking precedence over the category's global visibility state. The override affects all subcategories within the overridden category.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "modelId": {
+            "description": "Id of the model for which the override applies.",
+            "$ref": "/schemas/CommonTypes#/definitions/id64"
+          },
+          "categoryId": {
+            "description": "Id of the category whose visibility is overridden.",
+            "$ref": "/schemas/CommonTypes#/definitions/id64"
+          },
+          "visible": {
+            "description": "Whether the category is visible in the context of the model.",
+            "type": "boolean"
+          }
+        },
+        "required": [ "modelId", "categoryId", "visible" ]
+      }
+    },
+    "alwaysDrawn": {
+      "description": "Compressed Id64 Set of elements that should always be rendered, regardless of category and subcategory visibility.",
+      "$ref": "/schemas/CommonTypes#/definitions/compressedId64Set"
+    },
+    "neverDrawn": {
+      "description": "Compressed Id64 Set of elements that should never be rendered. This set takes precedence over the alwaysDrawn set.",
+      "$ref": "/schemas/CommonTypes#/definitions/compressedId64Set"
     }
   },
   "required": [ "categories", "models" ]
