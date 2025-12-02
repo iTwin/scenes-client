@@ -260,6 +260,11 @@ const iModelStyling: iModelVisibilityCreate = {
       shownList: "",
       hiddenList: "+20000000002",
     },
+    perModelCategoryVisibility: [
+      { modelId: "0x20000000079", categoryId: "0x2000000003e", visible: false },
+    ],
+    alwaysDrawn: "+1*4+4*3",
+    neverDrawn: "+21234567890+10000000000*2+20000000000",
   },
 };
 
