@@ -1,0 +1,14 @@
+{
+  "$id": "/schemas/GISStyling.1.0.0",
+  "description": "Defines styling options for a specific GeographicInformationSystem (GIS) resource.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "transparency": {
+      "description": "Transparency in the range [0.0, 1.0] where 0 indicates fully opaque and 1 indicates fully transparent.",
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0
+    }
+  }
+}
