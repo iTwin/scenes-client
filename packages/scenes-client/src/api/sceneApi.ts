@@ -21,6 +21,7 @@ import {
   GetSceneMetadataParams,
   isSceneMetadataResponse,
   SceneMetadataResponse,
+  PutSceneParams,
 } from "../models/index.js";
 import { iteratePagedEndpoint } from "../utilities.js";
 import { callApi, AuthArgs } from "./apiFetch.js";
@@ -229,6 +230,50 @@ export async function postScene({
     },
     fetchOptions: {
       method: "POST",
+      body: JSON.stringify(scene),
+    },
+    additionalHeaders: {
+      Accept: "application/vnd.bentley.itwin-platform.v1+json",
+      "Content-Type": "application/json",
+    },
+  });
+}
+
+/**
+ * Create or replace an existing scene.
+ * @param params - {@link PutSceneParams}
+ * @returns Created/updated scene details.
+ * @throws {ScenesApiError} If the API call fails or the response format is invalid.
+ */
+export async function putScene({
+  iTwinId,
+  sceneId,
+  scene,
+  getAccessToken,
+  baseUrl,
+}: PutSceneParams & AuthArgs): Promise<SceneResponse> {
+  return callApi<SceneResponse>({
+    endpoint: `/${sceneId}?iTwinId=${iTwinId}`,
+    getAccessToken,
+    baseUrl,
+    postProcess: async (response) => {
+      if (!response.ok) {
+        await handleErrorResponse(response);
+      }
+      const responseJson = await response.json();
+      if (!isSceneResponse(responseJson)) {
+        throw new ScenesApiError(
+          {
+            code: "InvalidResponse",
+            message: "Error creating or replacing scene: unexpected response format",
+          },
+          response.status,
+        );
+      }
+      return responseJson;
+    },
+    fetchOptions: {
+      method: "PUT",
       body: JSON.stringify(scene),
     },
     additionalHeaders: {
