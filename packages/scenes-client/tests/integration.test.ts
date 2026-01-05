@@ -168,6 +168,32 @@ describe("Scenes operation", () => {
     expect(upd2.scene.description).toBe(undefined); // removed optional description
   });
 
+  it("replace scene", async () => {
+    const upd = await client.putScene({
+      iTwinId: ITWIN_ID,
+      sceneId: sceneAId,
+      scene: {
+        displayName: "ReplaceA",
+        description: "Description",
+        sceneData: { objects: [LAYER_OBJ] },
+      },
+    });
+
+    expect(upd.scene.displayName).toBe("ReplaceA");
+    expect(upd.scene.description).toBe("Description");
+    expect(upd.scene.sceneData.objects).toHaveLength(1);
+
+    const upd2 = await client.putScene({
+      iTwinId: ITWIN_ID,
+      sceneId: sceneAId,
+      scene: { displayName: "ReplaceB" },
+    });
+
+    expect(upd2.scene.displayName).toBe("ReplaceB");
+    expect(upd2.scene.description).toBe(undefined); // removed description
+    expect(upd2.scene.sceneData.objects).toStrictEqual([]); // removed objects
+  });
+
   it("delete scene", async () => {
     await client.deleteScene({ iTwinId: ITWIN_ID, sceneId: sceneAId });
     await expect(client.getScene({ iTwinId: ITWIN_ID, sceneId: sceneAId })).rejects.toMatchObject({

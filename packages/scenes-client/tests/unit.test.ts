@@ -145,6 +145,27 @@ describe("Scenes Operations", () => {
     });
   });
 
+  it("putScene()", async () => {
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleSceneResponse));
+    const client = new SceneClient(getAccessToken);
+    const scenePayload = { displayName: "My Scene", sceneData: { objects: [] } };
+    await client.putScene({
+      iTwinId: "itw-1",
+      sceneId: "scene-1",
+      scene: scenePayload,
+    });
+
+    verifyFetch(fetchMock, {
+      url: `${BASE_DOMAIN}/scene-1?iTwinId=itw-1`,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/vnd.bentley.itwin-platform.v1+json",
+      },
+      method: "PUT",
+      body: JSON.stringify(scenePayload),
+    });
+  });
+
   it("patchScene()", async () => {
     fetchMock.mockImplementation(() => createSuccessfulResponse(exampleSceneMetadataResponse));
     const client = new SceneClient(getAccessToken);
@@ -375,6 +396,15 @@ describe("Error Handling", () => {
         client.postScene({
           iTwinId: "itw-1",
           scene: { displayName: "Test", sceneData: { objects: [] } },
+        }),
+    },
+    {
+      name: "scene upsert",
+      method: () =>
+        client.putScene({
+          iTwinId: "itw-1",
+          sceneId: "scene-1",
+          scene: { displayName: "Replace", sceneData: { objects: [] } },
         }),
     },
     {

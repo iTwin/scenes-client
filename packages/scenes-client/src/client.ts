@@ -10,6 +10,7 @@ import {
   deleteScene,
   getScenes,
   getSceneMetadata,
+  putScene,
 } from "./api/sceneApi.js";
 import {
   postObjects,
@@ -46,6 +47,7 @@ import {
   PatchObjectParam,
   GetSceneMetadataParams,
   SceneMetadataResponse,
+  PutSceneParams,
 } from "./models/index.js";
 
 type AccessTokenFn = () => Promise<string>;
@@ -163,7 +165,25 @@ export class SceneClient {
   }
 
   /**
-   * Update an existing scene.
+   * Create or replace an existing scene and all its objects.
+   * @param params.iTwinId – The iTwin's unique identifier.
+   * @param params.sceneId – The scene's unique identifier.
+   * @param params.scene – The scene creation payload.
+   * @returns SceneResponse containing the created/updated Scene's details.
+   * @throws {ScenesApiError} If the API call fails or the response format is invalid.
+   */
+  async putScene(params: PutSceneParams): Promise<SceneResponse> {
+    return putScene({
+      iTwinId: params.iTwinId,
+      sceneId: params.sceneId,
+      scene: params.scene,
+      getAccessToken: this.getAccessToken,
+      baseUrl: this.baseUrl,
+    });
+  }
+
+  /**
+   * Update an existing scene's metadata. To replace scene objects, use {@link putScene}.
    * @param params.iTwinId – The iTwin's unique identifier.
    * @param params.sceneId – The scene's unique identifier.
    * @param params.scene – The scene update payload.

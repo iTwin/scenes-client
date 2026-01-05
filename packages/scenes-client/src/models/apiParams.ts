@@ -8,6 +8,7 @@ import { BulkSceneObjectUpdate, SceneObjectUpdate } from "./object/sceneObjectUp
 import { GetScenesOptions } from "./scene/getScenesOptions.js";
 import { SceneCreate } from "./scene/sceneCreate.js";
 import { SceneUpdate } from "./scene/sceneUpdate.js";
+import { SceneUpsert } from "./scene/sceneUpsert.js";
 
 export type ITwinParams = { iTwinId: string };
 export type SceneParams = ITwinParams & { sceneId: string };
@@ -18,6 +19,7 @@ export type GetSceneParams = SceneParams & Pick<GetObjectsOptions, "orderBy">;
 export type GetScenesParams = ITwinParams & Omit<GetScenesOptions, "delayMs">;
 export type GetAllScenesParams = ITwinParams & GetScenesOptions;
 export type PostSceneParams = ITwinParams & { scene: SceneCreate };
+export type PutSceneParams = SceneParams & { scene: SceneUpsert };
 export type PatchSceneParams = SceneParams & { scene: SceneUpdate };
 export type DeleteSceneParams = SceneParams;
 
