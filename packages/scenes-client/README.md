@@ -110,7 +110,27 @@ const createResponse = await client.postScene({
 console.log(`Created scene: ${createResponse.scene!.displayName}`);
 ```
 
-#### Update a Scene
+#### Replace a Scene
+
+```ts
+// Fully replace an existing scene by id. Will create a new scene if provided sceneId does not exist.
+const putResponse = await client.putScene({
+  iTwinId: "<itwin_id>",
+  sceneId: "<scene_id>",
+  scene: {
+    displayName: "Full Scene Payload",
+    sceneData: {
+      objects: [
+        /** (optional) full list of scene objects */
+      ],
+    },
+  },
+});
+
+console.log(`Created or replaced scene: ${putResponse.scene!.displayName}`);
+```
+
+#### Update a Scene's metadata
 
 ```ts
 const updateResponse = await client.patchScene({
