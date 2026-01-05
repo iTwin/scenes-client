@@ -1,5 +1,13 @@
 # @itwin/scenes-client
 
+## 0.4.0
+
+### Minor Changes
+
+- d7df6d2: Add new client method `putScene(params: PutSceneParams)`
+  - Fully replaces an existing scene and all its objects in a single request. If the specified scene does not exist, it will be created.
+  - Uses new types `SceneUpsert` and `PutSceneParams`
+
 ## 0.3.0
 
 ### Minor Changes
