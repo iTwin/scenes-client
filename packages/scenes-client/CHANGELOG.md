@@ -1,5 +1,11 @@
 # @itwin/scenes-client
 
+## 0.4.1
+
+### Patch Changes
+
+- 1fd1ad5: Address CVE-2025-64718, CVE-2025-58752, and CVE-2025-54798
+
 ## 0.4.0
 
 ### Minor Changes
