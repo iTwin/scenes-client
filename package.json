@@ -18,12 +18,15 @@
   },
   "pnpm": {
     "overrides": {
-      "synckit": ">=0.11.11"
+      "synckit": ">=0.11.11",
+      "vite@>=7.0.0 <=7.0.7": ">=7.0.8",
+      "tmp@<=0.2.3": ">=0.2.4",
+      "js-yaml@>=4.0.0 <4.1.1": ">=4.1.1"
     }
   },
   "devDependencies": {
-    "@changesets/types": "6.0.0",
     "@changesets/cli": "^2.27.11",
+    "@changesets/types": "6.0.0",
     "typescript": "^5.8.3"
   }
 }
