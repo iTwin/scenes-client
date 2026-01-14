@@ -21,7 +21,7 @@
               "description": "Named expressions that can be reused within other expressions",
               "additionalProperties": false,
               "patternProperties": {
-                "^[a-zA-Z0-9 ?!@+-.:=_/]*$": {
+                "^[a-zA-Z0-9 ?!@+-.:=_/#%]*$": {
                   "$ref": "/schemas/CommonTypes#/definitions/expressionString",
                   "description": "Expression string that can define conditions or calculations for styling"
                 }
