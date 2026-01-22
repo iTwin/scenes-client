@@ -18,8 +18,8 @@
         "sunPitch": {
           "description": "The vertical angle of the sun above the horizon",
           "type": "number",
-          "minimum": -90,
-          "maximum": 90
+          "minimum": -180,
+          "maximum": 180
         },
         "sunIntensity": {
           "description": "Intensity of the sun for shadows",
