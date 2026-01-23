@@ -39,6 +39,7 @@ export type SceneObjectUpdateById = SceneObjectUpdate & {
 /**
  * Interface for updating multiple scene objects in bulk
  *
+ * @deprecated Use {@link BulkSceneObjectOperations} instead.
  * @example
  * ```typescript
  * const bulkUpdate: BulkSceneObjectUpdate = {

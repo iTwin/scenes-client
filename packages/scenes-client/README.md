@@ -334,9 +334,14 @@ createResponse.objects.forEach((obj: SceneObject) => {
 #### Update Scene Objects
 
 ```ts
-import { SceneObjectUpdate, SceneObjectUpdateById } from "@itwin/scenes-client";
+import {
+  SceneObject,
+  SceneObjectUpdate,
+  SceneObjectOperation,
+  OperationType,
+} from "@itwin/scenes-client";
 
-// Update data for a specific object with type safety
+// Update data for a single object with type safety
 const objectUpdate: SceneObjectUpdate<"GoogleTilesStyling", "1.0.0"> = {
   displayName: "Updated Global Styling Options",
   data: {
@@ -355,19 +360,43 @@ const updateResponse = await client.patchObject({
 
 console.log(`Updated object: ${updateResponse.object.displayName}`);
 
-// Update multiple objects in bulk (ex. reorder objects)
-const bulkUpdatePayload: SceneObjectUpdateById[] = [
-  { id: "<object_id_1>", order: 1 },
-  { id: "<object_id_2>", order: 2 },
-  { id: "<object_id_3>", order: 3 },
+// Update many scene objects with atomic operations
+// All operations execute in provided order
+const operations: SceneObjectOperation[] = [
+  // 1: Add a new Layer object
+  {
+    op: OperationType.CREATE,
+    payload: {
+      id: "<new_layer_id>",
+      kind: "Layer",
+      version: "1.0.0",
+      displayName: "New Construction Phase",
+      data: { visible: true },
+    },
+  },
+  //2: Move existing object to the new layer
+  {
+    op: OperationType.UPDATE,
+    id: "<existing_object_id>",
+    payload: { parentId: "<new_layer_id>" },
+  },
+  // 3: Remove old Layer
+  { op: OperationType.DELETE, id: "<old_layer_id>" },
+  // 4-6: Reorder scene objects
+  { op: OperationType.UPDATE, id: "<object_id_1>", payload: { order: 1 } },
+  { op: OperationType.UPDATE, id: "<object_id_2>", payload: { order: 2 } },
+  { op: OperationType.UPDATE, id: "<object_id_3>", payload: { order: 3 } },
 ];
-const bulkUpdateResponse = await client.patchObjects({
+
+const bulkUpdateResponse = await client.patchObjectsOperations({
   iTwinId: "<itwin_id>",
   sceneId: "<scene_id>",
-  objects: bulkUpdatePayload,
+  operations, // Maximum 100 operations per request
 });
 
-console.log(`Updated ${bulkUpdateResponse.objects.length} objects`);
+bulkUpdateResponse.objects.forEach((obj: SceneObject) => {
+  console.log(`Created or updated ${obj.kind} object: ${obj.displayName} (${obj.id})`);
+});
 ```
 
 #### Delete Scene Objects

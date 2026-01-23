@@ -4,7 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { SceneClient } from "../src/client.js";
-import { SceneCreate, SceneObjectCreate, ScenesApiError } from "../src/models";
+import {
+  OperationType,
+  SceneCreate,
+  SceneObjectCreate,
+  SceneObjectOperation,
+  ScenesApiError,
+} from "../src/models";
 
 function requireMetaEnv<K extends keyof ImportMetaEnv>(key: K): ImportMetaEnv[K] {
   const v = import.meta.env[key];
@@ -295,6 +301,62 @@ describe("Scenes Objects operations", () => {
     expect(pAll.objects.map((o) => o.displayName)).toEqual(
       expect.arrayContaining(["Layer1Again", "ResrcUp"]),
     );
+  });
+
+  it("patch with add/update/remove operations", async () => {
+    // Create a temporary object
+    const created = await client.postObjects({
+      iTwinId: ITWIN_ID,
+      sceneId,
+      objects: [
+        {
+          kind: "Layer",
+          version: "1.0.0",
+          displayName: "Scenes Client Test Layer",
+          visible: true,
+          data: {},
+        },
+      ],
+    });
+    const tempId = created.objects[0].id;
+    expect(tempId).toBeDefined();
+
+    const operations: SceneObjectOperation[] = [
+      {
+        op: OperationType.CREATE,
+        payload: {
+          kind: "Layer",
+          version: "1.0.0",
+          displayName: "Added in Operations",
+          visible: true,
+          data: {},
+        },
+      },
+      {
+        op: OperationType.UPDATE,
+        id: tempId,
+        payload: { displayName: "Updated in Operations" },
+      },
+      {
+        op: OperationType.DELETE,
+        id: tempId,
+      },
+    ];
+
+    const res = await client.patchObjectsOperations({
+      iTwinId: ITWIN_ID,
+      sceneId,
+      operations,
+    });
+
+    // Ensure response returned objects array (created/updated)
+    expect(res.objects).toBeDefined();
+    expect(res.objects.some((o) => o.displayName === "Added in Operations")).toBe(true);
+
+    // Layer object should be removed
+    await expect(
+      client.getObject({ iTwinId: ITWIN_ID, sceneId, objectId: tempId }),
+    ).rejects.toMatchObject({ code: "SceneObjectNotFound" } as ScenesApiError);
   });
 
   it("get single object", async () => {

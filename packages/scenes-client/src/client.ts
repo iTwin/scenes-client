@@ -21,6 +21,7 @@ import {
   getAllObjects,
   getObjects,
   patchObject,
+  patchObjectsOperations,
 } from "./api/sceneObjectApi.js";
 import {
   SceneListResponse,
@@ -48,6 +49,7 @@ import {
   GetSceneMetadataParams,
   SceneMetadataResponse,
   PutSceneParams,
+  PatchObjectsOperationsParams,
 } from "./models/index.js";
 
 type AccessTokenFn = () => Promise<string>;
@@ -327,6 +329,7 @@ export class SceneClient {
 
   /**
    * Update one or multiple scene objects.
+   * @deprecated Use {@link patchObjectsOperations} instead.
    * @param params.iTwinId – The iTwin's unique identifier.
    * @param params.sceneId – The scene's unique identifier.
    * @param params.objects – Array of {@link SceneObjectUpdateById} to update.
@@ -338,6 +341,29 @@ export class SceneClient {
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,
       objects: params.objects,
+      getAccessToken: this.getAccessToken,
+      baseUrl: this.baseUrl,
+    });
+  }
+
+  /**
+   * Update scene objects in bulk using atomic add/update/remove operations.
+   * All operations are executed in the order provided. If any operation fails, all changes are rolled back.
+   * Max 100 operations per request.
+   *
+   * @param params.iTwinId – The iTwin's unique identifier.
+   * @param params.sceneId – The scene's unique identifier.
+   * @param params.operations – Array of {@link SceneObjectOperation}s to perform.
+   * @returns Updated scene objects details.
+   * @throws {ScenesApiError} If the API call fails or the response format is invalid.
+   */
+  async patchObjectsOperations(
+    params: PatchObjectsOperationsParams,
+  ): Promise<SceneObjectListResponse> {
+    return patchObjectsOperations({
+      iTwinId: params.iTwinId,
+      sceneId: params.sceneId,
+      operations: params.operations,
       getAccessToken: this.getAccessToken,
       baseUrl: this.baseUrl,
     });

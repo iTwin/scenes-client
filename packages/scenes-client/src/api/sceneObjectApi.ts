@@ -20,6 +20,7 @@ import {
   GetObjectsParams,
   PatchObjectParam,
   handleErrorResponse,
+  PatchObjectsOperationsParams,
 } from "../models/index.js";
 import { iteratePagedEndpoint, batched } from "../utilities.js";
 import { callApi, AuthArgs } from "./apiFetch.js";
@@ -246,6 +247,7 @@ export async function patchObject({
 
 /**
  * Updates one or multiple scene objects.
+ * @deprecated Use {@link patchObjectsOperations} instead.
  * @param params - {@link PatchObjectsParams}
  * @returns Updated scene objects details.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
@@ -295,6 +297,53 @@ export async function patchObjects({
   return {
     objects: results.flatMap((r) => r.objects),
   };
+}
+
+/**
+ * Updates multiple objects within a scene using an ordered list of atomic operations.
+ * All operations are executed in the order provided. If any operation fails, all changes are rolled back.
+ * Max 100 operations per request.
+ *
+ * @param params - {@link PatchObjectsOperationsParams}
+ * @returns Updated scene objects details.
+ * @throws {ScenesApiError} If the API call fails or the response format is invalid.
+ */
+export async function patchObjectsOperations({
+  sceneId,
+  iTwinId,
+  operations,
+  getAccessToken,
+  baseUrl,
+}: PatchObjectsOperationsParams & AuthArgs): Promise<SceneObjectListResponse> {
+  return callApi({
+    endpoint: `/${sceneId}/objects?iTwinId=${iTwinId}`,
+    getAccessToken,
+    baseUrl,
+    postProcess: async (response) => {
+      if (!response.ok) {
+        await handleErrorResponse(response);
+      }
+      const responseJson = await response.json();
+      if (!isSceneObjectListResponse(responseJson)) {
+        throw new ScenesApiError(
+          {
+            code: "InvalidResponse",
+            message: "Error updating scene objects with operations: unexpected response format",
+          },
+          response.status,
+        );
+      }
+      return responseJson;
+    },
+    fetchOptions: {
+      method: "PATCH",
+      body: JSON.stringify({ operations }),
+    },
+    additionalHeaders: {
+      Accept: "application/vnd.bentley.itwin-platform.v1+json",
+      "Content-Type": "application/json",
+    },
+  });
 }
 
 /**
