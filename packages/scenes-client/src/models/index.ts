@@ -7,6 +7,7 @@ export * from "./object/getObjectsOptions.js";
 export * from "./object/sceneObject.js";
 export * from "./object/sceneObjectCreate.js";
 export * from "./object/sceneObjectMinimal.js";
+export * from "./object/sceneObjectOperations.js";
 export * from "./object/sceneObjectUpdate.js";
 export * from "./object/types/sceneObjectSchemas.js";
 export * from "./object/types/sceneObjectTypes.js";

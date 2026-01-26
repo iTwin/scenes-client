@@ -240,10 +240,10 @@ import {
 // Create objects with strongly typed interfaces
 // Note: LayerCreate is an alias for StandardObjectCreate<"Layer", "1.0.0">
 const layer: LayerCreate = {
-  id: "<layer_id>",
+  id: "<layer_id>", // Optional, will be auto-generated if not provided
   kind: "Layer",
   version: "1.0.0",
-  displayName: "Buildings",
+  displayName: "Buildings", // Optional
   data: {
     visible: true,
   },
@@ -251,10 +251,10 @@ const layer: LayerCreate = {
 
 // Note: RepositoryResourceCreate is an alias for StandardObjectCreate<"RepositoryResource", "1.0.0">
 const iModelResource: RepositoryResourceCreate = {
-  id: "<imodel_object_id>",
+  id: "<imodel_object_id>", // Optional
   kind: "RepositoryResource",
   version: "1.0.0",
-  displayName: "Main Building Model",
+  displayName: "Main Building Model", // Optional
   parentId: "<layer_id>", // Organize under the layer
   data: {
     iTwinId: "<itwin_id>",
@@ -292,7 +292,7 @@ const iModelStyling: iModelVisibilityCreate = {
 const view3d: View3dCreate = {
   kind: "View3d",
   version: "1.0.0",
-  displayName: "Aerial View",
+  displayName: "Aerial View", // Optional
   data: {
     position: { x: -50.0, y: 75.0, z: 150.0 },
     direction: { x: 0.2, y: 0.2, z: -0.96 },
@@ -309,7 +309,7 @@ const view3d: View3dCreate = {
 const formsRepository: RepositoryCreate = {
   kind: "Repository",
   version: "1.0.0",
-  displayName: "iTwin A Forms",
+  displayName: "iTwin A Forms", // Optional
   data: {
     visible: true,
     iTwinId: "<itwin_id>",
@@ -334,9 +334,14 @@ createResponse.objects.forEach((obj: SceneObject) => {
 #### Update Scene Objects
 
 ```ts
-import { SceneObjectUpdate, SceneObjectUpdateById } from "@itwin/scenes-client";
+import {
+  SceneObject,
+  SceneObjectUpdate,
+  SceneObjectOperation,
+  OperationType,
+} from "@itwin/scenes-client";
 
-// Update data for a specific object with type safety
+// Update data for a single object with type safety
 const objectUpdate: SceneObjectUpdate<"GoogleTilesStyling", "1.0.0"> = {
   displayName: "Updated Global Styling Options",
   data: {
@@ -355,19 +360,43 @@ const updateResponse = await client.patchObject({
 
 console.log(`Updated object: ${updateResponse.object.displayName}`);
 
-// Update multiple objects in bulk (ex. reorder objects)
-const bulkUpdatePayload: SceneObjectUpdateById[] = [
-  { id: "<object_id_1>", order: 1 },
-  { id: "<object_id_2>", order: 2 },
-  { id: "<object_id_3>", order: 3 },
+// Update many scene objects with atomic operations
+// All operations execute in provided order
+const operations: SceneObjectOperation[] = [
+  // 1: Add a new Layer object
+  {
+    op: OperationType.CREATE,
+    payload: {
+      id: "<new_layer_id>", // Optional, will be auto-generated if not provided
+      kind: "Layer",
+      version: "1.0.0",
+      displayName: "New Construction Phase", // Optional
+      data: { visible: true },
+    },
+  },
+  //2: Move existing object to the new layer
+  {
+    op: OperationType.UPDATE,
+    id: "<existing_object_id>",
+    payload: { parentId: "<new_layer_id>" },
+  },
+  // 3: Remove old Layer
+  { op: OperationType.DELETE, id: "<old_layer_id>" },
+  // 4-6: Reorder scene objects
+  { op: OperationType.UPDATE, id: "<object_id_1>", payload: { order: 1 } },
+  { op: OperationType.UPDATE, id: "<object_id_2>", payload: { order: 2 } },
+  { op: OperationType.UPDATE, id: "<object_id_3>", payload: { order: 3 } },
 ];
-const bulkUpdateResponse = await client.patchObjects({
+
+const bulkUpdateResponse = await client.patchObjectsOperations({
   iTwinId: "<itwin_id>",
   sceneId: "<scene_id>",
-  objects: bulkUpdatePayload,
+  operations, // Maximum 100 operations per request
 });
 
-console.log(`Updated ${bulkUpdateResponse.objects.length} objects`);
+bulkUpdateResponse.objects.forEach((obj: SceneObject) => {
+  console.log(`Created or updated ${obj.kind} object: ${obj.displayName} (${obj.id})`);
+});
 ```
 
 #### Delete Scene Objects

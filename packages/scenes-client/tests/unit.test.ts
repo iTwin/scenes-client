@@ -6,11 +6,13 @@ import { describe, it, expect, beforeAll, afterAll, afterEach, vi } from "vitest
 import { SceneClient } from "../src/client";
 import {
   GET_SCENES_DEFAULTS,
+  OperationType,
   OrderByProperties,
   PagingLinks,
   SceneListResponse,
   SceneMetadataResponse,
   SceneObjectListResponse,
+  SceneObjectOperation,
   SceneObjectPagedResponse,
   SceneObjectResponse,
   SceneResponse,
@@ -341,6 +343,49 @@ describe("Scene Object Operations", () => {
       },
       method: "PATCH",
       body: JSON.stringify({ objects }),
+    });
+  });
+
+  it("patchObjectsOperations()", async () => {
+    fetchMock.mockImplementation(() => createSuccessfulResponse({ objects: [] }));
+    const operations: SceneObjectOperation[] = [
+      // add
+      {
+        op: OperationType.CREATE,
+        payload: {
+          kind: "Layer",
+          version: "1.0.0",
+          displayName: "OpAdded",
+          data: { visible: true },
+        },
+      },
+      // update
+      {
+        op: OperationType.UPDATE,
+        id: "object-1",
+        payload: { displayName: "Updated" },
+      },
+      // remove
+      {
+        op: OperationType.DELETE,
+        id: "object-2",
+      },
+    ];
+    const client = new SceneClient(getAccessToken);
+    await client.patchObjectsOperations({
+      iTwinId: "itw-1",
+      sceneId: "scene-1",
+      operations,
+    });
+
+    verifyFetch(fetchMock, {
+      url: `${BASE_DOMAIN}/scene-1/objects?iTwinId=itw-1`,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/vnd.bentley.itwin-platform.v1+json",
+      },
+      method: "PATCH",
+      body: JSON.stringify({ operations }),
     });
   });
 

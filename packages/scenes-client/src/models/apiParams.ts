@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { GetObjectsOptions } from "./object/getObjectsOptions.js";
 import { BulkSceneObjectCreate } from "./object/sceneObjectCreate.js";
+import { BulkSceneObjectOperations } from "./object/sceneObjectOperations.js";
 import { BulkSceneObjectUpdate, SceneObjectUpdate } from "./object/sceneObjectUpdate.js";
 import { GetScenesOptions } from "./scene/getScenesOptions.js";
 import { SceneCreate } from "./scene/sceneCreate.js";
@@ -29,5 +30,6 @@ export type GetAllObjectsParams = SceneParams & GetObjectsOptions;
 export type PostObjectsParams = SceneParams & BulkSceneObjectCreate;
 export type PatchObjectParam = ObjectParams & { object: SceneObjectUpdate };
 export type PatchObjectsParams = SceneParams & BulkSceneObjectUpdate;
+export type PatchObjectsOperationsParams = SceneParams & BulkSceneObjectOperations;
 export type DeleteObjectParams = ObjectParams;
 export type DeleteObjectsParams = SceneParams & { objectIds: string[] };
