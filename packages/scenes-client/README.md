@@ -240,10 +240,10 @@ import {
 // Create objects with strongly typed interfaces
 // Note: LayerCreate is an alias for StandardObjectCreate<"Layer", "1.0.0">
 const layer: LayerCreate = {
-  id: "<layer_id>",
+  id: "<layer_id>", // Optional, will be auto-generated if not provided
   kind: "Layer",
   version: "1.0.0",
-  displayName: "Buildings",
+  displayName: "Buildings", // Optional
   data: {
     visible: true,
   },
@@ -251,10 +251,10 @@ const layer: LayerCreate = {
 
 // Note: RepositoryResourceCreate is an alias for StandardObjectCreate<"RepositoryResource", "1.0.0">
 const iModelResource: RepositoryResourceCreate = {
-  id: "<imodel_object_id>",
+  id: "<imodel_object_id>", // Optional
   kind: "RepositoryResource",
   version: "1.0.0",
-  displayName: "Main Building Model",
+  displayName: "Main Building Model", // Optional
   parentId: "<layer_id>", // Organize under the layer
   data: {
     iTwinId: "<itwin_id>",
@@ -292,7 +292,7 @@ const iModelStyling: iModelVisibilityCreate = {
 const view3d: View3dCreate = {
   kind: "View3d",
   version: "1.0.0",
-  displayName: "Aerial View",
+  displayName: "Aerial View", // Optional
   data: {
     position: { x: -50.0, y: 75.0, z: 150.0 },
     direction: { x: 0.2, y: 0.2, z: -0.96 },
@@ -309,7 +309,7 @@ const view3d: View3dCreate = {
 const formsRepository: RepositoryCreate = {
   kind: "Repository",
   version: "1.0.0",
-  displayName: "iTwin A Forms",
+  displayName: "iTwin A Forms", // Optional
   data: {
     visible: true,
     iTwinId: "<itwin_id>",
@@ -367,10 +367,10 @@ const operations: SceneObjectOperation[] = [
   {
     op: OperationType.CREATE,
     payload: {
-      id: "<new_layer_id>",
+      id: "<new_layer_id>", // Optional, will be auto-generated if not provided
       kind: "Layer",
       version: "1.0.0",
-      displayName: "New Construction Phase",
+      displayName: "New Construction Phase", // Optional
       data: { visible: true },
     },
   },

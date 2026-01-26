@@ -30,7 +30,7 @@ export interface SceneObjectOperationBase {
  * const createStylingObject: CreateSceneObjectOperation<'ExpressionStyling', '1.0.0'> = {
  *   op: OperationType.CREATE,
  *   payload: {
- *     id: '<object_id>',
+ *     id: '<object_id>', // Optional, will be auto-generated if not provided
  *     kind: 'ExpressionStyling',
  *     version: '1.0.0',
  *     relatedId: '<related_object_id>',
