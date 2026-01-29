@@ -27,9 +27,8 @@ Scene objects are:
   "kind": "Layer",
   "version": "1.0.0",
   "displayName": "Exton Campus - Main Building",
-  "data": {
-    "visible": true
-  }
+  "data": {},
+  "visible": true
 }
 ```
 
@@ -47,9 +46,8 @@ Scene objects are:
     "iTwinId": "fa6e86b2-da9a-4fdc-a1bd-4a707b696d32",
     "class": "iModels",
     "repositoryId": "iModels",
-    "id": "c2fdfb84-bedb-409d-8527-fe519c85abe2",
-    "visible": true
-  }
+    "id": "c2fdfb84-bedb-409d-8527-fe519c85abe2"
+  },
 }
 ```
 
@@ -132,9 +130,8 @@ Scene: "Construction Site Overview"
         "kind": "Layer",
         "version": "1.0.0",
         "displayName": "Buildings",
-        "data": {
-          "visible": true
-        }
+        "data": {},
+        "visible": true
       },
 
       // RepositoryResource: Main Building iModel
@@ -148,9 +145,9 @@ Scene: "Construction Site Overview"
           "iTwinId": "64060a14-d545-4fff-b3b0-4c31291e7a00",
           "class": "iModels",
           "repositoryId": "iModels",
-          "id": "ba9bdbbf-59f9-41aa-a4e3-6fbd8d6bd068",
-          "visible": true
-        }
+          "id": "ba9bdbbf-59f9-41aa-a4e3-6fbd8d6bd068"
+        },
+        "visible": true
       },
 
       // iModelVisibility: Styling for Main Building iModel
@@ -164,11 +161,11 @@ Scene: "Construction Site Overview"
         "data": {
           "categories": {
             "shownList": "",
-            "hiddenList": "+300000000A0+ED1+3*2+4+D+3*2+8+4*3+3*5+2+3*4+4+3*2+4*2+3*3+5+4+5+4+8+3*2+5+4+7F",
+            "hiddenList": "+300000000A0+ED1+3*2+4+D+3*2+8+4*3+3*5+2+3*4+4+3*2+4*2+3*3+5+4+5+4+8+3*2+5+4+7F"
           },
           "models": {
             "shownList": "",
-            "hiddenList": "+20000000002",
+            "hiddenList": "+20000000002"
           }
         }
       },
@@ -179,9 +176,8 @@ Scene: "Construction Site Overview"
         "kind": "Layer",
         "version": "1.0.0",
         "displayName": "Utilities",
-        "data": {
-          "visible": true
-        }
+        "data": {},
+        "visible": true
       },
 
       // RepositoryResource: Utility Lines iModel
@@ -195,9 +191,9 @@ Scene: "Construction Site Overview"
           "iTwinId": "64060a14-d545-4fff-b3b0-4c31291e7a00",
           "class": "iModels",
           "repositoryId": "iModels",
-          "id": "6bbcf593-6160-4d83-9c07-1a69e4cc29fb",
-          "visible": true
-        }
+          "id": "6bbcf593-6160-4d83-9c07-1a69e4cc29fb"
+        },
+        "visible": true
       },
 
       // View3d: Global camera position and view settings
