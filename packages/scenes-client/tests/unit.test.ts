@@ -265,7 +265,8 @@ describe("Scene Object Operations", () => {
           id: "1",
           kind: "Layer",
           version: "1.0.0",
-          data: { visible: true },
+          visible: true,
+          data: {},
         },
       ],
     });
@@ -283,7 +284,8 @@ describe("Scene Object Operations", () => {
             id: "1",
             kind: "Layer",
             version: "1.0.0",
-            data: { visible: true },
+            visible: true,
+            data: {},
           },
         ],
       }),
@@ -320,12 +322,12 @@ describe("Scene Object Operations", () => {
       {
         id: "object-1",
         displayName: "UpdatedObject1",
-        data: { visible: true },
+        visible: true,
       },
       {
         id: "object-2",
         displayName: "UpdatedObject2",
-        data: { visible: true },
+        visible: true,
       },
     ];
     const client = new SceneClient(getAccessToken);
@@ -356,7 +358,7 @@ describe("Scene Object Operations", () => {
           kind: "Layer",
           version: "1.0.0",
           displayName: "OpAdded",
-          data: { visible: true },
+          data: {},
         },
       },
       // update
@@ -632,7 +634,7 @@ const exampleSceneResponse: SceneResponse = {
           id: "obj-1",
           kind: "Layer",
           version: "1.0.0",
-          data: { visible: true },
+          data: {},
         },
       ],
     },

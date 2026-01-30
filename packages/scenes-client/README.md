@@ -244,9 +244,8 @@ const layer: LayerCreate = {
   kind: "Layer",
   version: "1.0.0",
   displayName: "Buildings", // Optional
-  data: {
-    visible: true,
-  },
+  visible: true, // Optional, sets initial visibility state
+  data: {},
 };
 
 // Note: RepositoryResourceCreate is an alias for StandardObjectCreate<"RepositoryResource", "1.0.0">
@@ -256,12 +255,12 @@ const iModelResource: RepositoryResourceCreate = {
   version: "1.0.0",
   displayName: "Main Building Model", // Optional
   parentId: "<layer_id>", // Organize under the layer
+  visible: true, // Optional, sets initial visibility state
   data: {
     iTwinId: "<itwin_id>",
     class: "iModels",
     repositoryId: "iModels",
     id: "<imodel_id>",
-    visible: true,
   },
 };
 
@@ -311,7 +310,6 @@ const formsRepository: RepositoryCreate = {
   version: "1.0.0",
   displayName: "iTwin A Forms", // Optional
   data: {
-    visible: true,
     iTwinId: "<itwin_id>",
     repositoryId: "Forms",
     class: "Forms",
@@ -371,7 +369,8 @@ const operations: SceneObjectOperation[] = [
       kind: "Layer",
       version: "1.0.0",
       displayName: "New Construction Phase", // Optional
-      data: { visible: true },
+      visible: true, // Optional, sets initial visibility state
+      data: {},
     },
   },
   //2: Move existing object to the new layer
