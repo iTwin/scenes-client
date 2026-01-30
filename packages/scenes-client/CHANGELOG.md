@@ -1,5 +1,12 @@
 # @itwin/scenes-client
 
+## 0.6.0
+
+### Minor Changes
+
+- 2bef474: **BREAKING CHANGE**: Remove deprecated `visible` property from `Layer`, `Repository`, and `RepositoryResource` SceneObject data types.
+  - Consumers must use `visible` field in top-level object metadata instead.
+
 ## 0.5.0
 
 ### Minor Changes
