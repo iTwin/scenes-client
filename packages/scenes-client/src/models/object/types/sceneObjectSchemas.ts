@@ -85,6 +85,7 @@ export type FeatureSymbology = {
   fillColor: ColorDef;
   weight: number;
   linePixels?: LinePixels;
+  labelText?: RestrictedString;
 };
 
 /**
@@ -341,6 +342,7 @@ export interface ScenesApiSchemas {
             color: ExpressionOrConditions;
             lineWeight?: ExpressionOrConditions;
             lineColor?: ExpressionOrConditions;
+            labelText?: ExpressionOrConditions;
           }
         | {
             styleType: "Category";
