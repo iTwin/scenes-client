@@ -44,7 +44,7 @@ scenes-client/
 ### Prerequisites
 
 - [Node >=20](https://nodejs.org/en/) : Node installation also includes the **npm** package manager.
-- [pnpm >=9](https://pnpm.io/): Package manager used for this repository. Install with `npm install -g pnpm@9`.
+- [pnpm >=10.30.1](https://pnpm.io/): Package manager used for this repository. Install with `npm install -g pnpm@10.30.1`.
 
 ### Top-level Commands
 
