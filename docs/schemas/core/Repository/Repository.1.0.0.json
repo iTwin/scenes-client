@@ -4,10 +4,6 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
-    "visible": {
-      "type": "boolean",
-      "description": "Whether the layer is turned on or off. DEPRECATED: Use visible field in object metadata instead."
-    },
     "iTwinId": {
       "$ref": "/schemas/CommonTypes#/definitions/guid",
       "description": "Id of the iTwin this repository is associated with"
