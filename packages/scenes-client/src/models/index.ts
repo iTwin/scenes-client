@@ -25,6 +25,12 @@ export * from "./scene/sceneUpdate.js";
 export * from "./scene/sceneUpsert.js";
 export * from "./scene/sceneWithLinks.js";
 
+export * from "./tag/getTagsOptions.js";
+export * from "./tag/tag.js";
+export * from "./tag/tagCreate.js";
+export * from "./tag/tagMinimal.js";
+export * from "./tag/tagUpdate.js";
+
 export * from "./apiParams.js";
 export * from "./apiResponse.js";
 export * from "./error.js";

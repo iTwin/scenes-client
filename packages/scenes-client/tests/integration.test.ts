@@ -406,3 +406,101 @@ describe("Scenes Objects operations", () => {
     ).rejects.toMatchObject({ code: "SceneObjectNotFound" } as ScenesApiError);
   });
 });
+
+describe("Tag operations", () => {
+  let tagId: string;
+  let sceneId: string;
+
+  afterAll(async () => {
+    if (sceneId) {
+      await client.deleteScene({ iTwinId: ITWIN_ID, sceneId });
+      await expect(client.getScene({ iTwinId: ITWIN_ID, sceneId })).rejects.toMatchObject({
+        status: 404,
+        code: "SceneNotFound",
+      } as ScenesApiError);
+    }
+  });
+
+  it("create tag", async () => {
+    const created = await client.postTag({
+      iTwinId: ITWIN_ID,
+      tag: { displayName: "ScenesClientTagA" },
+    });
+
+    expect(created.tag.id).toBeDefined();
+    expect(created.tag.displayName).toBe("ScenesClientTagA");
+    expect(created.tag.iTwinId).toBe(ITWIN_ID);
+
+    tagId = created.tag.id;
+  });
+
+  it("get and update tag", async () => {
+    const fetched = await client.getTag({ iTwinId: ITWIN_ID, tagId });
+    expect(fetched.tag.id).toBe(tagId);
+    expect(fetched.tag.displayName).toBe("ScenesClientTagA");
+
+    const updated = await client.patchTag({
+      iTwinId: ITWIN_ID,
+      tagId,
+      tag: { displayName: "ScenesClientTagB" },
+    });
+    expect(updated.tag.id).toBe(tagId);
+    expect(updated.tag.displayName).toBe("ScenesClientTagB");
+  });
+
+  it("list tags", async () => {
+    let found = false;
+    const pages = await client.getAllTags({ iTwinId: ITWIN_ID });
+
+    for await (const page of pages) {
+      const tag = page.tags.find((t) => t.id === tagId);
+      if (tag) {
+        expect(tag.displayName).toBe("ScenesClientTagB");
+        found = true;
+        break;
+      }
+    }
+
+    expect(found).toBe(true);
+  });
+
+  it("scene create/update/upsert with tagIds", async () => {
+    const created = await client.postScene({
+      iTwinId: ITWIN_ID,
+      scene: {
+        displayName: "TaggedSceneA",
+        tagIds: [tagId],
+      },
+    });
+
+    sceneId = created.scene.id;
+    expect(created.scene.tags.map((t) => t.id)).toContain(tagId);
+
+    const patched = await client.patchScene({
+      iTwinId: ITWIN_ID,
+      sceneId,
+      scene: {
+        tagIds: [],
+      },
+    });
+    expect(patched.scene.tags).toStrictEqual([]);
+
+    const upserted = await client.putScene({
+      iTwinId: ITWIN_ID,
+      sceneId,
+      scene: {
+        displayName: "TaggedSceneB",
+        tagIds: [tagId],
+      },
+    });
+    expect(upserted.scene.tags.map((t) => t.id)).toContain(tagId);
+  });
+
+  it("delete tag removes it", async () => {
+    await client.deleteTag({ iTwinId: ITWIN_ID, tagId });
+    await expect(client.getTag({ iTwinId: ITWIN_ID, tagId })).rejects.toMatchObject({
+      status: 404,
+      code: "TagNotFound",
+    } as ScenesApiError);
+  });
+});
