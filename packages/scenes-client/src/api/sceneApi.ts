@@ -118,7 +118,7 @@ export async function getScene({
 /**
  * Fetches scenes in single page specified by the options.
  * @param params - {@link GetScenesParams}
- * @returns Async iterator of paged scene lists.
+ * @returns One page of scenes in the iTwin.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
 export async function getScenes({
