@@ -195,7 +195,7 @@ describe("Scenes Operations", () => {
   });
 
   it("deleteScene()", async () => {
-    fetchMock.mockImplementation(() => createSuccessfulResponse({}));
+    fetchMock.mockImplementation(() => createNoContentResponse());
     const client = new SceneClient(getAccessToken);
     await client.deleteScene({ iTwinId: "itw-1", sceneId: "scene-1" });
 
@@ -394,7 +394,7 @@ describe("Scene Object Operations", () => {
   });
 
   it("deleteObject()", async () => {
-    fetchMock.mockImplementation(() => createSuccessfulResponse({}));
+    fetchMock.mockImplementation(() => createNoContentResponse());
     const client = new SceneClient(getAccessToken);
     await client.deleteObject({
       iTwinId: "itw-1",
@@ -410,7 +410,7 @@ describe("Scene Object Operations", () => {
   });
 
   it("deleteObjects()", async () => {
-    fetchMock.mockImplementation(() => createSuccessfulResponse({}));
+    fetchMock.mockImplementation(() => createNoContentResponse());
     const client = new SceneClient(getAccessToken);
     await client.deleteObjects({
       iTwinId: "itw-1",
@@ -513,7 +513,7 @@ describe("Tag Operations", () => {
   });
 
   it("deleteTag()", async () => {
-    fetchMock.mockImplementation(() => createSuccessfulResponse({}));
+    fetchMock.mockImplementation(() => createNoContentResponse());
     const client = new SceneClient(getAccessToken);
     await client.deleteTag({ iTwinId: "itw-1", tagId: "tag-1" });
 
@@ -705,7 +705,16 @@ async function getAccessToken(): Promise<string> {
 function createSuccessfulResponse(body: unknown) {
   return Promise.resolve({
     ok: true,
+    status: 200,
     json: async () => body,
+  } as Response);
+}
+
+function createNoContentResponse() {
+  return Promise.resolve({
+    ok: true,
+    status: 204,
+    json: () => Promise.reject(new Error("No body on 204 response")),
   } as Response);
 }
 

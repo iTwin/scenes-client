@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 import {
   SceneListResponse,
-  ScenesApiError,
   SceneResponse,
   isSceneListResponse,
   isSceneResponse,
@@ -15,7 +14,6 @@ import {
   PatchSceneParams,
   DeleteSceneParams,
   GetScenesParams,
-  handleErrorResponse,
   SceneObject,
   GET_OBJECTS_DEFAULTS,
   GetSceneMetadataParams,
@@ -42,22 +40,7 @@ export async function getSceneMetadata({
   return callApi<SceneMetadataResponse>({
     endpoint: `/${sceneId}?iTwinId=${iTwinId}`,
     getAccessToken,
-    postProcess: async (response) => {
-      if (!response.ok) {
-        await handleErrorResponse(response);
-      }
-      const responseJson = await response.json();
-      if (!isSceneMetadataResponse(responseJson)) {
-        throw new ScenesApiError(
-          {
-            code: "InvalidResponse",
-            message: "Error fetching scene: unexpected response format",
-          },
-          response.status,
-        );
-      }
-      return responseJson;
-    },
+    typeGuard: isSceneMetadataResponse,
     baseUrl,
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -136,19 +119,7 @@ export async function getScenes({
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
     },
-    postProcess: async (response) => {
-      if (!response.ok) {
-        await handleErrorResponse(response);
-      }
-      const responseJson = await response.json();
-      if (!isSceneListResponse(responseJson)) {
-        throw new ScenesApiError(
-          { code: "InvalidResponse", message: "Unexpected response format" },
-          response.status,
-        );
-      }
-      return responseJson;
-    },
+    typeGuard: isSceneListResponse,
   });
 
   return response;
@@ -176,22 +147,7 @@ export function getAllScenes(
       additionalHeaders: {
         Accept: "application/vnd.bentley.itwin-platform.v1+json",
       },
-      postProcess: async (response) => {
-        if (!response.ok) {
-          await handleErrorResponse(response);
-        }
-        const responseJson = await response.json();
-        if (!isSceneListResponse(responseJson)) {
-          throw new ScenesApiError(
-            {
-              code: "InvalidResponse",
-              message: "Error fetching scenes: unexpected response format",
-            },
-            response.status,
-          );
-        }
-        return responseJson;
-      },
+      typeGuard: isSceneListResponse,
     });
   });
 }
@@ -212,22 +168,7 @@ export async function postScene({
     endpoint: `?iTwinId=${iTwinId}`,
     getAccessToken,
     baseUrl,
-    postProcess: async (response) => {
-      if (!response.ok) {
-        await handleErrorResponse(response);
-      }
-      const responseJson = await response.json();
-      if (!isSceneResponse(responseJson)) {
-        throw new ScenesApiError(
-          {
-            code: "InvalidResponse",
-            message: "Error creating scene: unexpected response format",
-          },
-          response.status,
-        );
-      }
-      return responseJson;
-    },
+    typeGuard: isSceneResponse,
     fetchOptions: {
       method: "POST",
       body: JSON.stringify(scene),
@@ -256,22 +197,7 @@ export async function putScene({
     endpoint: `/${sceneId}?iTwinId=${iTwinId}`,
     getAccessToken,
     baseUrl,
-    postProcess: async (response) => {
-      if (!response.ok) {
-        await handleErrorResponse(response);
-      }
-      const responseJson = await response.json();
-      if (!isSceneResponse(responseJson)) {
-        throw new ScenesApiError(
-          {
-            code: "InvalidResponse",
-            message: "Error creating or replacing scene: unexpected response format",
-          },
-          response.status,
-        );
-      }
-      return responseJson;
-    },
+    typeGuard: isSceneResponse,
     fetchOptions: {
       method: "PUT",
       body: JSON.stringify(scene),
@@ -300,22 +226,7 @@ export async function patchScene({
     endpoint: `/${sceneId}?iTwinId=${iTwinId}`,
     getAccessToken,
     baseUrl,
-    postProcess: async (response) => {
-      if (!response.ok) {
-        await handleErrorResponse(response);
-      }
-      const responseJson = await response.json();
-      if (!isSceneMetadataResponse(responseJson)) {
-        throw new ScenesApiError(
-          {
-            code: "InvalidResponse",
-            message: "Error updating scene: unexpected response format",
-          },
-          response.status,
-        );
-      }
-      return responseJson;
-    },
+    typeGuard: isSceneMetadataResponse,
     fetchOptions: {
       method: "PATCH",
       body: JSON.stringify(scene),
@@ -338,19 +249,13 @@ export async function deleteScene({
   getAccessToken,
   baseUrl,
 }: DeleteSceneParams & AuthArgs): Promise<void> {
-  return callApi({
+  await callApi({
     endpoint: `/${sceneId}?iTwinId=${iTwinId}`,
     getAccessToken,
     baseUrl,
     fetchOptions: { method: "DELETE" },
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
-    },
-    postProcess: async (response) => {
-      if (!response.ok) {
-        await handleErrorResponse(response);
-      }
-      return;
     },
   });
 }

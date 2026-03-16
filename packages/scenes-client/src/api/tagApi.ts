@@ -10,10 +10,8 @@ import {
   GetTagsParams,
   PatchTagParams,
   PostTagParams,
-  ScenesApiError,
   TagListResponse,
   TagResponse,
-  handleErrorResponse,
   isTagListResponse,
   isTagResponse,
 } from "../models/index.js";
@@ -36,22 +34,7 @@ export async function getTag({
     endpoint: `/tags/${tagId}?iTwinId=${iTwinId}`,
     getAccessToken,
     baseUrl,
-    postProcess: async (response) => {
-      if (!response.ok) {
-        await handleErrorResponse(response);
-      }
-      const responseJson = await response.json();
-      if (!isTagResponse(responseJson)) {
-        throw new ScenesApiError(
-          {
-            code: "InvalidResponse",
-            message: "Error fetching tag: unexpected response format",
-          },
-          response.status,
-        );
-      }
-      return responseJson;
-    },
+    typeGuard: isTagResponse,
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
     },
@@ -75,22 +58,7 @@ export async function getTags({
     endpoint: `/tags?iTwinId=${iTwinId}&$top=${top}&$skip=${skip}`,
     getAccessToken,
     baseUrl,
-    postProcess: async (response) => {
-      if (!response.ok) {
-        await handleErrorResponse(response);
-      }
-      const responseJson = await response.json();
-      if (!isTagListResponse(responseJson)) {
-        throw new ScenesApiError(
-          {
-            code: "InvalidResponse",
-            message: "Error fetching tags: unexpected response format",
-          },
-          response.status,
-        );
-      }
-      return responseJson;
-    },
+    typeGuard: isTagListResponse,
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
     },
@@ -116,22 +84,7 @@ export function getAllTags(
     return callApi<TagListResponse>({
       baseUrl: url,
       getAccessToken,
-      postProcess: async (response) => {
-        if (!response.ok) {
-          await handleErrorResponse(response);
-        }
-        const responseJson = await response.json();
-        if (!isTagListResponse(responseJson)) {
-          throw new ScenesApiError(
-            {
-              code: "InvalidResponse",
-              message: "Error fetching tags: unexpected response format",
-            },
-            response.status,
-          );
-        }
-        return responseJson;
-      },
+      typeGuard: isTagListResponse,
       additionalHeaders: {
         Accept: "application/vnd.bentley.itwin-platform.v1+json",
       },
@@ -155,22 +108,7 @@ export async function postTag({
     endpoint: `/tags?iTwinId=${iTwinId}`,
     getAccessToken,
     baseUrl,
-    postProcess: async (response) => {
-      if (!response.ok) {
-        await handleErrorResponse(response);
-      }
-      const responseJson = await response.json();
-      if (!isTagResponse(responseJson)) {
-        throw new ScenesApiError(
-          {
-            code: "InvalidResponse",
-            message: "Error creating tag: unexpected response format",
-          },
-          response.status,
-        );
-      }
-      return responseJson;
-    },
+    typeGuard: isTagResponse,
     fetchOptions: {
       method: "POST",
       body: JSON.stringify(tag),
@@ -199,22 +137,7 @@ export async function patchTag({
     endpoint: `/tags/${tagId}?iTwinId=${iTwinId}`,
     getAccessToken,
     baseUrl,
-    postProcess: async (response) => {
-      if (!response.ok) {
-        await handleErrorResponse(response);
-      }
-      const responseJson = await response.json();
-      if (!isTagResponse(responseJson)) {
-        throw new ScenesApiError(
-          {
-            code: "InvalidResponse",
-            message: "Error updating tag: unexpected response format",
-          },
-          response.status,
-        );
-      }
-      return responseJson;
-    },
+    typeGuard: isTagResponse,
     fetchOptions: {
       method: "PATCH",
       body: JSON.stringify(tag),
@@ -237,19 +160,13 @@ export async function deleteTag({
   getAccessToken,
   baseUrl,
 }: DeleteTagParams & AuthArgs): Promise<void> {
-  return callApi({
+  await callApi({
     endpoint: `/tags/${tagId}?iTwinId=${iTwinId}`,
     getAccessToken,
     baseUrl,
     fetchOptions: { method: "DELETE" },
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
-    },
-    postProcess: async (response) => {
-      if (!response.ok) {
-        await handleErrorResponse(response);
-      }
-      return;
     },
   });
 }
