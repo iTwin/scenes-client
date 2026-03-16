@@ -9,6 +9,10 @@
       "type": "number",
       "minimum": 0.0,
       "maximum": 1.0
+    },
+    "selectable": {
+      "description": "Controls whether features in this GIS layer are included in map selection results (true = included, false = excluded).",
+      "type": "boolean"
     }
   }
 }
