@@ -3,6 +3,7 @@
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
 import { isObject } from "../../utilities.js";
+import { isTagMinimal, TagMinimal } from "../tag/tagMinimal.js";
 
 export interface SceneMinimal {
   /** Unique identifier for the scene (UUID). */
@@ -21,6 +22,8 @@ export interface SceneMinimal {
   creationTime: string;
   /** Time the scene was last modified as an ISO8601 string, 'YYYY-MM-DDTHH:mm:ss.sssZ'. */
   lastModified: string;
+  /** Tags associated with this scene */
+  tags: TagMinimal[];
 }
 
 export function isSceneMinimal(v: unknown): v is SceneMinimal {
@@ -32,6 +35,8 @@ export function isSceneMinimal(v: unknown): v is SceneMinimal {
     typeof v.iTwinId === "string" &&
     typeof v.creationTime === "string" &&
     typeof v.lastModified === "string" &&
+    Array.isArray(v.tags) &&
+    v.tags.every((tag) => isTagMinimal(tag)) &&
     (v.description === undefined || typeof v.description === "string") &&
     (v.parentId === undefined || typeof v.parentId === "string")
   );
