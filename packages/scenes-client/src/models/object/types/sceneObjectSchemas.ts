@@ -358,8 +358,6 @@ export interface ScenesApiSchemas {
     "1.0.0": {
       /** Transparency in the range [0.0, 1.0] where 0 indicates fully opaque and 1 indicates fully transparent. */
       transparency?: number;
-      /** Controls whether features in this GIS layer are included in map selection results (true = included, false = excluded). */
-      selectable?: boolean;
     };
   };
   ScheduleSimulation: {
