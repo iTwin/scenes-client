@@ -17,6 +17,8 @@ import {
   SceneObjectResponse,
   SceneResponse,
   ScenesApiError,
+  TagListResponse,
+  TagResponse,
 } from "../src/models/index";
 
 const BASE_DOMAIN = "https://api.bentley.com/scenes";
@@ -193,7 +195,7 @@ describe("Scenes Operations", () => {
   });
 
   it("deleteScene()", async () => {
-    fetchMock.mockImplementation(() => createSuccessfulResponse({}));
+    fetchMock.mockImplementation(() => createNoContentResponse());
     const client = new SceneClient(getAccessToken);
     await client.deleteScene({ iTwinId: "itw-1", sceneId: "scene-1" });
 
@@ -392,7 +394,7 @@ describe("Scene Object Operations", () => {
   });
 
   it("deleteObject()", async () => {
-    fetchMock.mockImplementation(() => createSuccessfulResponse({}));
+    fetchMock.mockImplementation(() => createNoContentResponse());
     const client = new SceneClient(getAccessToken);
     await client.deleteObject({
       iTwinId: "itw-1",
@@ -408,7 +410,7 @@ describe("Scene Object Operations", () => {
   });
 
   it("deleteObjects()", async () => {
-    fetchMock.mockImplementation(() => createSuccessfulResponse({}));
+    fetchMock.mockImplementation(() => createNoContentResponse());
     const client = new SceneClient(getAccessToken);
     await client.deleteObjects({
       iTwinId: "itw-1",
@@ -418,6 +420,105 @@ describe("Scene Object Operations", () => {
 
     verifyFetch(fetchMock, {
       url: `${BASE_DOMAIN}/scene-1/objects?iTwinId=itw-1&ids=object-1,object-2`,
+      headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
+      method: "DELETE",
+    });
+  });
+});
+
+describe("Tag Operations", () => {
+  it("getTag()", async () => {
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleTagResponse));
+    const client = new SceneClient(getAccessToken);
+    await client.getTag({
+      iTwinId: "itw-1",
+      tagId: "tag-1",
+    });
+
+    verifyFetch(fetchMock, {
+      url: `${BASE_DOMAIN}/tags/tag-1?iTwinId=itw-1`,
+      headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
+    });
+  });
+
+  it("getTags()", async () => {
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleTagListResponse));
+    const client = new SceneClient(getAccessToken);
+    const tags = await client.getTags({
+      iTwinId: "itw-1",
+      top: 10,
+      skip: 2,
+    });
+    expect(tags).toEqual(exampleTagListResponse);
+
+    verifyFetch(fetchMock, {
+      url: `${BASE_DOMAIN}/tags?iTwinId=itw-1&$top=10&$skip=2`,
+      headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
+    });
+  });
+
+  it("getAllTags()", async () => {
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleTagListResponse));
+    const client = new SceneClient(getAccessToken);
+    const it = await client.getAllTags({ iTwinId: "itw-1" });
+    await it.next();
+
+    verifyFetch(fetchMock, {
+      url: `${BASE_DOMAIN}/tags?iTwinId=itw-1&$top=100&$skip=0`,
+      headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
+    });
+  });
+
+  it("postTag()", async () => {
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleTagResponse));
+    const client = new SceneClient(getAccessToken);
+    await client.postTag({
+      iTwinId: "itw-1",
+      tag: { displayName: "Tag 1" },
+    });
+
+    verifyFetch(fetchMock, {
+      url: `${BASE_DOMAIN}/tags?iTwinId=itw-1`,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/vnd.bentley.itwin-platform.v1+json",
+      },
+      method: "POST",
+      body: JSON.stringify({
+        displayName: "Tag 1",
+      }),
+    });
+  });
+
+  it("patchTag()", async () => {
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleTagResponse));
+    const client = new SceneClient(getAccessToken);
+    await client.patchTag({
+      iTwinId: "itw-1",
+      tagId: "tag-1",
+      tag: { displayName: "Tag 2" },
+    });
+
+    verifyFetch(fetchMock, {
+      url: `${BASE_DOMAIN}/tags/tag-1?iTwinId=itw-1`,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/vnd.bentley.itwin-platform.v1+json",
+      },
+      method: "PATCH",
+      body: JSON.stringify({
+        displayName: "Tag 2",
+      }),
+    });
+  });
+
+  it("deleteTag()", async () => {
+    fetchMock.mockImplementation(() => createNoContentResponse());
+    const client = new SceneClient(getAccessToken);
+    await client.deleteTag({ iTwinId: "itw-1", tagId: "tag-1" });
+
+    verifyFetch(fetchMock, {
+      url: `${BASE_DOMAIN}/tags/tag-1?iTwinId=itw-1`,
       headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
       method: "DELETE",
     });
@@ -485,6 +586,35 @@ describe("Error Handling", () => {
           objectId: "object-1",
           object: { displayName: "Updated" },
         }),
+    },
+    {
+      name: "tag operations",
+      method: () => client.getTag({ iTwinId: "itw-1", tagId: "tag-1" }),
+    },
+    {
+      name: "tag list operations",
+      method: () => client.getTags({ iTwinId: "itw-1" }),
+    },
+    {
+      name: "tag creation",
+      method: () =>
+        client.postTag({
+          iTwinId: "itw-1",
+          tag: { displayName: "Tag 1" },
+        }),
+    },
+    {
+      name: "tag updates",
+      method: () =>
+        client.patchTag({
+          iTwinId: "itw-1",
+          tagId: "tag-1",
+          tag: { displayName: "Tag 2" },
+        }),
+    },
+    {
+      name: "tag deletion",
+      method: () => client.deleteTag({ iTwinId: "itw-1", tagId: "tag-1" }),
     },
   ];
 
@@ -575,7 +705,16 @@ async function getAccessToken(): Promise<string> {
 function createSuccessfulResponse(body: unknown) {
   return Promise.resolve({
     ok: true,
+    status: 200,
     json: async () => body,
+  } as Response);
+}
+
+function createNoContentResponse() {
+  return Promise.resolve({
+    ok: true,
+    status: 204,
+    json: () => Promise.reject(new Error("No body on 204 response")),
   } as Response);
 }
 
@@ -628,6 +767,7 @@ const exampleSceneResponse: SceneResponse = {
     createdById: "user-1",
     creationTime: "2025-07-16T15:00:00.000Z",
     lastModified: "2025-07-16T15:00:00.000Z",
+    tags: [{ id: "tag-1", displayName: "Tag 1" }],
     sceneData: {
       objects: [
         {
@@ -650,6 +790,7 @@ const exampleSceneMetadataResponse: SceneMetadataResponse = {
     createdById: "user-1",
     creationTime: "2025-07-16T15:00:00.000Z",
     lastModified: "2025-07-16T15:00:00.000Z",
+    tags: [{ id: "tag-1", displayName: "Tag 1" }],
     sceneData: {
       objects: {
         href: `${BASE_DOMAIN}/scene-1/objects?iTwinId=itwin-1`,
@@ -668,8 +809,25 @@ const exampleSceneListResponse: SceneListResponse = {
       createdById: "user-1",
       creationTime: "2025-07-16T15:00:00.000Z",
       lastModified: "2025-07-16T15:00:00.000Z",
+      tags: [{ id: "tag-1", displayName: "Tag 1" }],
     },
   ],
+  _links: links,
+};
+
+const exampleTagResponse: TagResponse = {
+  tag: {
+    id: "tag-1",
+    displayName: "Tag 1",
+    iTwinId: "itwin-1",
+    createdById: "user-1",
+    creationTime: "2025-07-16T15:00:00.000Z",
+    lastModified: "2025-07-16T15:00:00.000Z",
+  },
+};
+
+const exampleTagListResponse: TagListResponse = {
+  tags: [exampleTagResponse.tag],
   _links: links,
 };
 

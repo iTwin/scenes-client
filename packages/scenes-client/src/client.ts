@@ -23,8 +23,12 @@ import {
   patchObject,
   patchObjectsOperations,
 } from "./api/sceneObjectApi.js";
+import { deleteTag, getAllTags, getTag, getTags, patchTag, postTag } from "./api/tagApi.js";
 import {
+  DeleteTagParams,
   SceneListResponse,
+  TagListResponse,
+  TagResponse,
   SceneObjectResponse,
   SceneObjectListResponse,
   SceneResponse,
@@ -50,6 +54,13 @@ import {
   SceneMetadataResponse,
   PutSceneParams,
   PatchObjectsOperationsParams,
+  GetTagParams,
+  GetTagsParams,
+  GetAllTagsParams,
+  PostTagParams,
+  PatchTagParams,
+  GetTagsOptions,
+  GET_TAGS_DEFAULTS,
 } from "./models/index.js";
 
 type AccessTokenFn = () => Promise<string>;
@@ -398,6 +409,115 @@ export class SceneClient {
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,
       objectIds: params.objectIds,
+      getAccessToken: this.getAccessToken,
+      baseUrl: this.baseUrl,
+    });
+  }
+
+  /**
+   * Fetch a single tag by ID.
+   * @param params.iTwinId - The iTwin's unique identifier.
+   * @param params.tagId - The tag's unique identifier.
+   * @returns TagResponse containing the tag details.
+   * @throws {ScenesApiError} If the API call fails or the response format is invalid.
+   */
+  async getTag(params: GetTagParams): Promise<TagResponse> {
+    return getTag({
+      iTwinId: params.iTwinId,
+      tagId: params.tagId,
+      getAccessToken: this.getAccessToken,
+      baseUrl: this.baseUrl,
+    });
+  }
+
+  /**
+   * Fetch tags in a single page specified by top/skip.
+   * @param params.iTwinId - The iTwin's unique identifier.
+   * @param params.top - Number of items per page.
+   * @param params.skip - Number of items to skip.
+   * @returns TagListResponse containing the list of tags.
+   * @throws {ScenesApiError} If the API call fails or the response format is invalid.
+   */
+  async getTags(params: GetTagsParams): Promise<TagListResponse> {
+    return getTags({
+      iTwinId: params.iTwinId,
+      top: params.top ?? GET_TAGS_DEFAULTS.top,
+      skip: params.skip ?? GET_TAGS_DEFAULTS.skip,
+      getAccessToken: this.getAccessToken,
+      baseUrl: this.baseUrl,
+    });
+  }
+
+  /**
+   * Fetch all tags with pagination.
+   * @param params.iTwinId - The iTwin's unique identifier.
+   * @param params.top - Number of items per page.
+   * @param params.skip - Number of items to skip.
+   * @param params.delayMs - Milliseconds to wait between requests.
+   * @returns An async iterator of TagListResponse.
+   * @throws {ScenesApiError} If the API call fails or the response format is invalid.
+   */
+  async getAllTags(params: GetAllTagsParams): Promise<AsyncIterableIterator<TagListResponse>> {
+    const opts: Required<GetTagsOptions> = {
+      top: params.top ?? GET_TAGS_DEFAULTS.top,
+      skip: params.skip ?? GET_TAGS_DEFAULTS.skip,
+      delayMs: params.delayMs ?? GET_TAGS_DEFAULTS.delayMs,
+    };
+
+    return getAllTags(
+      {
+        iTwinId: params.iTwinId,
+        getAccessToken: this.getAccessToken,
+        baseUrl: this.baseUrl,
+      },
+      opts,
+    );
+  }
+
+  /**
+   * Create a new tag.
+   * @param params.iTwinId - The iTwin's unique identifier.
+   * @param params.tag - The tag creation payload.
+   * @returns TagResponse containing the created tag details.
+   * @throws {ScenesApiError} If the API call fails or the response format is invalid.
+   */
+  async postTag(params: PostTagParams): Promise<TagResponse> {
+    return postTag({
+      iTwinId: params.iTwinId,
+      tag: params.tag,
+      getAccessToken: this.getAccessToken,
+      baseUrl: this.baseUrl,
+    });
+  }
+
+  /**
+   * Update an existing tag.
+   * @param params.iTwinId - The iTwin's unique identifier.
+   * @param params.tagId - The tag's unique identifier.
+   * @param params.tag - The tag update payload.
+   * @returns TagResponse containing the updated tag details.
+   * @throws {ScenesApiError} If the API call fails or the response format is invalid.
+   */
+  async patchTag(params: PatchTagParams): Promise<TagResponse> {
+    return patchTag({
+      iTwinId: params.iTwinId,
+      tagId: params.tagId,
+      tag: params.tag,
+      getAccessToken: this.getAccessToken,
+      baseUrl: this.baseUrl,
+    });
+  }
+
+  /**
+   * Delete a tag by ID.
+   * @param params.iTwinId - The iTwin's unique identifier.
+   * @param params.tagId - The tag's unique identifier.
+   * @throws {ScenesApiError} If the API call fails.
+   */
+  async deleteTag(params: DeleteTagParams): Promise<void> {
+    return deleteTag({
+      iTwinId: params.iTwinId,
+      tagId: params.tagId,
       getAccessToken: this.getAccessToken,
       baseUrl: this.baseUrl,
     });

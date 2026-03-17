@@ -8,6 +8,7 @@ import { isScene, Scene } from "./scene/scene.js";
 import { isSceneContext, SceneContext } from "./scene/sceneContext.js";
 import { isSceneMinimal, SceneMinimal } from "./scene/sceneMinimal.js";
 import { isSceneWithLinks, SceneWithLinks } from "./scene/sceneWithLinks.js";
+import { isTag, Tag } from "./tag/tag.js";
 
 /** Generic href link */
 export interface Link {
@@ -53,6 +54,17 @@ export interface SceneObjectPagedResponse extends SceneObjectListResponse {
   _links: PagingLinks;
 }
 
+/** Tag response model */
+export interface TagResponse {
+  tag: Tag;
+}
+
+/** Tag list response model */
+export interface TagListResponse {
+  tags: Tag[];
+  _links?: PagingLinks;
+}
+
 // type guards for runtime type checking
 export function isLink(v: unknown): v is Link {
   return isObject(v) && typeof v.href === "string";
@@ -93,5 +105,18 @@ export function isSceneObjectPagedResponse(v: unknown): v is SceneObjectPagedRes
     isSceneObjectListResponse(v) &&
     isPagingLinks(v._links) &&
     isSceneContext(v.sceneContext)
+  );
+}
+
+export function isTagResponse(v: unknown): v is TagResponse {
+  return isObject(v) && isTag(v.tag);
+}
+
+export function isTagListResponse(v: unknown): v is TagListResponse {
+  return (
+    isObject(v) &&
+    Array.isArray(v.tags) &&
+    v.tags.every((tag) => isTag(tag)) &&
+    isPagingLinks(v._links)
   );
 }

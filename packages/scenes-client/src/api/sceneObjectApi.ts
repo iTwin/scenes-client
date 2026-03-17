@@ -3,7 +3,6 @@
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
 import {
-  ScenesApiError,
   SceneObjectResponse,
   SceneObjectListResponse,
   isSceneObjectResponse,
@@ -19,7 +18,6 @@ import {
   DeleteObjectsParams,
   GetObjectsParams,
   PatchObjectParam,
-  handleErrorResponse,
   PatchObjectsOperationsParams,
 } from "../models/index.js";
 import { iteratePagedEndpoint, batched } from "../utilities.js";
@@ -42,22 +40,7 @@ export async function getObject({
     endpoint: `/${sceneId}/objects/${objectId}?iTwinId=${iTwinId}`,
     getAccessToken,
     baseUrl,
-    postProcess: async (response) => {
-      if (!response.ok) {
-        await handleErrorResponse(response);
-      }
-      const responseJson = await response.json();
-      if (!isSceneObjectResponse(responseJson)) {
-        throw new ScenesApiError(
-          {
-            code: "InvalidResponse",
-            message: "Error fetching scene object: unexpected response format",
-          },
-          response.status,
-        );
-      }
-      return responseJson;
-    },
+    typeGuard: isSceneObjectResponse,
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
     },
@@ -83,22 +66,7 @@ export async function getObjects({
     endpoint: `/${sceneId}/objects?iTwinId=${iTwinId}&$top=${top}&$skip=${skip}&orderBy=${orderBy}`,
     getAccessToken,
     baseUrl,
-    postProcess: async (response) => {
-      if (!response.ok) {
-        await handleErrorResponse(response);
-      }
-      const responseJson = await response.json();
-      if (!isSceneObjectListResponse(responseJson)) {
-        throw new ScenesApiError(
-          {
-            code: "InvalidResponse",
-            message: "Error fetching scene objects: unexpected response format",
-          },
-          response.status,
-        );
-      }
-      return responseJson;
-    },
+    typeGuard: isSceneObjectListResponse,
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
     },
@@ -124,22 +92,7 @@ export function getAllObjects(
     return callApi<SceneObjectPagedResponse>({
       baseUrl: url,
       getAccessToken,
-      postProcess: async (response) => {
-        if (!response.ok) {
-          await handleErrorResponse(response);
-        }
-        const responseJson = await response.json();
-        if (!isSceneObjectPagedResponse(responseJson)) {
-          throw new ScenesApiError(
-            {
-              code: "InvalidResponse",
-              message: "Error fetching scene objects: unexpected response format",
-            },
-            response.status,
-          );
-        }
-        return responseJson;
-      },
+      typeGuard: isSceneObjectPagedResponse,
       additionalHeaders: {
         Accept: "application/vnd.bentley.itwin-platform.v1+json",
       },
@@ -163,26 +116,11 @@ export async function postObjects({
   const batchSize = 20;
   const results: SceneObjectListResponse[] = [];
   for (const batch of batched(objects, batchSize)) {
-    const response = await callApi({
+    const response = await callApi<SceneObjectListResponse>({
       endpoint: `/${sceneId}/objects?iTwinId=${iTwinId}`,
       getAccessToken,
       baseUrl,
-      postProcess: async (response) => {
-        if (!response.ok) {
-          await handleErrorResponse(response);
-        }
-        const responseJson = await response.json();
-        if (!isSceneObjectListResponse(responseJson)) {
-          throw new ScenesApiError(
-            {
-              code: "InvalidResponse",
-              message: "Error creating scene objects: unexpected response format",
-            },
-            response.status,
-          );
-        }
-        return responseJson;
-      },
+      typeGuard: isSceneObjectListResponse,
       fetchOptions: {
         method: "POST",
         body: JSON.stringify({ objects: batch }),
@@ -218,22 +156,7 @@ export async function patchObject({
     endpoint: `/${sceneId}/objects/${objectId}?iTwinId=${iTwinId}`,
     getAccessToken,
     baseUrl,
-    postProcess: async (response) => {
-      if (!response.ok) {
-        await handleErrorResponse(response);
-      }
-      const responseJson = await response.json();
-      if (!isSceneObjectResponse(responseJson)) {
-        throw new ScenesApiError(
-          {
-            code: "InvalidResponse", //@naron: this seemed repetitive
-            message: "Error updating scene object: unexpected response format",
-          },
-          response.status,
-        );
-      }
-      return responseJson;
-    },
+    typeGuard: isSceneObjectResponse,
     fetchOptions: {
       method: "PATCH",
       body: JSON.stringify(object),
@@ -262,26 +185,11 @@ export async function patchObjects({
   const batchSize = 20;
   const results: SceneObjectListResponse[] = [];
   for (const batch of batched(objects, batchSize)) {
-    const response = await callApi({
+    const response = await callApi<SceneObjectListResponse>({
       endpoint: `/${sceneId}/objects?iTwinId=${iTwinId}`,
       getAccessToken,
       baseUrl,
-      postProcess: async (response) => {
-        if (!response.ok) {
-          await handleErrorResponse(response);
-        }
-        const responseJson = await response.json();
-        if (!isSceneObjectListResponse(responseJson)) {
-          throw new ScenesApiError(
-            {
-              code: "InvalidResponse",
-              message: "Error updating scene objects: unexpected response format",
-            },
-            response.status,
-          );
-        }
-        return responseJson;
-      },
+      typeGuard: isSceneObjectListResponse,
       fetchOptions: {
         method: "PATCH",
         body: JSON.stringify({ objects: batch }),
@@ -315,26 +223,11 @@ export async function patchObjectsOperations({
   getAccessToken,
   baseUrl,
 }: PatchObjectsOperationsParams & AuthArgs): Promise<SceneObjectListResponse> {
-  return callApi({
+  return callApi<SceneObjectListResponse>({
     endpoint: `/${sceneId}/objects?iTwinId=${iTwinId}`,
     getAccessToken,
     baseUrl,
-    postProcess: async (response) => {
-      if (!response.ok) {
-        await handleErrorResponse(response);
-      }
-      const responseJson = await response.json();
-      if (!isSceneObjectListResponse(responseJson)) {
-        throw new ScenesApiError(
-          {
-            code: "InvalidResponse",
-            message: "Error updating scene objects with operations: unexpected response format",
-          },
-          response.status,
-        );
-      }
-      return responseJson;
-    },
+    typeGuard: isSceneObjectListResponse,
     fetchOptions: {
       method: "PATCH",
       body: JSON.stringify({ operations }),
@@ -358,16 +251,10 @@ export async function deleteObject({
   getAccessToken,
   baseUrl,
 }: DeleteObjectParams & AuthArgs): Promise<void> {
-  return callApi({
+  await callApi({
     endpoint: `/${sceneId}/objects/${objectId}?iTwinId=${iTwinId}`,
     getAccessToken,
     baseUrl,
-    postProcess: async (response) => {
-      if (!response.ok) {
-        await handleErrorResponse(response);
-      }
-      return;
-    },
     fetchOptions: {
       method: "DELETE",
     },
@@ -389,19 +276,13 @@ export async function deleteObjects({
   getAccessToken,
   baseUrl,
 }: DeleteObjectsParams & AuthArgs): Promise<void> {
-  const promises: Promise<void>[] = [];
+  const promises: Promise<unknown>[] = [];
   for (const batch of batched(objectIds, 20)) {
     promises.push(
       callApi({
         endpoint: `/${sceneId}/objects?iTwinId=${iTwinId}&ids=${batch.join(",")}`,
         getAccessToken,
         baseUrl,
-        postProcess: async (response) => {
-          if (!response.ok) {
-            await handleErrorResponse(response);
-          }
-          return;
-        },
         fetchOptions: {
           method: "DELETE",
         },
