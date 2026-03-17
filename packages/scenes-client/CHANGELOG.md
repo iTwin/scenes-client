@@ -1,5 +1,16 @@
 # @itwin/scenes-client
 
+## 0.7.0
+
+### Minor Changes
+
+- a9bd0f0: Support scene tags.
+
+  - Added tag CRUD APIs to `SceneClient`: `getTag`, `getTags`, `getAllTags`, `postTag`, `patchTag`, and `deleteTag`.
+  - Added tag model types and response guards (`Tag`, `TagMinimal`, `TagCreate`, `TagUpdate`).
+  - Updated scene payloads so create/update/upsert can accept `tagIds?: string[]`.
+  - Updated all scene response models to include `tags: TagMinimal[]`.
+
 ## 0.6.0
 
 ### Minor Changes
@@ -45,6 +56,7 @@
 ### Minor Changes
 
 - 6347911: Enhance `iModelVisibility` SceneObject types with optional visibility override properties
+
   - Added optional properties:
     - `perModelCategoryVisibility`: allows category visibility to be overridden in the context of individual models
     - `alwaysDrawn`: set of elements that should always be rendered
@@ -59,6 +71,7 @@
 ### Minor Changes
 
 - 44d7ff7: Add optional frustum properties to `View3d` SceneObject types
+
   - Non-breaking. New optional properties:
     - `fov` – angle of the field of view in radians for perspective views
     - `width` – width of the frustum in meters for orthographic views
