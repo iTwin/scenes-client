@@ -554,7 +554,8 @@ const updateResponse = await client.patchScene({
   },
 });
 
-console.log(`Updated scene tags:`, updateResponse.tags);
+console.log(`Updated scene tags:`, updateResponse.scene!.tags);
+// [{ id: "<tag_id_3>", displayName: "Site Perimeter" }]
 
 // Remove all tags from a scene
 await client.patchScene({
