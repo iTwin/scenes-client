@@ -416,6 +416,159 @@ await client.deleteObjects({
 });
 ```
 
+### Working with Tags
+
+Tags are iTwin-scoped labels that can be created independently and then applied to scenes. Scenes expose their tags as an array of `TagMinimal` objects (`id` and `displayName`). Assigning or replacing a scene's tags is done via the `tagIds` field when creating or updating a scene.
+
+#### Create a Tag
+
+```ts
+import { Tag } from "@itwin/scenes-client";
+
+const createTagResponse = await client.postTag({
+  iTwinId: "<itwin_id>",
+  tag: {
+    id: "<optional_tag_id>", // Optional, will be auto-generated if not provided
+    displayName: "Structural",
+  },
+});
+
+const tag: Tag = createTagResponse.tag;
+console.log(`Created tag: ${tag.displayName} (${tag.id})`);
+```
+
+#### Get a Tag
+
+```ts
+const tagResponse = await client.getTag({
+  iTwinId: "<itwin_id>",
+  tagId: "<tag_id>",
+});
+
+console.log(tagResponse.tag);
+/*
+{
+  id: "<tag_id>",
+  displayName: "Structural",
+  iTwinId: "<itwin_id>",
+  createdById: "<creator_id>",
+  creationTime: "2025-01-01T10:00:00.000Z",
+  lastModified: "2025-01-01T10:01:00.000Z"
+}
+*/
+```
+
+#### Get List of Tags for an iTwin
+
+```ts
+// Get a single page of tags (for UI pagination)
+const listResponse = await client.getTags({
+  iTwinId: "<itwin_id>",
+  top: 10, // Optional, defaults to 100
+  skip: 0, // Optional, defaults to 0
+});
+
+console.log(`Found ${listResponse.tags.length} tags on this page.`);
+listResponse.tags.forEach((tag) => {
+  console.log(`${tag.displayName} (${tag.id})`);
+});
+```
+
+#### Get All Tags with Iterator
+
+```ts
+// Get all tags using async iterator
+const allTagsIterator = await client.getAllTags({
+  iTwinId: "<itwin_id>",
+});
+
+let totalTags = 0;
+for await (const page of allTagsIterator) {
+  page.tags.forEach((tag) => {
+    console.log(`${tag.displayName} (${tag.id})`);
+    totalTags++;
+  });
+}
+
+console.log(`Processed ${totalTags} total tags`);
+```
+
+#### Update a Tag
+
+```ts
+const updateTagResponse = await client.patchTag({
+  iTwinId: "<itwin_id>",
+  tagId: "<tag_id>",
+  tag: {
+    displayName: "Structural",
+  },
+});
+
+console.log(`Updated tag: ${updateTagResponse.tag.displayName}`);
+```
+
+#### Delete a Tag
+
+```ts
+await client.deleteTag({
+  iTwinId: "<itwin_id>",
+  tagId: "<tag_id>",
+});
+
+console.log("Tag deleted successfully");
+```
+
+#### Assign Tags to a Scene
+
+Pass `tagIds` when creating a scene to apply existing tags to it:
+
+```ts
+const createResponse = await client.postScene({
+  iTwinId: "<itwin_id>",
+  scene: {
+    displayName: "Tagged Scene",
+    tagIds: ["<tag_id_1>", "<tag_id_2>"],
+    sceneData: {
+      objects: [
+        /** (optional) full list of scene objects */
+      ]
+    },
+  },
+});
+
+console.log(`Scene tags:`, createResponse.scene!.tags);
+// [{ id: "<tag_id_1>", displayName: "Structural" }, { id: "<tag_id_2>", displayName: "Civil" }]
+```
+
+#### Update a Scene's Tags
+
+Use `patchScene` with `tagIds` to replace the full set of tags on an existing scene. Provide an empty array to remove all tags:
+
+```ts
+// Replace the scene's tags with a new set
+const updateResponse = await client.patchScene({
+  iTwinId: "<itwin_id>",
+  sceneId: "<scene_id>",
+  scene: {
+    tagIds: ["<tag_id_3>"], // Replaces all existing tags
+  },
+});
+
+console.log(`Updated scene tags:`, updateResponse.scene!.tags);
+// [{ id: "<tag_id_3>", displayName: "Site Perimeter" }]
+
+// Remove all tags from a scene
+await client.patchScene({
+  iTwinId: "<itwin_id>",
+  sceneId: "<scene_id>",
+  scene: {
+    tagIds: [],
+  },
+});
+```
+
+---
+
 ### Type Safety
 
 This client provides strongly typed interfaces for all scene object operations, giving you compile-time validation:
