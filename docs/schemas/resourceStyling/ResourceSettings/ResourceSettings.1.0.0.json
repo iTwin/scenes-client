@@ -1,0 +1,18 @@
+{
+  "$id": "/schemas/ResourceSettings.1.0.0",
+  "description": "Defines display settings common to all repository resource types. Can be used alongside resource-specific styling schemas.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "transparency": {
+      "description": "Transparency in the range [0.0, 1.0] where 0 is fully opaque and 1 is fully transparent.",
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "selectionEnabled": {
+      "description": "If true, selection is enabled for this resource, making it eligible to be included in selection results or used by selection-driven tools. If false, the resource remains visible but is not selectable.",
+      "type": "boolean"
+    }
+  }
+}
