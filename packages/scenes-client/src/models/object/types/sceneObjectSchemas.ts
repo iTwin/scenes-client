@@ -356,7 +356,10 @@ export interface ScenesApiSchemas {
   GISStyling: {
     /** Defines styling options for a specific GeographicInformationSystem (GIS) resource.*/
     "1.0.0": {
-      /** Transparency in the range [0.0, 1.0] where 0 indicates fully opaque and 1 indicates fully transparent. */
+      /**
+       * Transparency in the range [0.0, 1.0] where 0 indicates fully opaque and 1 indicates fully transparent.
+       * @deprecated Use ResourceSettings.transparency instead.
+       */
       transparency?: number;
     };
   };
@@ -405,7 +408,10 @@ export interface ScenesApiSchemas {
       nonLocatable?: boolean;
       /** The color of the Feature */
       rgb?: RgbColor;
-      /** Transparency in the range [0.0, 1.0] where 0 indicates fully opaque and 1 indicates fully transparent. */
+      /**
+       * Transparency in the range [0.0, 1.0] where 0 indicates fully opaque and 1 indicates fully transparent.
+       * @deprecated Use ResourceSettings.transparency instead.
+       */
       transparency?: number;
       /** Settings that control how a reality model - whether a ContextRealityModel or a persistent reality Model - is displayed within a Viewport. */
       displayProps?: {
@@ -450,6 +456,15 @@ export interface ScenesApiSchemas {
           };
         };
       };
+    };
+  };
+  ResourceSettings: {
+    /** Defines display settings common to all repository resource types. Can be used alongside resource-specific styling schemas. */
+    "1.0.0": {
+      /** Transparency in the range [0.0, 1.0] where 0 indicates fully opaque and 1 indicates fully transparent. */
+      transparency?: number;
+      /** If true, selection is enabled for this resource, making it eligible to be included in selection results or used by selection-driven tools. If false, the resource remains visible but is not selectable. */
+      selectionEnabled?: boolean;
     };
   };
 }

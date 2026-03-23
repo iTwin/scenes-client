@@ -10,7 +10,8 @@ export type ResourceStylingSchemas =
   | "GISStyling"
   | "ScheduleSimulation"
   | "iModelVisibility"
-  | "RealityDataStyling";
+  | "RealityDataStyling"
+  | "ResourceSettings";
 
 /** Standard schemas without additional metadata requirements */
 export type StandardSchemas = Exclude<SchemaKind, ResourceStylingSchemas>;

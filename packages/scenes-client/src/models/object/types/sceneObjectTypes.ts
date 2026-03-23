@@ -92,6 +92,11 @@ export type RealityDataStylingCreateV1 = ResourceStylingObjectCreate<"RealityDat
 /** Latest RealityDataStyling creation type. Currently points to 1.0.0. */
 export type RealityDataStylingCreate = RealityDataStylingCreateV1;
 
+/** ResourceSettings (v1.0.0) Scene Object Creation Type */
+export type ResourceSettingsCreateV1 = ResourceStylingObjectCreate<"ResourceSettings", "1.0.0">;
+/** Latest ResourceSettings creation type. Currently points to 1.0.0. */
+export type ResourceSettingsCreate = ResourceSettingsCreateV1;
+
 // Version-specific response type aliases
 /** CameraAnimation (v1.0.0) Scene Object Response Type. */
 export type CameraAnimationV1 = StandardObject<"CameraAnimation", "1.0.0">;
@@ -173,6 +178,11 @@ export type RealityDataStylingV1 = ResourceStylingObject<"RealityDataStyling", "
 /** Latest RealityDataStyling response type. Currently points to 1.0.0. */
 export type RealityDataStyling = RealityDataStylingV1;
 
+/** ResourceSettings (v1.0.0) Scene Object Response Type. */
+export type ResourceSettingsV1 = ResourceStylingObject<"ResourceSettings", "1.0.0">;
+/** Latest ResourceSettings response type. Currently points to 1.0.0. */
+export type ResourceSettings = ResourceSettingsV1;
+
 /** Union of all scene object creation types. */
 export type SceneObjectCreateType =
   | CameraAnimationCreateV1
@@ -190,7 +200,8 @@ export type SceneObjectCreateType =
   | GISStylingCreateV1
   | ScheduleSimulationCreateV1
   | iModelVisibilityCreateV1
-  | RealityDataStylingCreateV1;
+  | RealityDataStylingCreateV1
+  | ResourceSettingsCreateV1;
 
 /** Union of all scene object types */
 export type SceneObjectType =
@@ -209,4 +220,5 @@ export type SceneObjectType =
   | GISStylingV1
   | ScheduleSimulationV1
   | iModelVisibilityV1
-  | RealityDataStylingV1;
+  | RealityDataStylingV1
+  | ResourceSettingsV1;
