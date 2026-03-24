@@ -262,19 +262,21 @@ describe("Scenes Objects operations", () => {
       iTwinId: ITWIN_ID,
       sceneId,
       objectId: obj1,
-      object: { displayName: undefined, order: 2 },
+      object: { displayName: undefined, order: 2, displayOrder: 5 },
     });
     expect(p1.object.displayName).toBe("TestLayer"); // ignored displayName
     expect(p1.object.order).toBe(2); // updated order
+    expect(p1.object.displayOrder).toBe(5); // updated displayOrder
 
     const p2 = await client.patchObject({
       iTwinId: ITWIN_ID,
       sceneId,
       objectId: obj1,
-      object: { displayName: null, order: null },
+      object: { displayName: null, order: null, displayOrder: null },
     });
     expect(p2.object.displayName).toBe(undefined); // removed displayName
     expect(p2.object.order).toBe(undefined); // removed order
+    expect(p2.object.displayOrder).toBe(undefined); // removed displayOrder
   });
 
   it("patches objects", async () => {
