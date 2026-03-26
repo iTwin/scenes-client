@@ -10,7 +10,7 @@
     },
     "repositoryId": {
       "$ref": "/schemas/CommonTypes#/definitions/safeString",
-      "description": "Id of the repository. Should be the same as class for internal repos and a GUID for external repos"
+      "description": "Id of the repository. For Bentley repositories, this is the lowercase class. For external repositories, this is a unique identifier."
     },
     "class": {
       "$ref": "/schemas/CommonTypes#/definitions/safeString",
