@@ -154,7 +154,7 @@ export interface ScenesApiSchemas {
     "1.0.0": {
       /** Id of the iTwin this repository is associated with */
       iTwinId: Guid;
-      /** Id of the repository. Should be the same as class for internal repos and a GUID for custom repos */
+      /** Id of the repository. For Bentley repositories, this is the lowercase class. For external repositories, this is a unique identifier. */
       repositoryId: SafeString;
       /** Class of the repository, such as IndexedMedia or Forms */
       class: SupportedRepository;
@@ -167,13 +167,13 @@ export interface ScenesApiSchemas {
     "1.0.0": {
       /** Id of the iTwin this repository resource is associated with */
       iTwinId: Guid;
-      /** Id of the repository. Should be the same as class for internal repos and a GUID for custom repos */
+      /** Id of the repository that contains this resource. For Bentley repositories like iModels, this is the lowercase class. For external repositories, this is a unique identifier. */
       repositoryId: SafeString;
-      /** Id of the individual resource */
+      /** Id of the individual resource. Format depends on the repository (may be a GUID or another string identifier). */
       id: SafeString;
-      /** Class of the repository, such as iModels or RealityData */
+      /** Class of the repository containing this resource, e.g. iModels, RealityData, GeographicInformationSystem. */
       class: SafeString;
-      /** SubClass of the repository if applicable */
+      /** SubClass of the repository type if applicable, e.g. WebMapTileService for GIS repositories. */
       subClass?: SafeString;
     };
   };
