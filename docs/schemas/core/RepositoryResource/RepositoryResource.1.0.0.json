@@ -10,19 +10,19 @@
     },
     "repositoryId": {
       "$ref": "/schemas/CommonTypes#/definitions/safeString",
-      "description": "Id of the repository. Should be the same as class for internal repos and a GUID for custom repos"
+      "description": "Id of the repository that contains this resource. For Bentley repositories like iModels, this is the lowercase class. For external repositories, this is a unique identifier."
     },
     "id": {
       "$ref": "/schemas/CommonTypes#/definitions/safeString",
-      "description": "Id of the individual resource"
+      "description": "Id of the individual resource. Format depends on the repository (may be a GUID or another string identifier)."
     },
     "class": {
       "$ref": "/schemas/CommonTypes#/definitions/safeString",
-      "description": "Class of the repository, such as iModels or RealityData"
+      "description": "Class of the repository containing this resource, e.g. iModels, RealityData, GeographicInformationSystem."
     },
     "subClass": {
       "$ref": "/schemas/CommonTypes#/definitions/safeString",
-      "description": "SubClass of the repository if applicable"
+      "description": "SubClass of the repository type if applicable, e.g. WebMapTileService for GIS repositories."
     }
   },
   "required": [ "iTwinId", "repositoryId", "id", "class" ]

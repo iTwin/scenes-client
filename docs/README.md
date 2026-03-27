@@ -45,7 +45,7 @@ Scene objects are:
   "data": {
     "iTwinId": "fa6e86b2-da9a-4fdc-a1bd-4a707b696d32",
     "class": "iModels",
-    "repositoryId": "iModels",
+    "repositoryId": "imodels",
     "id": "c2fdfb84-bedb-409d-8527-fe519c85abe2"
   },
 }
@@ -144,7 +144,7 @@ Scene: "Construction Site Overview"
         "data": {
           "iTwinId": "64060a14-d545-4fff-b3b0-4c31291e7a00",
           "class": "iModels",
-          "repositoryId": "iModels",
+          "repositoryId": "imodels",
           "id": "ba9bdbbf-59f9-41aa-a4e3-6fbd8d6bd068"
         },
         "visible": true
@@ -190,7 +190,7 @@ Scene: "Construction Site Overview"
         "data": {
           "iTwinId": "64060a14-d545-4fff-b3b0-4c31291e7a00",
           "class": "iModels",
-          "repositoryId": "iModels",
+          "repositoryId": "imodels",
           "id": "6bbcf593-6160-4d83-9c07-1a69e4cc29fb"
         },
         "visible": true

@@ -259,7 +259,7 @@ const iModelResource: RepositoryResourceCreate = {
   data: {
     iTwinId: "<itwin_id>",
     class: "iModels",
-    repositoryId: "iModels",
+    repositoryId: "imodels",
     id: "<imodel_id>",
   },
 };
@@ -311,7 +311,7 @@ const formsRepository: RepositoryCreate = {
   displayName: "iTwin A Forms", // Optional
   data: {
     iTwinId: "<itwin_id>",
-    repositoryId: "Forms",
+    repositoryId: "forms",
     class: "Forms",
   },
 };

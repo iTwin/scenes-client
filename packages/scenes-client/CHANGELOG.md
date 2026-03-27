@@ -1,5 +1,11 @@
 # @itwin/scenes-client
 
+## 0.8.1
+
+### Patch Changes
+
+- a0209b0: Update documentation for `Repository` and `RepositoryResource` types.
+
 ## 0.8.0
 
 ### Minor Changes
