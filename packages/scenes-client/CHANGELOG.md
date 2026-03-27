@@ -1,5 +1,14 @@
 # @itwin/scenes-client
 
+## 0.9.0
+
+### Minor Changes
+
+- b44cb49: Add optional `displayOrder` to Scene Object create, update, and response types.
+
+  Controls client rendering order.
+  Pass `null` in an update to remove the value.
+
 ## 0.8.1
 
 ### Patch Changes
