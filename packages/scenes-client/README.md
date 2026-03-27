@@ -385,6 +385,9 @@ const operations: SceneObjectOperation[] = [
   { op: OperationType.UPDATE, id: "<object_id_1>", payload: { order: 1 } },
   { op: OperationType.UPDATE, id: "<object_id_2>", payload: { order: 2 } },
   { op: OperationType.UPDATE, id: "<object_id_3>", payload: { order: 3 } },
+  // 7-8: Set rendering order
+  { op: OperationType.UPDATE, id: "<object_id_3>", payload: { displayOrder: 1 } },
+  { op: OperationType.UPDATE, id: "<object_id_1>", payload: { displayOrder: 0 } },
 ];
 
 const bulkUpdateResponse = await client.patchObjectsOperations({

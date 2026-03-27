@@ -23,6 +23,8 @@ export interface SceneObjectUpdate<
   displayName?: string | null;
   /** Optional number for the scene object's order in lists. Pass `null` to remove. */
   order?: number | null;
+  /** Optional stacking order for clients to control rendering sequence. Objects with lower values are typically drawn beneath objects with higher values. Pass `null` to remove. */
+  displayOrder?: number | null;
   /** Optional parent Id for the scene object (UUID). Pass `null` to remove. */
   parentId?: string | null;
   /** Optional visibility state for the scene object. Pass `null` to remove. */
