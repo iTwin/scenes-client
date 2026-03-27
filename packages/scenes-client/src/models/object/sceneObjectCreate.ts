@@ -26,7 +26,7 @@ export interface BaseSceneObjectCreate<
   displayName?: string;
   /** Optional number for the scene object's order in lists. */
   order?: number;
-  /** Optional stacking order for clients to control rendering sequence. Objects with lower values should be displayed beneath those with higher values. */
+  /** Optional stacking order for clients to control rendering sequence. Objects with lower values are typically drawn beneath objects with higher values.*/
   displayOrder?: number;
   /** Optional initial visibility state for the scene object */
   visible?: boolean;
