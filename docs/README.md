@@ -35,7 +35,7 @@ Scene objects are:
 </details>
 
 <details>
-<summary><strong>RepositoryResource</strong> - Reference <a href="https://developer.bentley.com/apis/itwins/overview/#itwin-repositories">iTwin repositories</a> (iModels, reality data, etc.)</summary>
+<summary><strong>RepositoryResource</strong> - Reference <a href="https://developer.bentley.com/apis/itwins/overview/#itwin-repositories">iTwin or global repositories</a> (iModels, reality data, cesium imagery, etc.)</summary>
 
 ```json
 {

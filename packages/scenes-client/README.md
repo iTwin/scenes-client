@@ -249,6 +249,20 @@ const layer: LayerCreate = {
 };
 
 // Note: RepositoryResourceCreate is an alias for StandardObjectCreate<"RepositoryResource", "1.0.0">
+const baseMapResource: RepositoryResourceCreate = {
+  kind: "RepositoryResource",
+  version: "1.0.0",
+  displayName: "Cesium Base Map Imagery", // Optional
+  parentId: "<layer_id>", // Organize under the layer
+  visible: true, // Optional, sets initial visibility state
+  displayOrder: 0, // Optional, sets the rendering order
+  data: {
+    class: "Cesium",
+    repositoryId: "cesium",
+    id: "<cesium_imagery_id>",
+  },
+};
+
 const iModelResource: RepositoryResourceCreate = {
   id: "<imodel_object_id>", // Optional
   kind: "RepositoryResource",
@@ -320,7 +334,7 @@ const formsRepository: RepositoryCreate = {
 const createResponse = await client.postObjects({
   iTwinId: "<itwin_id>",
   sceneId: "<scene_id>",
-  objects: [layer, view3d, iModelResource, iModelStyling, formsRepository],
+  objects: [layer, view3d, baseMapResource, iModelResource, iModelStyling, formsRepository],
 });
 
 console.log(`Created ${createResponse.objects.length} objects:`);
