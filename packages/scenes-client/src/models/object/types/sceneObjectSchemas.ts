@@ -165,8 +165,8 @@ export interface ScenesApiSchemas {
   RepositoryResource: {
     /** Reference to a single repository resource */
     "1.0.0": {
-      /** Id of the iTwin this repository resource is associated with */
-      iTwinId: Guid;
+      /** Id of the iTwin this repository resource is associated with. Omit for global repository classes, e.g. Cesium." */
+      iTwinId?: Guid;
       /** Id of the repository that contains this resource. For Bentley repositories like iModels, this is the lowercase class. For external repositories, this is a unique identifier. */
       repositoryId: SafeString;
       /** Id of the individual resource. Format depends on the repository (may be a GUID or another string identifier). */
