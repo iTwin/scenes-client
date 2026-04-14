@@ -6,7 +6,7 @@
   "properties": {
     "iTwinId": {
       "$ref": "/schemas/CommonTypes#/definitions/guid",
-      "description": "Id of the iTwin this repository resource is associated with"
+      "description": "Id of the iTwin this repository resource is associated with. Omit for global repository classes, e.g. Cesium."
     },
     "repositoryId": {
       "$ref": "/schemas/CommonTypes#/definitions/safeString",
@@ -25,5 +25,5 @@
       "description": "SubClass of the repository type if applicable, e.g. WebMapTileService for GIS repositories."
     }
   },
-  "required": [ "iTwinId", "repositoryId", "id", "class" ]
+  "required": [ "repositoryId", "id", "class" ]
 }
