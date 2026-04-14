@@ -53,8 +53,8 @@ export type ClipPlaneSet = { planes: ClipPlane[] };
 /** An unsigned 32-bit integer in 0xTTBBGGRR format. */
 export type ColorDef = number;
 
-/** An immutable representation of a color with r, g, and b components each in the integer range [0, 255] */
-export type RgbColor = { r: number; g: number; b: number };
+/** A color with r, g, b components each in the integer range [0, 255] and an optional alpha (a) component where 0 is fully transparent and 255 is fully opaque. */
+export type RgbColor = { r: number; g: number; b: number; a?: number };
 
 /** If defined and not equal to -1 (Invalid), the pixel pattern used to draw the edges. If undefined, edges are drawn using the element's line pattern. The patterns are, in order:
 0: Code0 (Solid), 2155905152 (0x80808080): Code1 (1 lit pixel followed by 7 unlit pixels), 4177066232 (0xf8f8f8f8): Code2 (5 lit pixels followed by 3 unlit pixels), 4292935648 (0xffe0ffe0): Code3 (11 lit pixels followed by 5 unlit pixels), 4262526480 (0xfe10fe10): Code4 (7 lit pixels followed by 4 unlit pixels followed by 1 lit pixel followed by 1 lit pixel), 3772834016 (0xe0e0e0e0): Code5 (3 lit pixels followed by 5 unlit pixels), 4169726088 (0xf888f888): Code6 (5 lit pixels followed by 3 unlit followed by 1 lit followed by 3 unlit followed by 1 lit followed by 3 unlit), 4279828248 (0xff18ff18): Code7 (8 lit pixels followed by 3 unlit followed by 2 lit followed by 3 unlit), 3435973836 (0xcccccccc): HiddenLine (2 lit pixels followed by 2 unlit pixels - default style for drawing hidden edges), 1 (0x00000001): Invisible, -1: Invalid */

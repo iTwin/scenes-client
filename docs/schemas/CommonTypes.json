@@ -152,7 +152,7 @@
       "maximum": 4294967295
     },
     "rgbColor": {
-      "description": "An immutable representation of a color with r, g, and b components each in the integer range [0, 255]",
+      "description": "A color with r, g, b components each in the integer range [0, 255] and an optional alpha (a) component where 0 is fully transparent and 255 is fully opaque.",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -173,6 +173,12 @@
           "minimum": 0,
           "maximum": 255,
           "description": "Blue component of the color"
+        },
+        "a": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "Optional alpha component of the color. 0 is fully transparent, 255 is fully opaque. If omitted, the color is fully opaque."
         }
       },
       "required": [ "r", "g", "b" ]

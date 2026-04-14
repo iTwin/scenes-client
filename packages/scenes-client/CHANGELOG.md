@@ -1,5 +1,11 @@
 # @itwin/scenes-client
 
+## 0.9.1
+
+### Patch Changes
+
+- c36bced: Add optional alpha component (`a`) to `RgbColor` type, where 0 is fully transparent and 255 is fully opaque.
+
 ## 0.9.0
 
 ### Minor Changes
