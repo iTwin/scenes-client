@@ -1,5 +1,12 @@
 # @itwin/scenes-client
 
+## 0.10.0
+
+### Minor Changes
+
+- 2d3d482: Support global resources by making `iTwinId` optional in `RepositoryResource` scene object types.
+  Updated documentation and README with Cesium base map example.
+
 ## 0.9.1
 
 ### Patch Changes
