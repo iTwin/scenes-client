@@ -11,13 +11,13 @@ export type Guid = string;
 /** String containing only alphanumeric characters */
 export type AlphaNumericString = string;
 
-/** String containing only web safe characters */
+/** Free-text string that blocks any HTML tag (e.g. `<div` or `</div`), URIs (`://`), and the JS protocol (`javascript:`). Standalone `<` or `>` in non-tag contexts (e.g. `x < y`) are allowed. Frontend should treat this as untrusted input and escape or sanitize it before rendering. */
 export type SafeString = string;
 
 /** A JavaScript (JSEP) expression for frontend rendering that excludes potentially dangerous constructs. It's up to the frontend to validate and execute this expression safely. */
 export type ExpressionString = string;
 
-/** Free-text string that blocks a small set of potentially dangerous patterns (<script, javascript:, data:, <iframe, inline on event handlers). Frontend should treat this as untrusted input and escape or sanitize it before rendering. */
+/** Free-text string that blocks a small set of potentially dangerous patterns (<script, javascript:, data:, <iframe, inline on event handlers). May contain URIs. Frontend should treat this as untrusted input and escape or sanitize it before rendering. */
 export type RestrictedString = string;
 
 /** Expression that determines styling conditions or a single expression. */
