@@ -1,0 +1,233 @@
+{
+  "$id": "/schemas/GeospatialFeatureStyling.1.0.0",
+  "description": "Defines styling options for a specific geospatial features resource.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [ "featureSymbology" ],
+  "properties": {
+    "featureSymbology": {
+      "description": "Defines how geospatial features are styled. Supports simple (uniform), category-based (attribute matching), and interval-based (numeric range) symbology.",
+      "oneOf": [
+        { "$ref": "#/definitions/SimpleSymbology" },
+        { "$ref": "#/definitions/CategorySymbology" },
+        { "$ref": "#/definitions/IntervalSymbology" }
+      ]
+    }
+  },
+  "definitions": {
+    "Expression": {
+      "description": "Object wrapper for a JSEP expression string. Used to distinguish plain strings from expressions that need to be evaluated at runtime.",
+      "type": "object",
+      "properties": {
+        "expression": {
+          "$ref": "/schemas/CommonTypes#/definitions/expressionString",
+          "description": "The expression to evaluate."
+        }
+      },
+      "required": [ "expression" ],
+      "additionalProperties": false
+    },
+    "StringOrExpression": {
+      "description": "A string literal or a JSEP expression string that evaluates to a string.",
+      "oneOf": [
+        { "$ref": "/schemas/CommonTypes#/definitions/restrictedString" },
+        { "$ref": "#/definitions/Expression" }
+      ]
+    },
+    "NumberOrExpression": {
+      "description": "A numeric literal or a JSEP expression string that evaluates to a number.",
+      "oneOf": [
+        { "type": "number" },
+        { "$ref": "#/definitions/Expression" }
+      ]
+    },
+    "ColorOrExpression": {
+      "description": "An RGB(A) color object or a JSEP expression that evaluates to a color at runtime.",
+      "oneOf": [
+        { "$ref": "/schemas/CommonTypes#/definitions/rgbColor" },
+        { "$ref": "#/definitions/Expression" }
+      ]
+    },
+    "LineSymbol": {
+      "type": "object",
+      "description": "Symbol definition for rendering lines.",
+      "additionalProperties": false,
+      "required": [ "type", "color", "width" ],
+      "properties": {
+        "type": {
+          "enum": [ "line-symbol" ],
+          "description": "Indicates this is a line symbol."
+        },
+        "color": {
+          "$ref": "#/definitions/ColorOrExpression",
+          "description": "Color of the line. Can be a literal RGB(A) color or an expression."
+        },
+        "width": {
+          "$ref": "#/definitions/NumberOrExpression",
+          "description": "Width of the line in pixels. Can be a literal number or an expression."
+        }
+      }
+    },
+    "FillSymbol": {
+      "type": "object",
+      "description": "Symbol definition for rendering filled areas.",
+      "additionalProperties": false,
+      "required": [ "type", "color" ],
+      "properties": {
+        "type": {
+          "enum": [ "fill-symbol" ],
+          "description": "Indicates this is a fill symbol."
+        },
+        "color": {
+          "$ref": "#/definitions/ColorOrExpression",
+          "description": "Fill color of the area. Can be a literal RGB(A) color or an expression."
+        },
+        "outline": {
+          "$ref": "#/definitions/LineSymbol",
+          "description": "Optional outline symbol for the filled area."
+        }
+      }
+    },
+    "ShapeMarkerSymbol": {
+      "type": "object",
+      "description": "Symbol definition for shape-based point feature markers.",
+      "additionalProperties": false,
+      "required": [ "type", "shape", "size", "fill" ],
+      "properties": {
+        "type": {
+          "enum": [ "shape-marker" ],
+          "description": "Indicates this is a shape marker symbol."
+        },
+        "shape": {
+          "enum": [ "circle", "square", "triangle" ],
+          "description": "Shape of the marker."
+        },
+        "size": {
+          "$ref": "#/definitions/NumberOrExpression",
+          "description": "Size of the marker in pixels. Can be a literal number or an expression."
+        },
+        "fill": {
+          "$ref": "#/definitions/FillSymbol",
+          "description": "Fill symbology applied to the marker shape."
+        }
+      }
+    },
+    "FeatureSymbol": {
+      "description": "A symbol used to render a geospatial feature. Can be a line symbol, fill symbol, or shape marker.",
+      "oneOf": [
+        { "$ref": "#/definitions/LineSymbol" },
+        { "$ref": "#/definitions/FillSymbol" },
+        { "$ref": "#/definitions/ShapeMarkerSymbol" }
+      ]
+    },
+    "SimpleSymbology": {
+      "type": "object",
+      "description": "Applies a single symbol uniformly to all features.",
+      "additionalProperties": false,
+      "required": [ "type", "symbol" ],
+      "properties": {
+        "type": {
+          "enum": [ "simple-symbology" ],
+          "description": "Discriminator. Indicates simple symbology where a single symbol is applied uniformly to all features."
+        },
+        "symbol": {
+          "$ref": "#/definitions/FeatureSymbol",
+          "description": "The symbol applied uniformly to all features."
+        }
+      }
+    },
+    "CategorySymbology": {
+      "type": "object",
+      "description": "Styles features by matching an attribute value to a set of predefined categories.",
+      "additionalProperties": false,
+      "required": [ "type", "valueSource", "defaultSymbol", "categories" ],
+      "properties": {
+        "type": {
+          "enum": [ "category-symbology" ],
+          "description": "Discriminator. Indicates category-based symbology where features are styled by matching attribute values."
+        },
+        "valueSource": {
+          "$ref": "#/definitions/StringOrExpression",
+          "description": "Attribute name or expression that resolves to the value used for category matching."
+        },
+        "defaultSymbol": {
+          "$ref": "#/definitions/FeatureSymbol",
+          "description": "Default symbol applied when no category value matches."
+        },
+        "categories": {
+          "type": "array",
+          "description": "Array of value-to-symbol mappings. Each entry defines a value to match and the symbol to apply.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [ "value", "symbol" ],
+            "properties": {
+              "value": {
+                "description": "The literal value to match against the valueSource result.",
+                "oneOf": [
+                  { "$ref": "/schemas/CommonTypes#/definitions/restrictedString" },
+                  { "type": "number" }
+                ]
+              },
+              "symbol": {
+                "$ref": "#/definitions/FeatureSymbol",
+                "description": "Symbol to apply when this category matches."
+              },
+              "displayName": {
+                "$ref": "/schemas/CommonTypes#/definitions/safeString",
+                "description": "Optional human-readable name for this category."
+              }
+            }
+          }
+        }
+      }
+    },
+    "IntervalSymbology": {
+      "type": "object",
+      "description": "Styles features by mapping a numeric attribute value to a set of defined ranges.",
+      "additionalProperties": false,
+      "required": [ "type", "valueSource", "defaultSymbol", "intervals" ],
+      "properties": {
+        "type": {
+          "enum": [ "interval-symbology" ],
+          "description": "Discriminator. Indicates interval-based symbology where features are styled by numeric value ranges."
+        },
+        "valueSource": {
+          "$ref": "#/definitions/StringOrExpression",
+          "description": "Attribute name or expression that resolves to the numeric value used for interval matching."
+        },
+        "defaultSymbol": {
+          "$ref": "#/definitions/FeatureSymbol",
+          "description": "Default symbol applied when no interval range matches."
+        },
+        "intervals": {
+          "type": "array",
+          "description": "Array of numeric range-to-symbol mappings. Each entry defines a value range and the symbol to apply.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [ "maxValue", "symbol" ],
+            "properties": {
+              "maxValue": {
+                "type": "number",
+                "description": "Upper bound of this interval."
+              },
+              "minValue": {
+                "type": "number",
+                "description": "Optional lower bound of this interval. If omitted, the interval extends to negative infinity."
+              },
+              "symbol": {
+                "$ref": "#/definitions/FeatureSymbol",
+                "description": "Symbol to apply when the value falls within this interval."
+              },
+              "displayName": {
+                "$ref": "/schemas/CommonTypes#/definitions/safeString",
+                "description": "Optional human-readable name for this interval."
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
