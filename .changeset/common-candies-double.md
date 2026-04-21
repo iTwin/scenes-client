@@ -2,4 +2,4 @@
 "@itwin/scenes-client": patch
 ---
 
-UPdate documentation for `RgbColor` type
+Update documentation for `RgbColor` type
