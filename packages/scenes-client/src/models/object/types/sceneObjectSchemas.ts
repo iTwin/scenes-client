@@ -62,7 +62,7 @@ export type RgbColor = {
   /** Blue component in the range [0, 255] */
   b: number;
   /** Optional alpha component in the range [0, 255], where 0 is fully transparent and 255 is fully opaque */
-  a?: number
+  a?: number;
 };
 
 /** If defined and not equal to -1 (Invalid), the pixel pattern used to draw the edges. If undefined, edges are drawn using the element's line pattern. The patterns are, in order:
