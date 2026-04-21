@@ -72,6 +72,11 @@ export type ExpressionStylingCreateV1 = ResourceStylingObjectCreate<"ExpressionS
 /** Latest ExpressionStyling creation type. Currently points to 1.0.0. */
 export type ExpressionStylingCreate = ExpressionStylingCreateV1;
 
+/** GeospatialFeatureStyling (v1.0.0) Scene Object Creation Type */
+export type GeospatialFeatureStylingCreateV1 = ResourceStylingObjectCreate<"GeospatialFeatureStyling", "1.0.0">;
+/** Latest GeospatialFeatureStyling creation type. Currently points to 1.0.0. */
+export type GeospatialFeatureStylingCreate = GeospatialFeatureStylingCreateV1;
+
 /** GISStyling (v1.0.0) Scene Object Creation Type */
 export type GISStylingCreateV1 = ResourceStylingObjectCreate<"GISStyling", "1.0.0">;
 /** Latest GISStyling creation type. Currently points to 1.0.0. */
@@ -158,6 +163,11 @@ export type ExpressionStylingV1 = ResourceStylingObject<"ExpressionStyling", "1.
 /** Latest ExpressionStyling response type. Currently points to 1.0.0. */
 export type ExpressionStyling = ExpressionStylingV1;
 
+/** GeospatialFeatureStyling (v1.0.0) Scene Object Response Type. */
+export type GeospatialFeatureStylingV1 = ResourceStylingObject<"GeospatialFeatureStyling", "1.0.0">;
+/** Latest GeospatialFeatureStyling response type. Currently points to 1.0.0. */
+export type GeospatialFeatureStyling = GeospatialFeatureStylingV1;
+
 /** GISStyling (v1.0.0) Scene Object Response Type. */
 export type GISStylingV1 = ResourceStylingObject<"GISStyling", "1.0.0">;
 /** Latest GISStyling response type. Currently points to 1.0.0. */
@@ -201,7 +211,8 @@ export type SceneObjectCreateType =
   | ScheduleSimulationCreateV1
   | iModelVisibilityCreateV1
   | RealityDataStylingCreateV1
-  | ResourceSettingsCreateV1;
+  | ResourceSettingsCreateV1
+  | GeospatialFeatureStylingCreateV1;
 
 /** Union of all scene object types */
 export type SceneObjectType =
@@ -217,6 +228,7 @@ export type SceneObjectType =
   | ITwinDisplayStyleOptionsV1
   | UnrealAtmosphericStylingV1
   | ExpressionStylingV1
+  | GeospatialFeatureStylingV1
   | GISStylingV1
   | ScheduleSimulationV1
   | iModelVisibilityV1

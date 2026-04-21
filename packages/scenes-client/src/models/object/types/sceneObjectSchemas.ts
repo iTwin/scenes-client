@@ -87,6 +87,96 @@ export type FeatureSymbology = {
   linePixels?: LinePixels;
 };
 
+
+/** A string literal or a JSEP expression that resolves to a string at runtime. */
+export type StringOrExpression = RestrictedString | { expression: ExpressionString };
+
+/** A numeric literal or a JSEP expression string that evaluates to a number. */
+export type NumberOrExpression = number | { expression: ExpressionString };
+
+/** An RGB(A) color object or a JSEP expression that evaluates to a color at runtime. */
+export type ColorOrExpression = RgbColor | { expression: ExpressionString };
+
+/** Symbol definition for rendering lines in geospatial features. */
+export type LineSymbol = {
+  type: "line-symbol";
+  /** Color of the line. Can be a literal RGB(A) color or an expression. */
+  color: ColorOrExpression;
+  /** Width of the line in pixels. Can be a literal number or an expression. */
+  width: NumberOrExpression;
+};
+
+/** Symbol definition for rendering filled areas in geospatial features. */
+export type FillSymbol = {
+  type: "fill-symbol";
+  /** Fill color of the area. Can be a literal RGB(A) color or an expression. */
+  color: ColorOrExpression;
+  /** Optional outline symbol for the filled area. */
+  outline?: LineSymbol;
+};
+
+/** Symbol definition for shape-based point feature markers. */
+export type ShapeMarkerSymbol = {
+  type: "shape-marker";
+  /** Shape of the marker. */
+  shape: "circle" | "square" | "triangle";
+  /** Size of the marker in pixels. Can be a literal number or an expression. */
+  size: NumberOrExpression;
+  /** Fill symbology applied to the marker shape. */
+  fill: FillSymbol;
+};
+
+/** A symbol used to render a geospatial feature. Can be a line symbol, fill symbol, or shape marker. */
+export type FeatureSymbol =
+  | LineSymbol
+  | FillSymbol
+  | ShapeMarkerSymbol;
+
+/** Applies a single symbol uniformly to all features. */
+export type SimpleSymbology = {
+  type: "simple-symbology";
+  /** The symbol applied uniformly to all features. */
+  symbol: FeatureSymbol;
+};
+
+/** Styles features by matching an attribute value to a set of predefined categories. */
+export type CategorySymbology = {
+  type: "category-symbology";
+  /** Attribute name or expression that resolves to the value used for category matching. */
+  valueSource: StringOrExpression;
+  /** Default symbol applied when no category value matches. */
+  defaultSymbol: FeatureSymbol;
+  /** Array of value-to-symbol mappings. Each entry defines a value to match and the symbol to apply. */
+  categories: {
+    /** The literal value to match against the valueSource result. */
+    value: RestrictedString | number;
+    /** Symbol to apply when this category matches. */
+    symbol: FeatureSymbol;
+    /** Optional human-readable name for this category. */
+    displayName?: SafeString;
+  }[];
+};
+
+/** Styles features by mapping a numeric attribute value to a set of defined ranges. */
+export type IntervalSymbology = {
+  type: "interval-symbology";
+  /** Attribute name or expression that resolves to the numeric value used for interval matching. */
+  valueSource: StringOrExpression;
+  /** Default symbol applied when no interval range matches. */
+  defaultSymbol: FeatureSymbol;
+  /** Array of numeric range-to-symbol mappings. Each entry defines a value range and the symbol to apply. */
+  intervals: {
+    /** Upper bound of this interval. */
+    maxValue: number;
+    /** Optional lower bound of this interval. If omitted, the interval extends to negative infinity. */
+    minValue?: number;
+    /** Symbol to apply when the value falls within this interval. */
+    symbol: FeatureSymbol;
+    /** Optional human-readable name for this interval. */
+    displayName?: SafeString;
+  }[];
+};
+
 /**
  * All schema definitions and versions supported by the Scenes API.
  * Each schema can have multiple versions, each version defining its expected data structure.
@@ -351,6 +441,13 @@ export interface ScenesApiSchemas {
               symbology: FeatureSymbology;
             }[];
           };
+    };
+  };
+  GeospatialFeatureStyling: {
+    /** Defines styling options for a specific geospatial features resource. */
+    "1.0.0": {
+      /** Defines how geospatial features are styled. Supports simple (uniform), category-based (attribute matching), and interval-based (numeric range) symbology. */
+      featureSymbology: SimpleSymbology | CategorySymbology | IntervalSymbology;
     };
   };
   GISStyling: {
