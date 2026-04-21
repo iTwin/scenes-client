@@ -87,7 +87,6 @@ export type FeatureSymbology = {
   linePixels?: LinePixels;
 };
 
-
 /** A string literal or a JSEP expression that resolves to a string at runtime. */
 export type StringOrExpression = RestrictedString | { expression: ExpressionString };
 
@@ -127,10 +126,7 @@ export type ShapeMarkerSymbol = {
 };
 
 /** A symbol used to render a geospatial feature. Can be a line symbol, fill symbol, or shape marker. */
-export type FeatureSymbol =
-  | LineSymbol
-  | FillSymbol
-  | ShapeMarkerSymbol;
+export type FeatureSymbol = LineSymbol | FillSymbol | ShapeMarkerSymbol;
 
 /** Applies a single symbol uniformly to all features. */
 export type SimpleSymbology = {

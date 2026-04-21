@@ -73,7 +73,10 @@ export type ExpressionStylingCreateV1 = ResourceStylingObjectCreate<"ExpressionS
 export type ExpressionStylingCreate = ExpressionStylingCreateV1;
 
 /** GeospatialFeatureStyling (v1.0.0) Scene Object Creation Type */
-export type GeospatialFeatureStylingCreateV1 = ResourceStylingObjectCreate<"GeospatialFeatureStyling", "1.0.0">;
+export type GeospatialFeatureStylingCreateV1 = ResourceStylingObjectCreate<
+  "GeospatialFeatureStyling",
+  "1.0.0"
+>;
 /** Latest GeospatialFeatureStyling creation type. Currently points to 1.0.0. */
 export type GeospatialFeatureStylingCreate = GeospatialFeatureStylingCreateV1;
 
