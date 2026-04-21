@@ -1,5 +1,18 @@
 # @itwin/scenes-client
 
+## 0.11.0
+
+### Minor Changes
+
+- 7708ed2: Add GeospatialFeatureStyling v1.0.0 schema support
+
+  - Update `SceneApiSchemas` interface to include GeospatialFeatureStyling v1.0.0 schema
+  - Add create types (`GeospatialFeatureStylingCreate`/`GeospatialFeatureStylingV1`) and response types (`GeospatialFeatureStyling`/`GeospatialFeatureStylingV1`)
+
+### Patch Changes
+
+- cd88fd2: Update documentation for `RgbColor` type
+
 ## 0.10.1
 
 ### Patch Changes
