@@ -1,5 +1,11 @@
 # @itwin/scenes-client
 
+## 0.10.1
+
+### Patch Changes
+
+- c6ac9bd: Update documentation for `SafeString` type
+
 ## 0.10.0
 
 ### Minor Changes
