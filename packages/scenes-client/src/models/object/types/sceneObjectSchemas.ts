@@ -25,6 +25,14 @@ export type ExpressionOrConditions =
   | ExpressionString
   | { conditions: { condition: ExpressionString; value: ExpressionString; label?: SafeString }[] };
 
+/** A structured expression definition that wraps an expression or conditions with optional reusable variable definitions. */
+export type StyleExpression = {
+  /** The expression value: either a JSEP expression string or a conditions object. */
+  value: ExpressionOrConditions;
+  /** Reusable named variables that can be referenced in expressions and conditions. */
+  defines?: { [key: string]: ExpressionString };
+};
+
 /** Date time in format: YYYY-MM-DDThh:mm:ssZ or YYYY-MM-DDThh:mm:ss.sssZ */
 export type DateTime = string;
 
@@ -96,29 +104,14 @@ export type FeatureSymbology = {
   linePixels?: LinePixels;
 };
 
-/** A structured expression definition.
- *  At least one of `expression` or `conditions` should be present. If `conditions` is defined, `expression` is ignored.
- *  - `expression`: a single JSEP expression string.
- *  - `conditions`: an ordered array of condition entries; the first matching condition wins.
- *  - `defines`: reusable named variables that can be referenced in expressions and conditions.
- */
-export type ExpressionDefinition = {
-  /** A JSEP expression string that resolves to a value at runtime. */
-  expression?: ExpressionString;
-  /** Condition-based expression: array of condition entries evaluated in order. Use "true" as the last condition for a default/fallback. */
-  conditions?: { condition: ExpressionString; value: ExpressionString; label?: SafeString }[];
-  /** Reusable named variables that can be referenced in expressions and conditions. */
-  defines?: { [key: string]: ExpressionString };
-};
-
 /** A string literal or a JSEP expression that resolves to a string at runtime. */
-export type StringOrExpression = RestrictedString | ExpressionDefinition;
+export type StringOrExpression = RestrictedString | StyleExpression;
 
 /** A numeric literal or a JSEP expression string that evaluates to a number. */
-export type NumberOrExpression = number | ExpressionDefinition;
+export type NumberOrExpression = number | StyleExpression;
 
 /** An RGB(A) color object or a JSEP expression that evaluates to a color at runtime. */
-export type ColorOrExpression = RgbColor | ExpressionDefinition;
+export type ColorOrExpression = RgbColor | StyleExpression;
 
 /** Symbol definition for rendering lines in geospatial features. */
 export type LineSymbol = {
