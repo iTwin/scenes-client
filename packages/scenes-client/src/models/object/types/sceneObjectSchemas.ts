@@ -23,7 +23,7 @@ export type RestrictedString = string;
 /** Expression that determines styling conditions or a single expression. */
 export type ExpressionOrConditions =
   | ExpressionString
-  | { conditions: [ExpressionString, ExpressionString][] };
+  | { conditions: { condition: ExpressionString; value: ExpressionString; label?: SafeString }[] };
 
 /** Date time in format: YYYY-MM-DDThh:mm:ssZ or YYYY-MM-DDThh:mm:ss.sssZ */
 export type DateTime = string;
@@ -96,14 +96,29 @@ export type FeatureSymbology = {
   linePixels?: LinePixels;
 };
 
+/** A structured expression definition.
+ *  At least one of `expression` or `conditions` should be present. If `conditions` is defined, `expression` is ignored.
+ *  - `expression`: a single JSEP expression string.
+ *  - `conditions`: an ordered array of condition entries; the first matching condition wins.
+ *  - `defines`: reusable named variables that can be referenced in expressions and conditions.
+ */
+export type ExpressionDefinition = {
+  /** A JSEP expression string that resolves to a value at runtime. */
+  expression?: ExpressionString;
+  /** Condition-based expression: array of condition entries evaluated in order. Use "true" as the last condition for a default/fallback. */
+  conditions?: { condition: ExpressionString; value: ExpressionString; label?: SafeString }[];
+  /** Reusable named variables that can be referenced in expressions and conditions. */
+  defines?: { [key: string]: ExpressionString };
+};
+
 /** A string literal or a JSEP expression that resolves to a string at runtime. */
-export type StringOrExpression = RestrictedString | { expression: ExpressionString };
+export type StringOrExpression = RestrictedString | ExpressionDefinition;
 
 /** A numeric literal or a JSEP expression string that evaluates to a number. */
-export type NumberOrExpression = number | { expression: ExpressionString };
+export type NumberOrExpression = number | ExpressionDefinition;
 
 /** An RGB(A) color object or a JSEP expression that evaluates to a color at runtime. */
-export type ColorOrExpression = RgbColor | { expression: ExpressionString };
+export type ColorOrExpression = RgbColor | ExpressionDefinition;
 
 /** Symbol definition for rendering lines in geospatial features. */
 export type LineSymbol = {
@@ -127,7 +142,7 @@ export type FillSymbol = {
 export type ShapeMarkerSymbol = {
   type: "shape-marker";
   /** Shape of the marker. */
-  shape: "circle" | "square" | "triangle";
+  shape: "circle" | "square" | "triangle" | "diamond" | "cross" | "star" | "hexagon";
   /** Size of the marker in pixels. Can be a literal number or an expression. */
   size: NumberOrExpression;
   /** Fill symbology applied to the marker shape. */
