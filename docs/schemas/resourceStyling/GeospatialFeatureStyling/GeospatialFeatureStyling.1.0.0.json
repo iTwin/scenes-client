@@ -15,37 +15,80 @@
     }
   },
   "definitions": {
-    "Expression": {
-      "description": "Object wrapper for a JSEP expression string. Used to distinguish plain strings from expressions that need to be evaluated at runtime.",
-      "type": "object",
-      "properties": {
-        "expression": {
-          "$ref": "/schemas/CommonTypes#/definitions/expressionString",
-          "description": "The expression to evaluate."
+    "ExpressionOrConditions": {
+      "description": "A single JSEP expression string, or a conditions object with an ordered array of condition entries.",
+      "oneOf": [
+        { "$ref": "/schemas/CommonTypes#/definitions/expressionString" },
+        {
+          "type": "object",
+          "required": [ "conditions" ],
+          "additionalProperties": false,
+          "properties": {
+            "conditions": {
+              "type": "array",
+              "description": "Condition-based expression: array of condition entries evaluated in order. Use 'true' as the last condition for a default/fallback.",
+              "items": {
+                "type": "object",
+                "required": [ "condition", "value" ],
+                "additionalProperties": false,
+                "properties": {
+                  "condition": {
+                    "$ref": "/schemas/CommonTypes#/definitions/expressionString",
+                    "description": "A JSEP expression that is evaluated to determine if this entry matches."
+                  },
+                  "value": {
+                    "$ref": "/schemas/CommonTypes#/definitions/expressionString",
+                    "description": "The result expression to use when the condition matches."
+                  },
+                  "label": {
+                    "$ref": "/schemas/CommonTypes#/definitions/safeString",
+                    "description": "Optional human-readable label for this condition."
+                  }
+                }
+              }
+            }
+          }
         }
-      },
-      "required": [ "expression" ],
-      "additionalProperties": false
+      ]
+    },
+    "StyleExpression": {
+      "description": "Wraps an expression or conditions with optional reusable variable definitions.",
+      "type": "object",
+      "required": [ "value" ],
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "$ref": "#/definitions/ExpressionOrConditions",
+          "description": "The expression value: either a JSEP expression string or a conditions object."
+        },
+        "defines": {
+          "type": "object",
+          "description": "Reusable named variables that can be referenced in expressions and conditions.",
+          "additionalProperties": {
+            "$ref": "/schemas/CommonTypes#/definitions/expressionString"
+          }
+        }
+      }
     },
     "StringOrExpression": {
       "description": "A string literal or a JSEP expression string that evaluates to a string.",
       "oneOf": [
         { "$ref": "/schemas/CommonTypes#/definitions/restrictedString" },
-        { "$ref": "#/definitions/Expression" }
+        { "$ref": "#/definitions/StyleExpression" }
       ]
     },
     "NumberOrExpression": {
       "description": "A numeric literal or a JSEP expression string that evaluates to a number.",
       "oneOf": [
         { "type": "number" },
-        { "$ref": "#/definitions/Expression" }
+        { "$ref": "#/definitions/StyleExpression" }
       ]
     },
     "ColorOrExpression": {
       "description": "An RGB(A) color object or a JSEP expression that evaluates to a color at runtime.",
       "oneOf": [
         { "$ref": "/schemas/CommonTypes#/definitions/rgbColor" },
-        { "$ref": "#/definitions/Expression" }
+        { "$ref": "#/definitions/StyleExpression" }
       ]
     },
     "LineSymbol": {
@@ -99,7 +142,7 @@
           "description": "Indicates this is a shape marker symbol."
         },
         "shape": {
-          "enum": [ "circle", "square", "triangle" ],
+          "enum": [ "circle", "square", "triangle", "diamond", "cross", "star", "hexagon" ],
           "description": "Shape of the marker."
         },
         "size": {

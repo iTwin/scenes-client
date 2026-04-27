@@ -23,7 +23,15 @@ export type RestrictedString = string;
 /** Expression that determines styling conditions or a single expression. */
 export type ExpressionOrConditions =
   | ExpressionString
-  | { conditions: [ExpressionString, ExpressionString][] };
+  | { conditions: { condition: ExpressionString; value: ExpressionString; label?: SafeString }[] };
+
+/** A structured expression definition that wraps an expression or conditions with optional reusable variable definitions. */
+export type StyleExpression = {
+  /** The expression value: either a JSEP expression string or a conditions object. */
+  value: ExpressionOrConditions;
+  /** Reusable named variables that can be referenced in expressions and conditions. */
+  defines?: { [key: string]: ExpressionString };
+};
 
 /** Date time in format: YYYY-MM-DDThh:mm:ssZ or YYYY-MM-DDThh:mm:ss.sssZ */
 export type DateTime = string;
@@ -97,13 +105,13 @@ export type FeatureSymbology = {
 };
 
 /** A string literal or a JSEP expression that resolves to a string at runtime. */
-export type StringOrExpression = RestrictedString | { expression: ExpressionString };
+export type StringOrExpression = RestrictedString | StyleExpression;
 
 /** A numeric literal or a JSEP expression string that evaluates to a number. */
-export type NumberOrExpression = number | { expression: ExpressionString };
+export type NumberOrExpression = number | StyleExpression;
 
 /** An RGB(A) color object or a JSEP expression that evaluates to a color at runtime. */
-export type ColorOrExpression = RgbColor | { expression: ExpressionString };
+export type ColorOrExpression = RgbColor | StyleExpression;
 
 /** Symbol definition for rendering lines in geospatial features. */
 export type LineSymbol = {
@@ -127,7 +135,7 @@ export type FillSymbol = {
 export type ShapeMarkerSymbol = {
   type: "shape-marker";
   /** Shape of the marker. */
-  shape: "circle" | "square" | "triangle";
+  shape: "circle" | "square" | "triangle" | "diamond" | "cross" | "star" | "hexagon";
   /** Size of the marker in pixels. Can be a literal number or an expression. */
   size: NumberOrExpression;
   /** Fill symbology applied to the marker shape. */
