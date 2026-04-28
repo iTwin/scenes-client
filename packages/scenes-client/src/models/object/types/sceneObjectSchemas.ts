@@ -29,7 +29,7 @@ export type ExpressionOrConditions =
 export type StyleExpression = {
   /** The expression value: either a JSEP expression string or a conditions object. */
   value: ExpressionOrConditions;
-  /** Reusable named variables that can be referenced in expressions and conditions. */
+  /** Named variables that can be referenced in expressions and conditions. */
   defines?: { [key: string]: ExpressionString };
 };
 
