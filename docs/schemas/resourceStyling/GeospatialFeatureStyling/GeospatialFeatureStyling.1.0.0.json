@@ -27,9 +27,12 @@
         },
         "defines": {
           "type": "object",
-          "description": "Reusable named variables that can be referenced in expressions and conditions.",
-          "additionalProperties": {
-            "$ref": "/schemas/CommonTypes#/definitions/expressionString"
+          "description": "Reusable named variables that can be referenced in expressions via ${name} syntax.",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^[a-zA-Z_$][a-zA-Z0-9_$]*$": {
+              "$ref": "/schemas/CommonTypes#/definitions/expressionString"
+            }
           }
         }
       }
