@@ -28,35 +28,36 @@
       "description": "A JavaScript (JSEP) expression for frontend rendering that excludes potentially dangerous constructs. It's up to the frontend to validate and execute this expression safely."
     },
     "expressionOrConditions": {
-      "description": "Expression that determines styling conditions or a single expression.",
+      "description": "A single JSEP expression string, or a conditions object with an ordered array of condition entries.",
       "oneOf": [
-        {
-          "$ref": "#/definitions/expressionString",
-          "description": "Single expression string"
-        },
+        { "$ref": "#/definitions/expressionString" },
         {
           "type": "object",
-          "additionalProperties": false,
           "required": [ "conditions" ],
+          "additionalProperties": false,
           "properties": {
             "conditions": {
               "type": "array",
-              "description": "Array of condition-value pairs for determining styling",
+              "description": "Condition-based expression: array of condition entries evaluated in order. Use 'true' as the last condition for a default/fallback.",
               "minItems": 1,
               "items": {
-                "type": "array",
-                "minItems": 2,
-                "maxItems": 2,
-                "items": [
-                  {
+                "type": "object",
+                "required": [ "condition", "value" ],
+                "additionalProperties": false,
+                "properties": {
+                  "condition": {
                     "$ref": "#/definitions/expressionString",
-                    "description": "Condition expression that evaluates to a boolean"
+                    "description": "A JSEP expression that is evaluated to determine if this entry matches."
                   },
-                  {
+                  "value": {
                     "$ref": "#/definitions/expressionString",
-                    "description": "Expression that returns a value when the condition is true"
+                    "description": "The result expression to use when the condition matches."
+                  },
+                  "label": {
+                    "$ref": "#/definitions/safeString",
+                    "description": "Optional human-readable label for this condition."
                   }
-                ]
+                }
               }
             }
           }

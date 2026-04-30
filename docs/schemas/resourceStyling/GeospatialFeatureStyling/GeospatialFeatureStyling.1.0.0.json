@@ -15,42 +15,6 @@
     }
   },
   "definitions": {
-    "ExpressionOrConditions": {
-      "description": "A single JSEP expression string, or a conditions object with an ordered array of condition entries.",
-      "oneOf": [
-        { "$ref": "/schemas/CommonTypes#/definitions/expressionString" },
-        {
-          "type": "object",
-          "required": [ "conditions" ],
-          "additionalProperties": false,
-          "properties": {
-            "conditions": {
-              "type": "array",
-              "description": "Condition-based expression: array of condition entries evaluated in order. Use 'true' as the last condition for a default/fallback.",
-              "items": {
-                "type": "object",
-                "required": [ "condition", "value" ],
-                "additionalProperties": false,
-                "properties": {
-                  "condition": {
-                    "$ref": "/schemas/CommonTypes#/definitions/expressionString",
-                    "description": "A JSEP expression that is evaluated to determine if this entry matches."
-                  },
-                  "value": {
-                    "$ref": "/schemas/CommonTypes#/definitions/expressionString",
-                    "description": "The result expression to use when the condition matches."
-                  },
-                  "label": {
-                    "$ref": "/schemas/CommonTypes#/definitions/safeString",
-                    "description": "Optional human-readable label for this condition."
-                  }
-                }
-              }
-            }
-          }
-        }
-      ]
-    },
     "StyleExpression": {
       "description": "Wraps an expression or conditions with optional reusable variable definitions.",
       "type": "object",
@@ -58,7 +22,7 @@
       "additionalProperties": false,
       "properties": {
         "value": {
-          "$ref": "#/definitions/ExpressionOrConditions",
+          "$ref": "/schemas/CommonTypes#/definitions/expressionOrConditions",
           "description": "The expression value: either a JSEP expression string or a conditions object."
         },
         "defines": {
