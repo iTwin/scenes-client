@@ -15,37 +15,47 @@
     }
   },
   "definitions": {
-    "Expression": {
-      "description": "Object wrapper for a JSEP expression string. Used to distinguish plain strings from expressions that need to be evaluated at runtime.",
+    "StyleExpression": {
+      "description": "Wraps an expression or conditions with optional reusable variable definitions.",
       "type": "object",
+      "required": [ "expression" ],
+      "additionalProperties": false,
       "properties": {
         "expression": {
-          "$ref": "/schemas/CommonTypes#/definitions/expressionString",
-          "description": "The expression to evaluate."
+          "$ref": "/schemas/CommonTypes#/definitions/expressionOrConditions",
+          "description": "The expression value: either a JSEP expression string or a conditions object."
+        },
+        "defines": {
+          "type": "object",
+          "description": "Reusable named variables that can be referenced in expressions via ${name} syntax.",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^[a-zA-Z_$][a-zA-Z0-9_$]*$": {
+              "$ref": "/schemas/CommonTypes#/definitions/expressionString"
+            }
+          }
         }
-      },
-      "required": [ "expression" ],
-      "additionalProperties": false
+      }
     },
     "StringOrExpression": {
       "description": "A string literal or a JSEP expression string that evaluates to a string.",
       "oneOf": [
         { "$ref": "/schemas/CommonTypes#/definitions/restrictedString" },
-        { "$ref": "#/definitions/Expression" }
+        { "$ref": "#/definitions/StyleExpression" }
       ]
     },
     "NumberOrExpression": {
       "description": "A numeric literal or a JSEP expression string that evaluates to a number.",
       "oneOf": [
         { "type": "number" },
-        { "$ref": "#/definitions/Expression" }
+        { "$ref": "#/definitions/StyleExpression" }
       ]
     },
     "ColorOrExpression": {
       "description": "An RGB(A) color object or a JSEP expression that evaluates to a color at runtime.",
       "oneOf": [
         { "$ref": "/schemas/CommonTypes#/definitions/rgbColor" },
-        { "$ref": "#/definitions/Expression" }
+        { "$ref": "#/definitions/StyleExpression" }
       ]
     },
     "LineSymbol": {
@@ -99,7 +109,7 @@
           "description": "Indicates this is a shape marker symbol."
         },
         "shape": {
-          "enum": [ "circle", "square", "triangle" ],
+          "enum": [ "circle", "square", "triangle", "diamond", "cross", "star", "hexagon" ],
           "description": "Shape of the marker."
         },
         "size": {
