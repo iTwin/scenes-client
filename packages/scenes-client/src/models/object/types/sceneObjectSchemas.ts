@@ -28,7 +28,7 @@ export type ExpressionOrConditions =
 /** A structured expression definition that wraps an expression or conditions with optional reusable variable definitions. */
 export type StyleExpression = {
   /** The expression value: either a JSEP expression string or a conditions object. */
-  value: ExpressionOrConditions;
+  expression: ExpressionOrConditions;
   /** Named variables that can be referenced in expressions and conditions. */
   defines?: { [key: string]: ExpressionString };
 };
