@@ -42,14 +42,14 @@
               "minItems": 1,
               "items": {
                 "type": "object",
-                "required": [ "condition", "value" ],
+                "required": [ "condition", "expression" ],
                 "additionalProperties": false,
                 "properties": {
                   "condition": {
                     "$ref": "#/definitions/expressionString",
-                    "description": "A JSEP expression that is evaluated to determine if this entry matches."
+                    "description": "Condition expression that evaluates to a boolean"
                   },
-                  "value": {
+                  "expression": {
                     "$ref": "#/definitions/expressionString",
                     "description": "The result expression to use when the condition matches."
                   },
