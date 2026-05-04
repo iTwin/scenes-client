@@ -1,5 +1,11 @@
 # @itwin/scenes-client
 
+## 0.11.1
+
+### Patch Changes
+
+- f8f9e98: Add StyleExpression type with defines support, update OrExpression types to use StyleExpression, refactor ExpressionOrConditions to use named condition/value/label fields, and add new shape-marker shapes (diamond, cross, star, hexagon)
+
 ## 0.11.0
 
 ### Minor Changes
