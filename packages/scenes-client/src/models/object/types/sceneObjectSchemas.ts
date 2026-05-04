@@ -23,7 +23,13 @@ export type RestrictedString = string;
 /** Expression that determines styling conditions or a single expression. */
 export type ExpressionOrConditions =
   | ExpressionString
-  | { conditions: { condition: ExpressionString; expression: ExpressionString; label?: SafeString }[] };
+  | {
+      conditions: {
+        condition: ExpressionString;
+        expression: ExpressionString;
+        label?: SafeString;
+      }[];
+    };
 
 /** A structured expression definition that wraps an expression or conditions with optional reusable variable definitions. */
 export type StyleExpression = {
