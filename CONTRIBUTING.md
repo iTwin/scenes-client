@@ -38,6 +38,10 @@ Please add the following header at the top of every new source file.
  *--------------------------------------------------------------------------------------------*/
 ```
 
+## Schema Documentation (`docs/schemas/`)
+
+The JSON schema files under `docs/schemas/` are **auto-generated** and kept in sync with the Scenes API. Do not edit these files directly — any manual changes will be overwritten.
+
 ## Versioning with Changesets
 
 This repository uses [Changesets](https://github.com/changesets/changesets) to manage package versioning and changelogs. When making changes that affect the public API or behavior, please add a changeset by running:
