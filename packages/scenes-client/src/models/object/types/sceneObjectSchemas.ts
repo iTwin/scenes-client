@@ -20,6 +20,12 @@ export type ExpressionString = string;
 /** Free-text string that blocks a small set of potentially dangerous patterns (<script, javascript:, data:, <iframe, inline on event handlers). May contain URIs. Frontend should treat this as untrusted input and escape or sanitize it before rendering. */
 export type RestrictedString = string;
 
+/** Base64-encoded image data URI. Supported types: `image/png`, `image/jpeg`, `image/svg+xml`, `image/webp`. Maximum decoded size: 20KB. Animated SVGs are not supported. SVG content cannot contain scripts, event handlers, `javascript:` URIs, `foreignObject` elements, or animation elements. */
+export type Base64Image = string;
+
+/** HTTPS URL pointing to a publicly hosted resource. Must use a domain name host; raw IP addresses (all ranges, including private and loopback) are disallowed. URLs with embedded credentials are disallowed. */
+export type HttpsUrl = string;
+
 /** Expression that determines styling conditions or a single expression. */
 export type ExpressionOrConditions =
   | ExpressionString
@@ -148,8 +154,19 @@ export type ShapeMarkerSymbol = {
   fill: FillSymbol;
 };
 
-/** A symbol used to render a geospatial feature. Can be a line symbol, fill symbol, or shape marker. */
-export type FeatureSymbol = LineSymbol | FillSymbol | ShapeMarkerSymbol;
+/** Symbol definition for image-based point feature markers. */
+export type ImageMarkerSymbol = {
+  type: "image-marker";
+  /** Image source: either a base64-encoded data URI (max 20KB, PNG/JPEG/SVG/WebP) or an HTTPS URL to a publicly hosted image. */
+  url: Base64Image | HttpsUrl;
+  /** Display width in pixels. If omitted, the image's intrinsic width is used. */
+  width?: NumberOrExpression;
+  /** Display height in pixels. If omitted, the image's intrinsic height is used. */
+  height?: NumberOrExpression;
+};
+
+/** A symbol used to render a geospatial feature. Can be a line symbol, fill symbol, shape marker, or image marker. */
+export type FeatureSymbol = LineSymbol | FillSymbol | ShapeMarkerSymbol | ImageMarkerSymbol;
 
 /** Applies a single symbol uniformly to all features. */
 export type SimpleSymbology = {
