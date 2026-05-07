@@ -122,12 +122,40 @@
         }
       }
     },
+    "ImageMarkerSymbol": {
+      "type": "object",
+      "description": "Symbol definition for image-based point feature markers.",
+      "additionalProperties": false,
+      "required": [ "type", "url" ],
+      "properties": {
+        "type": {
+          "enum": [ "image-marker" ],
+          "description": "Indicates this is an image marker symbol."
+        },
+        "url": {
+          "description": "Image source: either a base64-encoded data URI (max 20KB, PNG/JPEG/SVG/WebP) or an HTTPS URL to a publicly hosted image.",
+          "oneOf": [
+            { "$ref": "/schemas/CommonTypes#/definitions/base64Image" },
+            { "$ref": "/schemas/CommonTypes#/definitions/httpsUrl" }
+          ]
+        },
+        "width": {
+          "$ref": "#/definitions/NumberOrExpression",
+          "description": "Display width in pixels. If omitted, the image's intrinsic width is used."
+        },
+        "height": {
+          "$ref": "#/definitions/NumberOrExpression",
+          "description": "Display height in pixels. If omitted, the image's intrinsic height is used."
+        }
+      }
+    },
     "FeatureSymbol": {
-      "description": "A symbol used to render a geospatial feature. Can be a line symbol, fill symbol, or shape marker.",
+      "description": "A symbol used to render a geospatial feature. Can be a line symbol, fill symbol, shape marker, or image marker.",
       "oneOf": [
         { "$ref": "#/definitions/LineSymbol" },
         { "$ref": "#/definitions/FillSymbol" },
-        { "$ref": "#/definitions/ShapeMarkerSymbol" }
+        { "$ref": "#/definitions/ShapeMarkerSymbol" },
+        { "$ref": "#/definitions/ImageMarkerSymbol" }
       ]
     },
     "SimpleSymbology": {
