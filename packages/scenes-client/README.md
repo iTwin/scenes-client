@@ -275,6 +275,7 @@ const iModelResource: RepositoryResourceCreate = {
     class: "iModels",
     repositoryId: "imodels",
     id: "<imodel_id>",
+    version: "<named_version_id>" // Optional, if omitted latest version should be used
   },
 };
 

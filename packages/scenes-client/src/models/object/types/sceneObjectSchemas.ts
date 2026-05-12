@@ -301,6 +301,8 @@ export interface ScenesApiSchemas {
       class: SafeString;
       /** SubClass of the repository type if applicable, e.g. WebMapTileService for GIS repositories. */
       subClass?: SafeString;
+      /** Version of the resource, if the repository supports versioning, e.g. an iModel named version id. If omitted, the latest resource version is used. */
+      version?: SafeString;
     };
   };
   View3d: {
