@@ -192,7 +192,7 @@ Scene: "Construction Site Overview"
           "class": "iModels",
           "repositoryId": "imodels",
           "id": "6bbcf593-6160-4d83-9c07-1a69e4cc29fb",
-          "version": "09515c5d-a71f-4fee-86a3-9f7d172c064d" // Optionally specify resource version
+          "version": "1f2e04b666edce395e37a795e2231e995cbf8349" // Optionally specify resource version
         },
         "visible": true
       },
