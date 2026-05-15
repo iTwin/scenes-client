@@ -191,7 +191,8 @@ Scene: "Construction Site Overview"
           "iTwinId": "64060a14-d545-4fff-b3b0-4c31291e7a00",
           "class": "iModels",
           "repositoryId": "imodels",
-          "id": "6bbcf593-6160-4d83-9c07-1a69e4cc29fb"
+          "id": "6bbcf593-6160-4d83-9c07-1a69e4cc29fb",
+          "version": "1f2e04b666edce395e37a795e2231e995cbf8349" // Optionally specify resource version
         },
         "visible": true
       },
