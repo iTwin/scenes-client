@@ -70,7 +70,7 @@ export type UnrealAtmosphericStylingCreate = UnrealAtmosphericStylingCreateV1;
 /**
  * ExpressionStyling (v1.0.0) Scene Object Creation Type
  * @deprecated Please use {@link GeospatialFeatureStylingCreateV1} instead
-*/
+ */
 export type ExpressionStylingCreateV1 = ResourceStylingObjectCreate<"ExpressionStyling", "1.0.0">;
 /**
  * Latest ExpressionStyling creation type. Currently points to 1.0.0.
