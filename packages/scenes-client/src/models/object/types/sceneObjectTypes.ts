@@ -67,9 +67,15 @@ export type UnrealAtmosphericStylingCreateV1 = StandardObjectCreate<
 /** Latest UnrealAtmosphericStyling creation type. Currently points to 1.0.0. */
 export type UnrealAtmosphericStylingCreate = UnrealAtmosphericStylingCreateV1;
 
-/** ExpressionStyling (v1.0.0) Scene Object Creation Type */
+/**
+ * ExpressionStyling (v1.0.0) Scene Object Creation Type
+ * @deprecated Please use {@link GeospatialFeatureStylingCreateV1} instead
+*/
 export type ExpressionStylingCreateV1 = ResourceStylingObjectCreate<"ExpressionStyling", "1.0.0">;
-/** Latest ExpressionStyling creation type. Currently points to 1.0.0. */
+/**
+ * Latest ExpressionStyling creation type. Currently points to 1.0.0.
+ * @deprecated Please use {@link GeospatialFeatureStylingCreate} instead
+ */
 export type ExpressionStylingCreate = ExpressionStylingCreateV1;
 
 /** GeospatialFeatureStyling (v1.0.0) Scene Object Creation Type */
@@ -161,9 +167,15 @@ export type UnrealAtmosphericStylingV1 = StandardObject<"UnrealAtmosphericStylin
 /** Latest UnrealAtmosphericStyling response type. Currently points to 1.0.0. */
 export type UnrealAtmosphericStyling = UnrealAtmosphericStylingV1;
 
-/** ExpressionStyling (v1.0.0) Scene Object Response Type. */
+/**
+ * ExpressionStyling (v1.0.0) Scene Object Response Type.
+ * @deprecated Please use {@link GeospatialFeatureStylingV1} instead
+ */
 export type ExpressionStylingV1 = ResourceStylingObject<"ExpressionStyling", "1.0.0">;
-/** Latest ExpressionStyling response type. Currently points to 1.0.0. */
+/**
+ * Latest ExpressionStyling response type. Currently points to 1.0.0.
+ * @deprecated Please use {@link GeospatialFeatureStyling} instead
+ */
 export type ExpressionStyling = ExpressionStylingV1;
 
 /** GeospatialFeatureStyling (v1.0.0) Scene Object Response Type. */
