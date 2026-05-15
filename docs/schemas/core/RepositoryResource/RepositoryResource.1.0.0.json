@@ -23,6 +23,10 @@
     "subClass": {
       "$ref": "/schemas/CommonTypes#/definitions/safeString",
       "description": "SubClass of the repository type if applicable, e.g. WebMapTileService for GIS repositories."
+    },
+    "version": {
+      "$ref": "/schemas/CommonTypes#/definitions/safeString",
+      "description": "Version of the resource, if the repository supports versioning, e.g. an iModel changesetId. If omitted, the latest resource version is used. Format depends on the repository."
     }
   },
   "required": [ "repositoryId", "id", "class" ]
