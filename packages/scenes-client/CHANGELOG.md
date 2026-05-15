@@ -1,5 +1,16 @@
 # @itwin/scenes-client
 
+## 0.13.0
+
+### Minor Changes
+
+- 2ae912f: Add optional `version` to `RepositoryResource` scene object types.
+  - Allows specifying a resource version for repositories that support versioning (e.g. an iModel changesetId).
+
+### Patch Changes
+
+- e4c1067: Deprecate `ExpressionStylingCreate` and `ExpressionStyling` types; Use `GeospatialFeatureStylingCreate` and `GeospatialFeatureStyling` instead
+
 ## 0.12.0
 
 ### Minor Changes
