@@ -13,8 +13,10 @@ export type CameraAnimationCreate = CameraAnimationCreateV1;
 
 /** Cutout (v1.0.0) Scene Object Creation Type */
 export type CutoutCreateV1 = StandardObjectCreate<"Cutout", "1.0.0">;
-/** Latest Cutout creation type. Currently points to 1.0.0. */
-export type CutoutCreate = CutoutCreateV1;
+/** Cutout (v2.0.0) Scene Object Creation Type */
+export type CutoutCreateV2 = StandardObjectCreate<"Cutout", "2.0.0">;
+/** Latest Cutout creation type. Currently points to 2.0.0. */
+export type CutoutCreate = CutoutCreateV2;
 
 /** Layer (v1.0.0) Scene Object Creation Type */
 export type LayerCreateV1 = StandardObjectCreate<"Layer", "1.0.0">;
@@ -119,8 +121,10 @@ export type CameraAnimation = CameraAnimationV1;
 
 /** Cutout (v1.0.0) Scene Object Response Type. */
 export type CutoutV1 = StandardObject<"Cutout", "1.0.0">;
-/** Latest Cutout response type. Currently points to 1.0.0. */
-export type Cutout = CutoutV1;
+/** Cutout (v2.0.0) Scene Object Response Type. */
+export type CutoutV2 = StandardObject<"Cutout", "2.0.0">;
+/** Latest Cutout response type. Currently points to 2.0.0. */
+export type Cutout = CutoutV2;
 
 /** Layer (v1.0.0) Scene Object Response Type. */
 export type LayerV1 = StandardObject<"Layer", "1.0.0">;
@@ -212,6 +216,7 @@ export type ResourceSettings = ResourceSettingsV1;
 export type SceneObjectCreateType =
   | CameraAnimationCreateV1
   | CutoutCreateV1
+  | CutoutCreateV2
   | LayerCreateV1
   | MaterialDecorationCreateV1
   | MovieCreateV1
@@ -233,6 +238,7 @@ export type SceneObjectCreateType =
 export type SceneObjectType =
   | CameraAnimationV1
   | CutoutV1
+  | CutoutV2
   | LayerV1
   | MaterialDecorationV1
   | MovieV1
