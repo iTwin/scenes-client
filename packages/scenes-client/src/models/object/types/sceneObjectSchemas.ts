@@ -324,8 +324,8 @@ export interface ScenesApiSchemas {
     };
     /** A cutout defines clipping regions to exclude specific areas from rendering. Supports single planes, polygon sets, and oriented boxes. */
     "2.0.0": {
-      /** Optional list of scene objects that this cutout applies to. If omitted, the cutout applies to all resources. */
-      appliesTo?: Guid[];
+      /** Ids of the scene objects this cutout applies to. Only the listed resources will be clipped. */
+      appliesTo: Guid[];
       /** Clipping geometry definition. */
       cutout: PolygonSetCutout | PlaneCutout | BoxCutout;
     };
