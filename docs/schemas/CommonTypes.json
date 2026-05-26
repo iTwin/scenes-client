@@ -98,6 +98,30 @@
       },
       "required": [ "x", "y", "z" ]
     },
+    "quaternion": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "type": "number",
+          "description": "X coordinate"
+        },
+        "y": {
+          "type": "number",
+          "description": "Y coordinate"
+        },
+        "z": {
+          "type": "number",
+          "description": "Z coordinate"
+        },
+        "w": {
+          "type": "number",
+          "description": "W coordinate"
+        }
+      },
+      "required": [ "x", "y", "z", "w" ],
+      "description": "A set of 4-dimensional coordinates used to represent rotation in 3-dimensional space."
+    },
     "transform": {
       "type": "array",
       "items": {

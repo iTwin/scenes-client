@@ -1,0 +1,167 @@
+{
+  "$id": "/schemas/Cutout.2.0.0",
+  "description": "A cutout defines clipping regions to exclude specific areas from rendering. Supports single planes, polygon sets, and oriented boxes.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [ "cutout", "appliesTo" ],
+  "properties": {
+    "appliesTo": {
+      "description": "Ids of the scene objects this cutout applies to. Only the listed resources will be clipped.",
+      "type": "array",
+      "items": {
+        "$ref": "/schemas/CommonTypes#/definitions/guid",
+        "description": "Id of the scene object this cutout should be applied to."
+      }
+    },
+    "cutout": {
+      "description": "Clipping geometry definition.",
+      "oneOf": [
+        { "$ref": "#/definitions/PolygonSetCutout" },
+        { "$ref": "#/definitions/PlaneCutout" },
+        { "$ref": "#/definitions/BoxCutout" }
+      ]
+    }
+  },
+  "definitions": {
+    "ClippingPolygon": {
+      "type": "object",
+      "description": "A single clipping polygon defined by its outer ring positions.",
+      "additionalProperties": false,
+      "required": [ "positions" ],
+      "properties": {
+        "positions": {
+          "type": "array",
+          "minItems": 3,
+          "description": "The points describing the outer ring of the clipping polygon.",
+          "items": {
+            "$ref": "/schemas/CommonTypes#/definitions/vector3d"
+          }
+        }
+      }
+    },
+    "PolygonSetCutout": {
+      "type": "object",
+      "description": "A cutout defined by one or more clipping polygons.",
+      "additionalProperties": false,
+      "required": [ "cutoutType", "polygons" ],
+      "properties": {
+        "cutoutType": {
+          "enum": [ "polygonSet" ],
+          "description": "Discriminator indicating this uses polygon set geometry."
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether this cutout is active. If false, the cutout should be ignored during rendering."
+        },
+        "inverse": {
+          "type": "boolean",
+          "description": "Clipping behavior: false = hide interior (area inside any polygon), true = hide exterior (area outside all polygons)."
+        },
+        "transformFromClip": {
+          "$ref": "/schemas/CommonTypes#/definitions/transform",
+          "description": "Optional transform from local coordinate space to world coordinates."
+        },
+        "transformToClip": {
+          "$ref": "/schemas/CommonTypes#/definitions/transform",
+          "description": "Optional transform from world coordinates to local coordinate space."
+        },
+        "polygons": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Array of clipping polygons. The cutout-level 'inverse' flag applies uniformly to all polygons. Per-polygon masking is not supported.",
+          "items": {
+            "$ref": "#/definitions/ClippingPolygon"
+          }
+        }
+      }
+    },
+    "ClippingPlane": {
+      "type": "object",
+      "description": "A single clipping plane that defines a half-space for clipping geometry.",
+      "additionalProperties": false,
+      "required": [ "normal", "distance" ],
+      "properties": {
+        "normal": {
+          "$ref": "/schemas/CommonTypes#/definitions/vector3d",
+          "description": "Inward unit normal vector. Points toward the region that should be kept when clipping."
+        },
+        "distance": {
+          "type": "number",
+          "description": "Signed distance from origin to plane."
+        }
+      }
+    },
+    "PlaneCutout": {
+      "type": "object",
+      "description": "A cutout defined by a single clipping plane.",
+      "additionalProperties": false,
+      "required": [ "cutoutType", "plane" ],
+      "properties": {
+        "cutoutType": {
+          "enum": [ "plane" ],
+          "description": "Discriminator indicating this uses a single plane geometry."
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether this cutout is active. If false, the cutout should be ignored during rendering."
+        },
+        "plane": {
+          "$ref": "#/definitions/ClippingPlane",
+          "description": "A single clipping plane that defines a half-space for clipping geometry."
+        }
+      }
+    },
+    "ClippingBox": {
+      "type": "object",
+      "description": "An oriented box used for clipping geometry.",
+      "additionalProperties": false,
+      "required": [ "center", "halfExtents" ],
+      "properties": {
+        "center": {
+          "$ref": "/schemas/CommonTypes#/definitions/vector3d",
+          "description": "Center position of the box."
+        },
+        "halfExtents": {
+          "$ref": "/schemas/CommonTypes#/definitions/vector3d",
+          "description": "Half-dimensions along each axis [halfWidth, halfHeight, halfDepth]. For a cube, all extents are equal."
+        },
+        "rotation": {
+          "$ref": "/schemas/CommonTypes#/definitions/quaternion",
+          "description": "Quaternion rotation defining box orientation."
+        }
+      }
+    },
+    "BoxCutout": {
+      "type": "object",
+      "description": "A cutout defined by an oriented box.",
+      "additionalProperties": false,
+      "required": [ "cutoutType", "box" ],
+      "properties": {
+        "cutoutType": {
+          "enum": [ "box" ],
+          "description": "Discriminator indicating this uses box geometry."
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether this cutout is active. If false, the cutout should be ignored during rendering."
+        },
+        "inverse": {
+          "type": "boolean",
+          "description": "Clipping behavior: false = hide interior, true = hide exterior."
+        },
+        "transformFromClip": {
+          "$ref": "/schemas/CommonTypes#/definitions/transform",
+          "description": "Optional transform from local coordinate space to world coordinates."
+        },
+        "transformToClip": {
+          "$ref": "/schemas/CommonTypes#/definitions/transform",
+          "description": "Optional transform from world coordinates to local coordinate space."
+        },
+        "box": {
+          "$ref": "#/definitions/ClippingBox",
+          "description": "An oriented box used for clipping geometry."
+        }
+      }
+    }
+  }
+}
