@@ -56,6 +56,9 @@ export type CompressedId64Set = string;
 
 export type Vector3d = { x: number; y: number; z: number };
 
+/** A set of 4-dimensional coordinates used to represent rotation in 3-dimensional space. */
+export type Quaternion = { x: number; y: number; z: number; w: number };
+
 /** Array of 16 numbers representing a 4x4 matrix in row-major order */
 export type Transform = number[];
 
@@ -69,6 +72,72 @@ export type ClipPlane = {
 
 /** Collection of ClipPlanes, often used for bounding regions of space. */
 export type ClipPlaneSet = { planes: ClipPlane[] };
+
+/** A single clipping polygon defined by its outer ring positions. */
+export type ClippingPolygon = {
+  /** The points describing the outer ring of the clipping polygon. */
+  positions: Vector3d[];
+};
+
+/** A cutout defined by one or more clipping polygons. */
+export type PolygonSetCutout = {
+  /** Discriminator indicating this uses polygon set geometry. */
+  cutoutType: "polygonSet";
+  /** Whether this cutout is active. If false, the cutout should be ignored during rendering. */
+  enabled?: boolean;
+  /** Clipping behavior: false = hide interior (area inside any polygon), true = hide exterior (area outside all polygons). */
+  inverse?: boolean;
+  /** Optional transform from local coordinate space to world coordinates. */
+  transformFromClip?: Transform;
+  /** Optional transform from world coordinates to local coordinate space. */
+  transformToClip?: Transform;
+  /** Array of clipping polygons. The cutout-level 'inverse' flag applies uniformly to all polygons. Per-polygon masking is not supported. */
+  polygons: ClippingPolygon[];
+};
+
+/** A single clipping plane that defines a half-space for clipping geometry. */
+export type ClippingPlane = {
+  /** Inward unit normal vector. Points toward the region that should be kept when clipping. */
+  normal: Vector3d;
+  /** Signed distance from origin to plane. */
+  distance: number;
+};
+
+/** A cutout defined by a single clipping plane. */
+export type PlaneCutout = {
+  /** Discriminator indicating this uses a single plane geometry. */
+  cutoutType: "plane";
+  /** Whether this cutout is active. If false, the cutout should be ignored during rendering. */
+  enabled?: boolean;
+  /** A single clipping plane that defines a half-space for clipping geometry. */
+  plane: ClippingPlane;
+};
+
+/** An oriented box used for clipping geometry. */
+export type ClippingBox = {
+  /** Center position of the box. */
+  center: Vector3d;
+  /** Half-dimensions along each axis [halfWidth, halfHeight, halfDepth]. For a cube, all extents are equal. */
+  halfExtents: Vector3d;
+  /** Quaternion rotation defining box orientation. */
+  rotation?: Quaternion;
+};
+
+/** A cutout defined by an oriented box. */
+export type BoxCutout = {
+  /** Discriminator indicating this uses box geometry. */
+  cutoutType: "box";
+  /** Whether this cutout is active. If false, the cutout should be ignored during rendering. */
+  enabled?: boolean;
+  /** Clipping behavior: false = hide interior, true = hide exterior. */
+  inverse?: boolean;
+  /** Optional transform from local coordinate space to world coordinates. */
+  transformFromClip?: Transform;
+  /** Optional transform from world coordinates to local coordinate space. */
+  transformToClip?: Transform;
+  /** An oriented box used for clipping geometry. */
+  box: ClippingBox;
+};
 
 /** An unsigned 32-bit integer in 0xTTBBGGRR format. */
 export type ColorDef = number;
@@ -252,6 +321,13 @@ export interface ScenesApiSchemas {
       mask: boolean;
       /** The union of convex regions. */
       clipPlanes?: { convexSets: ClipPlaneSet[] };
+    };
+    /** A cutout defines clipping regions to exclude specific areas from rendering. Supports single planes, polygon sets, and oriented boxes. */
+    "2.0.0": {
+      /** Ids of the scene objects this cutout applies to. Only the listed resources will be clipped. */
+      appliesTo: Guid[];
+      /** Clipping geometry definition. */
+      cutout: PolygonSetCutout | PlaneCutout | BoxCutout;
     };
   };
   Layer: {
