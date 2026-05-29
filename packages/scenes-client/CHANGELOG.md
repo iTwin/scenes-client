@@ -1,5 +1,14 @@
 # @itwin/scenes-client
 
+## 0.14.1
+
+### Patch Changes
+
+- 57dbc92: Standardize color representation
+
+  - Update `ITwinDisplayStyleOptions` (`backgroundColor`, `monochromeColor`, `HiddenLineStyle.color`) to use `RgbColor` instead of `ColorDef`
+  - Mark `ColorDef` in Expression Styling types as deprecated
+
 ## 0.14.0
 
 ### Minor Changes
