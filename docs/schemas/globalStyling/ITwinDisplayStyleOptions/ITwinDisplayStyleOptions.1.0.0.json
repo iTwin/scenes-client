@@ -6,11 +6,11 @@
   "properties": {
     "backgroundColor": {
       "description": "Background color",
-      "$ref": "/schemas/CommonTypes#/definitions/colorDef"
+      "$ref": "/schemas/CommonTypes#/definitions/rgbColor"
     },
     "monochromeColor": {
       "description": "Monochrome color",
-      "$ref": "/schemas/CommonTypes#/definitions/colorDef"
+      "$ref": "/schemas/CommonTypes#/definitions/rgbColor"
     },
     "monochromeMode": {
       "description": "Monochrome mode. Flat = 0 and Scaled = 1",

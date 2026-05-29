@@ -170,12 +170,6 @@
       },
       "required": [ "planes" ]
     },
-    "colorDef": {
-      "description": "An unsigned 32-bit integer in 0xTTBBGGRR format.",
-      "type": "integer",
-      "minimum": 0,
-      "maximum": 4294967295
-    },
     "rgbColor": {
       "description": "A color with r, g, b components each in the integer range [0, 255] and an optional alpha (a) component where 0 is fully transparent and 255 is fully opaque.",
       "type": "object",
@@ -236,7 +230,7 @@
           "description": "If true, and color is defined, then the edge color is overridden"
         },
         "color": {
-          "$ref": "#/definitions/colorDef",
+          "$ref": "#/definitions/rgbColor",
           "description": "If defined, and overrideColor is not `false`, the color used to draw the edges. If undefined, edges are drawn using the element's line color"
         },
         "pattern": {
