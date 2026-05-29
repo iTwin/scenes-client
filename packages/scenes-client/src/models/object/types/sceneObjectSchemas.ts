@@ -139,7 +139,10 @@ export type BoxCutout = {
   box: ClippingBox;
 };
 
-/** An unsigned 32-bit integer in 0xTTBBGGRR format. */
+/**
+ * An unsigned 32-bit integer in 0xTTBBGGRR format.
+ * @deprecated Only used by deprecated ExpressionStyling types. Use {@link RgbColor} instead.
+ */
 export type ColorDef = number;
 
 /** A color defined by red, green, blue, and optional alpha components. */
@@ -172,12 +175,15 @@ export type LinePixels =
 /** JSON representation of a hidden line style, which can be used to define how hidden lines are rendered in a view. */
 export type HiddenLineStyle = {
   ovrColor?: boolean;
-  color?: ColorDef;
+  color?: RgbColor;
   pattern?: LinePixels;
   width?: number;
 };
 
-/** Symbology settings to apply to an attributed feature */
+/**
+ * Symbology settings to apply to an attributed feature
+ * @deprecated Only used by deprecated ExpressionStyling Category style type.
+ */
 export type FeatureSymbology = {
   lineColor: ColorDef;
   fillColor: ColorDef;
@@ -419,9 +425,9 @@ export interface ScenesApiSchemas {
     /** Global setting to control iModel styling when visualizing the scene in iTwin viewer applications. */
     "1.0.0": {
       /** Background color */
-      backgroundColor?: ColorDef;
+      backgroundColor?: RgbColor;
       /** Monochrome color */
-      monochromeColor?: ColorDef;
+      monochromeColor?: RgbColor;
       /** Monochrome mode. Flat = 0 and Scaled = 1 */
       monochromeMode?: 0 | 1;
       /** JSON representation of the view flags for the iTwin */
