@@ -104,11 +104,11 @@
       "required": [ "lineColor", "fillColor", "weight" ],
       "properties": {
         "lineColor": {
-          "$ref": "/schemas/CommonTypes#/definitions/colorDef",
+          "$ref": "#/definitions/colorDef",
           "description": "Color of the feature's lines"
         },
         "fillColor": {
-          "$ref": "/schemas/CommonTypes#/definitions/colorDef",
+          "$ref": "#/definitions/colorDef",
           "description": "Fill color of the feature"
         },
         "weight": {
@@ -120,6 +120,12 @@
           "description": "Line pattern for the feature's lines"
         }
       }
+    },
+    "colorDef": {
+      "description": "An unsigned 32-bit integer in 0xTTBBGGRR format.",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4294967295
     }
   }
 }
