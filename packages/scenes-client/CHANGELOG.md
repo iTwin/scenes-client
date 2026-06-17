@@ -1,5 +1,11 @@
 # @itwin/scenes-client
 
+## 0.14.2
+
+### Patch Changes
+
+- e970f0b: Add optional `description` field to SceneObject interfaces. Enables detailed object descriptions alongside display names.
+
 ## 0.14.1
 
 ### Patch Changes
