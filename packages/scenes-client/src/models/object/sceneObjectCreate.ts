@@ -24,6 +24,8 @@ export interface BaseSceneObjectCreate<
   id?: string;
   /** Optional display name for the scene object */
   displayName?: string;
+  /** Optional detailed description of the scene object */
+  description?: string;
   /** Optional number for the scene object's order in lists. */
   order?: number;
   /** Optional stacking order for clients to control rendering sequence. Objects with lower values are typically drawn beneath objects with higher values.*/
@@ -102,6 +104,7 @@ export function isSceneObjectCreate(v: unknown): v is SceneObjectCreate {
     isObject(v) &&
     (v.id === undefined || typeof v.id === "string") &&
     (v.displayName === undefined || typeof v.displayName === "string") &&
+    (v.description === undefined || typeof v.description === "string") &&
     (v.order === undefined || typeof v.order === "number") &&
     (v.displayOrder === undefined || typeof v.displayOrder === "number") &&
     (v.visible === undefined || typeof v.visible === "boolean") &&

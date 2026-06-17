@@ -262,9 +262,10 @@ describe("Scenes Objects operations", () => {
       iTwinId: ITWIN_ID,
       sceneId,
       objectId: obj1,
-      object: { displayName: undefined, order: 2, displayOrder: 5 },
+      object: { displayName: undefined, description: "TestDescription", order: 2, displayOrder: 5 },
     });
     expect(p1.object.displayName).toBe("TestLayer"); // ignored displayName
+    expect(p1.object.description).toBe("TestDescription"); // updated description
     expect(p1.object.order).toBe(2); // updated order
     expect(p1.object.displayOrder).toBe(5); // updated displayOrder
 
@@ -272,9 +273,10 @@ describe("Scenes Objects operations", () => {
       iTwinId: ITWIN_ID,
       sceneId,
       objectId: obj1,
-      object: { displayName: null, order: null, displayOrder: null },
+      object: { displayName: null, description: null, order: null, displayOrder: null },
     });
     expect(p2.object.displayName).toBe(undefined); // removed displayName
+    expect(p2.object.description).toBe(undefined); // removed description
     expect(p2.object.order).toBe(undefined); // removed order
     expect(p2.object.displayOrder).toBe(undefined); // removed displayOrder
   });
