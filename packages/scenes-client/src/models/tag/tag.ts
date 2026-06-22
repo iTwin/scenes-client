@@ -11,6 +11,8 @@ export interface Tag extends TagMinimal {
   iTwinId: string;
   /** Id of the user who created the tag (UUID). */
   createdById: string;
+  /** Id of the user who last modified the tag (UUID). */
+  lastModifiedById: string;
   /** Time the tag was created as an ISO8601 string, 'YYYY-MM-DDTHH:mm:ss.sssZ'. */
   creationTime: string;
   /** Time the tag was last modified as an ISO8601 string, 'YYYY-MM-DDTHH:mm:ss.sssZ'. */
@@ -23,6 +25,7 @@ export function isTag(v: unknown): v is Tag {
     isTagMinimal(v) &&
     typeof v.iTwinId === "string" &&
     typeof v.createdById === "string" &&
+    typeof v.lastModifiedById === "string" &&
     typeof v.creationTime === "string" &&
     typeof v.lastModified === "string"
   );

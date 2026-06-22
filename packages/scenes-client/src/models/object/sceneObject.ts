@@ -21,6 +21,8 @@ interface SceneObjectResponseMetadata {
   sceneId: string;
   /** Id of the user who created the scene object (UUID). */
   createdById: string;
+  /** Id of the user who last modified the scene object (UUID). */
+  lastModifiedById: string;
   /** Time the scene object was created as an ISO8601 string, 'YYYY-MM-DDTHH:mm:ss.sssZ'. */
   creationTime: string;
   /** Time the scene object was last modified as an ISO8601 string, 'YYYY-MM-DDTHH:mm:ss.sssZ'. */
@@ -34,8 +36,8 @@ interface SceneObjectResponseMetadata {
 export interface ResourceStylingObject<
   K extends ResourceStylingSchemas = ResourceStylingSchemas,
   V extends SchemaVersion<K> = SchemaVersion<K>,
-> extends Omit<ResourceStylingObjectCreate<K, V>, "id">,
-    SceneObjectResponseMetadata {}
+>
+  extends Omit<ResourceStylingObjectCreate<K, V>, "id">, SceneObjectResponseMetadata {}
 
 /**
  * Standard scene object (ex: Layer, RepositoryResource, View3d, UnrealAtmosphericStyling)
@@ -43,8 +45,8 @@ export interface ResourceStylingObject<
 export interface StandardObject<
   K extends StandardSchemas = StandardSchemas,
   V extends SchemaVersion<K> = SchemaVersion<K>,
-> extends Omit<StandardObjectCreate<K, V>, "id">,
-    SceneObjectResponseMetadata {}
+>
+  extends Omit<StandardObjectCreate<K, V>, "id">, SceneObjectResponseMetadata {}
 
 /**
  * Type representing all possible scene object responses.
@@ -65,6 +67,7 @@ export function isSceneObject(v: unknown): v is SceneObject {
     typeof v.id === "string" &&
     typeof v.sceneId === "string" &&
     typeof v.createdById === "string" &&
+    typeof v.lastModifiedById === "string" &&
     typeof v.creationTime === "string" &&
     typeof v.lastModified === "string" &&
     isSceneObjectCreate(v)

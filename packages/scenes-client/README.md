@@ -44,6 +44,7 @@ console.log(sceneResponse.scene);
   displayName: "My Scene",
   iTwinId: "<itwin_id>",
   createdById: "<creator_id>",
+  lastModifiedById: "<editor_id>",
   creationTime: "2025-01-01T10:00:00.000Z",
   lastModified: "2025-01-01T10:01:00.000Z",
   sceneData: { objects: [...] },
@@ -176,6 +177,7 @@ console.log(objectResponse.object);
   version: "1.0.0",
   data: { ... },
   createdById: "<creator_id>",
+  lastModifiedById: "<editor_id>",
   creationTime: "2025-01-01T10:00:00.000Z",
   lastModified: "2025-01-01T10:01:00.000Z"
 }
@@ -470,6 +472,7 @@ console.log(tagResponse.tag);
   displayName: "Structural",
   iTwinId: "<itwin_id>",
   createdById: "<creator_id>",
+  lastModifiedById: "<editor_id>",
   creationTime: "2025-01-01T10:00:00.000Z",
   lastModified: "2025-01-01T10:01:00.000Z"
 }
