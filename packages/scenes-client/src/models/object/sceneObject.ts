@@ -36,8 +36,8 @@ interface SceneObjectResponseMetadata {
 export interface ResourceStylingObject<
   K extends ResourceStylingSchemas = ResourceStylingSchemas,
   V extends SchemaVersion<K> = SchemaVersion<K>,
->
-  extends Omit<ResourceStylingObjectCreate<K, V>, "id">, SceneObjectResponseMetadata {}
+> extends Omit<ResourceStylingObjectCreate<K, V>, "id">,
+    SceneObjectResponseMetadata {}
 
 /**
  * Standard scene object (ex: Layer, RepositoryResource, View3d, UnrealAtmosphericStyling)
@@ -45,8 +45,8 @@ export interface ResourceStylingObject<
 export interface StandardObject<
   K extends StandardSchemas = StandardSchemas,
   V extends SchemaVersion<K> = SchemaVersion<K>,
->
-  extends Omit<StandardObjectCreate<K, V>, "id">, SceneObjectResponseMetadata {}
+> extends Omit<StandardObjectCreate<K, V>, "id">,
+    SceneObjectResponseMetadata {}
 
 /**
  * Type representing all possible scene object responses.
