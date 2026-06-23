@@ -16,6 +16,8 @@ export interface SceneMinimal {
   description?: string;
   /** Id of the user who created the scene (UUID). */
   createdById: string;
+  /** Id of the user who last modified the scene (UUID). */
+  lastModifiedById: string;
   /** iTwin Id associated with the scene (UUID). */
   iTwinId: string;
   /** Time the scene was created as an ISO8601 string, 'YYYY-MM-DDTHH:mm:ss.sssZ'. */
@@ -32,6 +34,7 @@ export function isSceneMinimal(v: unknown): v is SceneMinimal {
     typeof v.id === "string" &&
     typeof v.displayName === "string" &&
     typeof v.createdById === "string" &&
+    typeof v.lastModifiedById === "string" &&
     typeof v.iTwinId === "string" &&
     typeof v.creationTime === "string" &&
     typeof v.lastModified === "string" &&

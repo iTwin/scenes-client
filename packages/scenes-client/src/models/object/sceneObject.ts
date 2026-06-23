@@ -21,6 +21,8 @@ interface SceneObjectResponseMetadata {
   sceneId: string;
   /** Id of the user who created the scene object (UUID). */
   createdById: string;
+  /** Id of the user who last modified the scene object (UUID). */
+  lastModifiedById: string;
   /** Time the scene object was created as an ISO8601 string, 'YYYY-MM-DDTHH:mm:ss.sssZ'. */
   creationTime: string;
   /** Time the scene object was last modified as an ISO8601 string, 'YYYY-MM-DDTHH:mm:ss.sssZ'. */
@@ -65,6 +67,7 @@ export function isSceneObject(v: unknown): v is SceneObject {
     typeof v.id === "string" &&
     typeof v.sceneId === "string" &&
     typeof v.createdById === "string" &&
+    typeof v.lastModifiedById === "string" &&
     typeof v.creationTime === "string" &&
     typeof v.lastModified === "string" &&
     isSceneObjectCreate(v)

@@ -8,7 +8,7 @@ import { isSceneObjectCreate } from "./sceneObjectCreate.js";
 
 export type SceneObjectMinimal = UnionOmit<
   SceneObject,
-  "sceneId" | "createdById" | "creationTime" | "lastModified"
+  "sceneId" | "createdById" | "lastModifiedById" | "creationTime" | "lastModified"
 >;
 
 export function isSceneObjectMinimal(v: unknown): v is SceneObjectMinimal {
