@@ -1,5 +1,11 @@
 # @itwin/scenes-client
 
+## 0.14.3
+
+### Patch Changes
+
+- 18659bb: Add `lastModifiedById` to `Scene`, `SceneObject`, and `Tag` response interfaces. Tracks the id of the user who last made changes.
+
 ## 0.14.2
 
 ### Patch Changes
