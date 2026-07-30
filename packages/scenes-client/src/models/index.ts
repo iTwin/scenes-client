@@ -22,7 +22,6 @@ export * from "./scene/sceneData.js";
 export * from "./scene/sceneDataLinks.js";
 export * from "./scene/sceneMinimal.js";
 export * from "./scene/sceneUpdate.js";
-export * from "./scene/sceneUpsert.js";
 export * from "./scene/sceneWithLinks.js";
 
 export * from "./tag/getTagsOptions.js";

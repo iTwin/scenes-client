@@ -43,7 +43,7 @@ const REPO_OBJ: SceneObjectCreate = {
     iTwinId: ITWIN_ID,
     id: IMODEL_ID,
     class: "iModels",
-    repositoryId: "iModels",
+    repositoryId: "imodels",
   },
 };
 
@@ -172,32 +172,6 @@ describe("Scenes operation", () => {
 
     expect(upd2.scene.displayName).toBe("UpdatedA"); // ignored displayName
     expect(upd2.scene.description).toBe(undefined); // removed optional description
-  });
-
-  it("replace scene", async () => {
-    const upd = await client.putScene({
-      iTwinId: ITWIN_ID,
-      sceneId: sceneAId,
-      scene: {
-        displayName: "ReplaceA",
-        description: "Description",
-        sceneData: { objects: [LAYER_OBJ] },
-      },
-    });
-
-    expect(upd.scene.displayName).toBe("ReplaceA");
-    expect(upd.scene.description).toBe("Description");
-    expect(upd.scene.sceneData.objects).toHaveLength(1);
-
-    const upd2 = await client.putScene({
-      iTwinId: ITWIN_ID,
-      sceneId: sceneAId,
-      scene: { displayName: "ReplaceB" },
-    });
-
-    expect(upd2.scene.displayName).toBe("ReplaceB");
-    expect(upd2.scene.description).toBe(undefined); // removed description
-    expect(upd2.scene.sceneData.objects).toStrictEqual([]); // removed objects
   });
 
   it("delete scene", async () => {
@@ -468,7 +442,7 @@ describe("Tag operations", () => {
     expect(found).toBe(true);
   });
 
-  it("scene create/update/upsert with tagIds", async () => {
+  it("scene create/update with tagIds", async () => {
     const created = await client.postScene({
       iTwinId: ITWIN_ID,
       scene: {
@@ -488,16 +462,6 @@ describe("Tag operations", () => {
       },
     });
     expect(patched.scene.tags).toStrictEqual([]);
-
-    const upserted = await client.putScene({
-      iTwinId: ITWIN_ID,
-      sceneId,
-      scene: {
-        displayName: "TaggedSceneB",
-        tagIds: [tagId],
-      },
-    });
-    expect(upserted.scene.tags.map((t) => t.id)).toContain(tagId);
   });
 
   it("delete tag removes it", async () => {
