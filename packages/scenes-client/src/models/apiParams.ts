@@ -9,7 +9,6 @@ import { BulkSceneObjectUpdate, SceneObjectUpdate } from "./object/sceneObjectUp
 import { GetScenesOptions } from "./scene/getScenesOptions.js";
 import { SceneCreate } from "./scene/sceneCreate.js";
 import { SceneUpdate } from "./scene/sceneUpdate.js";
-import { SceneUpsert } from "./scene/sceneUpsert.js";
 import { GetTagsOptions } from "./tag/getTagsOptions.js";
 import { TagCreate } from "./tag/tagCreate.js";
 import { TagUpdate } from "./tag/tagUpdate.js";
@@ -24,7 +23,6 @@ export type GetSceneParams = SceneParams & Pick<GetObjectsOptions, "orderBy">;
 export type GetScenesParams = ITwinParams & Omit<GetScenesOptions, "delayMs">;
 export type GetAllScenesParams = ITwinParams & GetScenesOptions;
 export type PostSceneParams = ITwinParams & { scene: SceneCreate };
-export type PutSceneParams = SceneParams & { scene: SceneUpsert };
 export type PatchSceneParams = SceneParams & { scene: SceneUpdate };
 export type DeleteSceneParams = SceneParams;
 
