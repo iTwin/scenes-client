@@ -17,8 +17,6 @@ export interface SceneCreate {
   displayName: string;
   /** Optional detailed description of the scene */
   description?: string;
-  /** Optional parent Id for the scene (UUID) */
-  parentId?: string;
   /** Optional list of tag Ids to apply to this scene. Tags must exist in the same iTwin as the scene itself. */
   tagIds?: string[];
   /** Scene informational objects */
