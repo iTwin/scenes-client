@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { isObject } from "../../utilities.js";
 import { isTagMinimal, TagMinimal } from "../tag/tagMinimal.js";
+import { SceneVisibility } from "./sceneVisibility.js";
 
 export interface SceneMinimal {
   /** Unique identifier for the scene (UUID). */
@@ -26,6 +27,8 @@ export interface SceneMinimal {
   lastModified: string;
   /** Tags associated with this scene */
   tags: TagMinimal[];
+  /** Visibility of the scene. `iTwin` means the scene is visible to all iTwin members with `SCENES_READ` permission. */
+  visibility?: SceneVisibility;
 }
 
 export function isSceneMinimal(v: unknown): v is SceneMinimal {

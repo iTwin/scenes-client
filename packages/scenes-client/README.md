@@ -43,6 +43,7 @@ console.log(sceneResponse.scene);
   id: "<scene_id>",
   displayName: "My Scene",
   iTwinId: "<itwin_id>",
+  visibility: "iTwin",
   createdById: "<creator_id>",
   lastModifiedById: "<editor_id>",
   creationTime: "2025-01-01T10:00:00.000Z",
@@ -100,6 +101,7 @@ const createResponse = await client.postScene({
   iTwinId: "<itwin_id>",
   scene: {
     displayName: "Construction Site Overview",
+    visibility: "private",
     sceneData: {
       objects: [
         /** (optional) objects to create */
