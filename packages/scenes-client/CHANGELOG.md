@@ -1,5 +1,16 @@
 # @itwin/scenes-client
 
+## 0.16.0
+
+### Minor Changes
+
+- d6b3498: **BREAKING:** Remove unused `parentId` property from `SceneCreate`, `SceneUpdate`, and `SceneMinimal` interfaces.
+  Note: SceneObject `parentId` properties remain unchanged.
+
+### Patch Changes
+
+- b402c00: Package updates for GHSA-2v37-7h3g-55p8 fix.
+
 ## 0.15.0
 
 ### Minor Changes
