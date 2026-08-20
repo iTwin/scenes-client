@@ -8,8 +8,6 @@ export interface SceneUpdate {
   displayName?: string;
   /** Optional detailed description of the scene. Pass `null` to remove. */
   description?: string | null;
-  /** Optional parent Id for the scene (UUID). Pass `null` to remove. */
-  parentId?: string | null;
   /**
    * Optional list of tag Ids to apply to this scene.
    * Tags must exist in the same iTwin as the scene itself.
