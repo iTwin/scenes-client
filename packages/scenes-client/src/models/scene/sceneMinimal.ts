@@ -23,10 +23,10 @@ export interface SceneMinimal {
   creationTime: string;
   /** Time the scene was last modified as an ISO8601 string, 'YYYY-MM-DDTHH:mm:ss.sssZ'. */
   lastModified: string;
-  /** Tags associated with this scene */
-  tags: TagMinimal[];
   /** Visibility of the scene. `iTwin` means the scene is visible to all iTwin members with `SCENES_READ` permission. */
   visibility?: SceneVisibility;
+  /** Tags associated with this scene */
+  tags: TagMinimal[];
 }
 
 export function isSceneMinimal(v: unknown): v is SceneMinimal {
@@ -41,6 +41,7 @@ export function isSceneMinimal(v: unknown): v is SceneMinimal {
     typeof v.lastModified === "string" &&
     Array.isArray(v.tags) &&
     v.tags.every((tag) => isTagMinimal(tag)) &&
-    (v.description === undefined || typeof v.description === "string")
+    (v.description === undefined || typeof v.description === "string") &&
+    (v.visibility === undefined || typeof v.visibility === "string")
   );
 }
