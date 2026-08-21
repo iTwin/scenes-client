@@ -18,8 +18,6 @@ export interface SceneCreate {
   displayName: string;
   /** Optional detailed description of the scene */
   description?: string;
-  /** Optional parent Id for the scene (UUID) */
-  parentId?: string;
   /**  Visibility of the scene. Defaults to `private`. Set to `iTwin` to make the scene visible to all iTwin members with `SCENES_READ` permission.*/
   visibility?: SceneVisibility;
   /** Optional list of tag Ids to apply to this scene. Tags must exist in the same iTwin as the scene itself. */

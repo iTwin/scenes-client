@@ -9,8 +9,6 @@ import { SceneVisibility } from "./sceneVisibility.js";
 export interface SceneMinimal {
   /** Unique identifier for the scene (UUID). */
   id: string;
-  /** Optional parent Id for the scene (UUID) */
-  parentId?: string;
   /** User defined display name of the scene */
   displayName: string;
   /** Optional detailed description of the scene */
@@ -43,7 +41,6 @@ export function isSceneMinimal(v: unknown): v is SceneMinimal {
     typeof v.lastModified === "string" &&
     Array.isArray(v.tags) &&
     v.tags.every((tag) => isTagMinimal(tag)) &&
-    (v.description === undefined || typeof v.description === "string") &&
-    (v.parentId === undefined || typeof v.parentId === "string")
+    (v.description === undefined || typeof v.description === "string")
   );
 }

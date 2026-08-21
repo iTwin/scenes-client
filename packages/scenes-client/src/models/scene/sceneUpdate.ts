@@ -9,8 +9,6 @@ export interface SceneUpdate {
   displayName?: string;
   /** Optional detailed description of the scene. Pass `null` to remove. */
   description?: string | null;
-  /** Optional parent Id for the scene (UUID). Pass `null` to remove. */
-  parentId?: string | null;
   /** Visibility of the scene. Set to `iTwin` to make the scene visible to all iTwin members with `SCENES_READ` permission.*/
   visibility?: SceneVisibility;
   /**
