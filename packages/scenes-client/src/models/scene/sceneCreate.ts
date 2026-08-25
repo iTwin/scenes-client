@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { isObject } from "../../utilities.js";
 import { isSceneObjectCreate, SceneObjectCreate } from "../object/sceneObjectCreate.js";
+import { SceneVisibility } from "./sceneVisibility.js";
 
 export interface SceneDataCreate {
   /** Array of scene objects */
@@ -17,6 +18,8 @@ export interface SceneCreate {
   displayName: string;
   /** Optional detailed description of the scene */
   description?: string;
+  /**  Visibility of the scene. Defaults to `private`. Set to `iTwin` to make the scene visible to all iTwin members with `SCENES_READ` permission.*/
+  visibility?: SceneVisibility;
   /** Optional list of tag Ids to apply to this scene. Tags must exist in the same iTwin as the scene itself. */
   tagIds?: string[];
   /** Scene informational objects */

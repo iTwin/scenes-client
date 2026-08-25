@@ -16,6 +16,7 @@ import {
   SceneObjectPagedResponse,
   SceneObjectResponse,
   SceneResponse,
+  SceneVisibility,
   ScenesApiError,
   TagListResponse,
   TagResponse,
@@ -155,6 +156,7 @@ describe("Scenes Operations", () => {
     const updateData = {
       displayName: "Updated Scene",
       description: "Updated Description",
+      visibility: SceneVisibility.ITWIN,
     };
     await client.patchScene({
       iTwinId: "itw-1",
@@ -739,6 +741,7 @@ const exampleSceneResponse: SceneResponse = {
     creationTime: "2025-07-16T15:00:00.000Z",
     lastModified: "2025-07-16T15:00:00.000Z",
     tags: [{ id: "tag-1", displayName: "Tag 1" }],
+    visibility: SceneVisibility.ITWIN,
     sceneData: {
       objects: [
         {
@@ -763,6 +766,7 @@ const exampleSceneMetadataResponse: SceneMetadataResponse = {
     creationTime: "2025-07-16T15:00:00.000Z",
     lastModified: "2025-07-16T15:00:00.000Z",
     tags: [{ id: "tag-1", displayName: "Tag 1" }],
+    visibility: SceneVisibility.ITWIN,
     sceneData: {
       objects: {
         href: `${BASE_DOMAIN}/scene-1/objects?iTwinId=itwin-1`,
@@ -782,6 +786,7 @@ const exampleSceneListResponse: SceneListResponse = {
       lastModifiedById: "user-1",
       creationTime: "2025-07-16T15:00:00.000Z",
       lastModified: "2025-07-16T15:00:00.000Z",
+      visibility: SceneVisibility.ITWIN,
       tags: [{ id: "tag-1", displayName: "Tag 1" }],
     },
   ],
