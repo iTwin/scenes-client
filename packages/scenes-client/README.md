@@ -259,7 +259,7 @@ const iModelResource: RepositoryResourceCreate = {
     class: "iModels",
     repositoryId: "imodels",
     id: "<imodel_id>",
-    version: "<imodel_changeset_id>" // Optional, if omitted latest should be used
+    version: "<imodel_changeset_id>", // Optional, if omitted latest should be used
   },
 };
 
@@ -534,7 +534,7 @@ const createResponse = await client.postScene({
     sceneData: {
       objects: [
         /** (optional) full list of scene objects */
-      ]
+      ],
     },
   },
 });
@@ -567,6 +567,94 @@ await client.patchScene({
   scene: {
     tagIds: [],
   },
+});
+```
+
+### Working with Scene Shares
+
+Scene sharing lets you grant unauthenticated, read-only access to a scene and the resources it references (iModels, Reality Data, GIS layers, etc.). Use the returned `shareKey` as HTTP Basic credentials for iTwin Platform APIs (e.g. `Authorization: Basic <shareKey>`).
+
+A common pattern is to distribute a shareable URL that includes the share key in the fragment, for example:
+`https://app.com/iTwins/<itwin_id>/scenes/<scene_id>#shareKey=<share_key>`.
+
+> ⚠️ Treat `shareKey` values as secrets. Anyone who obtains one can read the scene and its referenced resources until the share expires or is revoked. Avoid logging them or including in client telemetry.
+
+#### Create a Share
+
+```ts
+import { SceneShare } from "@itwin/scenes-client";
+
+// Share with a custom expiration
+const shareResponse = await client.postSceneShare({
+  iTwinId: "<itwin_id>",
+  sceneId: "<scene_id>",
+  share: {
+    expiration: "2027-01-01T00:00:00.000Z",
+  },
+});
+
+const share: SceneShare = shareResponse.share;
+console.log(`Share ${share.id} expires at ${share.expiration}`);
+```
+
+#### Get a Share
+
+```ts
+const shareResponse = await client.getSceneShare({
+  iTwinId: "<itwin_id>",
+  sceneId: "<scene_id>",
+  shareId: "<share_id>",
+});
+
+const share: SceneShare = shareResponse.share;
+console.log(`Share ${share.id} expires at ${share.expiration}`);
+```
+
+#### List All Shares for a Scene
+
+```ts
+const listResponse = await client.getAllSceneShares({
+  iTwinId: "<itwin_id>",
+  sceneId: "<scene_id>",
+});
+
+console.log(`Found ${listResponse.shares.length} active shares.`);
+listResponse.shares.forEach((share) => {
+  console.log(`${share.id} expires at ${share.expiration}`);
+});
+```
+
+#### Revoke a Share
+
+Revocation is permanent; any future requests using the associated `shareKey` will be rejected.
+
+```ts
+await client.revokeSceneShare({
+  iTwinId: "<itwin_id>",
+  sceneId: "<scene_id>",
+  shareId: "<share_id>",
+});
+
+console.log("Share revoked successfully");
+```
+
+#### Consume a Shared Scene
+
+You can configure a `SceneClient` instance for public, unauthenticated access to a shared scene — no sign-in required. Because the `getAccessToken` callback provides the full `Authorization` header value, simply have it return `Basic <shareKey>` instead of a `Bearer` token, and use the client as you normally would.
+
+Note: Only read endpoints are permitted with the shareKey; write requests are rejected.
+
+```ts
+import { SceneClient } from "@itwin/scenes-client";
+
+const shareKey = "<share_key>"; // from a previous postSceneShare or a shareable link
+
+const sharedClient = new SceneClient(async () => `Basic ${shareKey}`);
+
+// Read-only access to the shared scene
+const sceneResponse = await sharedClient.getScene({
+  iTwinId: "<itwin_id>",
+  sceneId: "<scene_id>",
 });
 ```
 

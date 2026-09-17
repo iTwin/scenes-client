@@ -9,6 +9,7 @@ import { BulkSceneObjectUpdate, SceneObjectUpdate } from "./object/sceneObjectUp
 import { GetScenesOptions } from "./scene/getScenesOptions.js";
 import { SceneCreate } from "./scene/sceneCreate.js";
 import { SceneUpdate } from "./scene/sceneUpdate.js";
+import { SceneShareCreate } from "./share/sceneShareCreate.js";
 import { GetTagsOptions } from "./tag/getTagsOptions.js";
 import { TagCreate } from "./tag/tagCreate.js";
 import { TagUpdate } from "./tag/tagUpdate.js";
@@ -16,6 +17,7 @@ import { TagUpdate } from "./tag/tagUpdate.js";
 export type ITwinParams = { iTwinId: string };
 export type SceneParams = ITwinParams & { sceneId: string };
 export type ObjectParams = SceneParams & { objectId: string };
+export type ShareParams = SceneParams & { shareId: string };
 export type TagParams = ITwinParams & { tagId: string };
 
 export type GetSceneMetadataParams = SceneParams;
@@ -35,6 +37,11 @@ export type PatchObjectsParams = SceneParams & BulkSceneObjectUpdate;
 export type PatchObjectsOperationsParams = SceneParams & BulkSceneObjectOperations;
 export type DeleteObjectParams = ObjectParams;
 export type DeleteObjectsParams = SceneParams & { objectIds: string[] };
+
+export type GetSceneShareParams = ShareParams;
+export type GetAllSceneSharesParams = SceneParams;
+export type PostSceneShareParams = SceneParams & { share: SceneShareCreate };
+export type RevokeSceneShareParams = ShareParams;
 
 export type GetTagParams = TagParams;
 export type GetTagsParams = ITwinParams & Omit<GetTagsOptions, "delayMs">;

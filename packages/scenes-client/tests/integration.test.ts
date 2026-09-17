@@ -10,6 +10,7 @@ import {
   SceneObjectCreate,
   SceneObjectOperation,
   ScenesApiError,
+  SceneVisibility,
 } from "../src/models";
 
 function requireMetaEnv<K extends keyof ImportMetaEnv>(key: K): ImportMetaEnv[K] {
@@ -382,6 +383,76 @@ describe("Scenes Objects operations", () => {
         objectId: obj2,
       }),
     ).rejects.toMatchObject({ code: "SceneObjectNotFound" } as ScenesApiError);
+  });
+});
+
+describe("Scene Share operations", () => {
+  let sceneId: string;
+  let shareId: string;
+
+  beforeAll(async () => {
+    const res = await client.postScene({
+      iTwinId: ITWIN_ID,
+      scene: {
+        displayName: "TestSceneToBeShared",
+        visibility: SceneVisibility.ITWIN,
+        sceneData: { objects: [LAYER_OBJ, REPO_OBJ] },
+      },
+    });
+    expect(res.scene.id).toBeDefined();
+    sceneId = res.scene.id;
+  });
+
+  afterAll(async () => {
+    // Deleting the scene automatically revokes any remaining shares.
+    await client.deleteScene({ iTwinId: ITWIN_ID, sceneId });
+    await expect(client.getScene({ iTwinId: ITWIN_ID, sceneId })).rejects.toMatchObject({
+      status: 404,
+      code: "SceneNotFound",
+    } as ScenesApiError);
+  });
+
+  it("create a share", async () => {
+    const res = await client.postSceneShare({
+      iTwinId: ITWIN_ID,
+      sceneId,
+      share: {},
+    });
+
+    expect(res.share.id).toBeDefined();
+    expect(res.share.sceneId).toBe(sceneId);
+    expect(res.share.iTwinId).toBe(ITWIN_ID);
+    expect(res.share.shareKey.length).toBeGreaterThan(0);
+    expect(res.share.contractName.length).toBeGreaterThan(0);
+    expect(new Date(res.share.expiration).getTime()).toBeGreaterThan(Date.now());
+
+    shareId = res.share.id;
+  });
+
+  it("get share by id", async () => {
+    const res = await client.getSceneShare({ iTwinId: ITWIN_ID, sceneId, shareId });
+
+    expect(res.share.id).toBe(shareId);
+    expect(res.share.sceneId).toBe(sceneId);
+    expect(res.share.iTwinId).toBe(ITWIN_ID);
+    expect(res.share.shareKey.length).toBeGreaterThan(0);
+  });
+
+  it("list all shares for the scene", async () => {
+    const res = await client.getAllSceneShares({ iTwinId: ITWIN_ID, sceneId });
+
+    expect(res.shares.length).toBeGreaterThanOrEqual(1);
+    expect(res.shares.map((s) => s.id)).toContain(shareId);
+  });
+
+  it("revoke share", async () => {
+    await client.revokeSceneShare({ iTwinId: ITWIN_ID, sceneId, shareId });
+    await expect(
+      client.getSceneShare({ iTwinId: ITWIN_ID, sceneId, shareId }),
+    ).rejects.toMatchObject({
+      status: 404,
+      code: "SceneShareNotFound",
+    } as ScenesApiError);
   });
 });
 

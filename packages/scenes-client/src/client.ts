@@ -22,6 +22,12 @@ import {
   patchObject,
   patchObjectsOperations,
 } from "./api/sceneObjectApi.js";
+import {
+  getAllSceneShares,
+  getSceneShare,
+  postSceneShare,
+  revokeSceneShare,
+} from "./api/sceneShareApi.js";
 import { deleteTag, getAllTags, getTag, getTags, patchTag, postTag } from "./api/tagApi.js";
 import {
   DeleteTagParams,
@@ -59,6 +65,12 @@ import {
   PatchTagParams,
   GetTagsOptions,
   GET_TAGS_DEFAULTS,
+  GetSceneShareParams,
+  GetAllSceneSharesParams,
+  PostSceneShareParams,
+  RevokeSceneShareParams,
+  SceneShareListResponse,
+  SceneShareResponse,
 } from "./models/index.js";
 
 type AccessTokenFn = () => Promise<string>;
@@ -389,6 +401,83 @@ export class SceneClient {
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,
       objectIds: params.objectIds,
+      getAccessToken: this.getAccessToken,
+      baseUrl: this.baseUrl,
+    });
+  }
+
+  /**
+   * Create a new scene share, making the scene publicly accessible via the returned `shareKey`.
+   * To access the scene and its data, take the returned `shareKey` and prepend it with the `Basic`
+   * prefix in the `Authorization` header of your requests, i.e. `Authorization: Basic <shareKey>`.
+   *
+   * If no `expiration` is provided, it defaults to 100 years from creation (to be effectively non-expiring).
+   * Shares may be revoked at any time via {@link revokeSceneShare}.
+   * Deleting a scene also automatically revokes all of its shares.
+   *
+   * @param params.iTwinId - The iTwin's unique identifier.
+   * @param params.sceneId - The scene's unique identifier.
+   * @param params.share - The share creation payload.
+   * @returns SceneShareResponse containing the created share details.
+   * @throws {ScenesApiError} If the API call fails or the response format is invalid.
+   */
+  async postSceneShare(params: PostSceneShareParams): Promise<SceneShareResponse> {
+    return postSceneShare({
+      iTwinId: params.iTwinId,
+      sceneId: params.sceneId,
+      share: params.share,
+      getAccessToken: this.getAccessToken,
+      baseUrl: this.baseUrl,
+    });
+  }
+
+  /**
+   * Permanently revoke a scene share.
+   * Any future requests made with the associated `shareKey` will no longer work.
+   * @param params.iTwinId - The iTwin's unique identifier.
+   * @param params.sceneId - The scene's unique identifier.
+   * @param params.shareId - The share's unique identifier.
+   * @throws {ScenesApiError} If the API call fails.
+   */
+  async revokeSceneShare(params: RevokeSceneShareParams): Promise<void> {
+    return revokeSceneShare({
+      iTwinId: params.iTwinId,
+      sceneId: params.sceneId,
+      shareId: params.shareId,
+      getAccessToken: this.getAccessToken,
+      baseUrl: this.baseUrl,
+    });
+  }
+
+  /**
+   * Fetch a single scene share by ID.
+   * @param params.iTwinId - The iTwin's unique identifier.
+   * @param params.sceneId - The scene's unique identifier.
+   * @param params.shareId - The share's unique identifier.
+   * @returns SceneShareResponse containing the share details.
+   * @throws {ScenesApiError} If the API call fails or the response format is invalid.
+   */
+  async getSceneShare(params: GetSceneShareParams): Promise<SceneShareResponse> {
+    return getSceneShare({
+      iTwinId: params.iTwinId,
+      sceneId: params.sceneId,
+      shareId: params.shareId,
+      getAccessToken: this.getAccessToken,
+      baseUrl: this.baseUrl,
+    });
+  }
+
+  /**
+   * Fetch all shares for the specified scene.
+   * @param params.iTwinId - The iTwin's unique identifier.
+   * @param params.sceneId - The scene's unique identifier.
+   * @returns SceneShareListResponse containing all shares for the scene.
+   * @throws {ScenesApiError} If the API call fails or the response format is invalid.
+   */
+  async getAllSceneShares(params: GetAllSceneSharesParams): Promise<SceneShareListResponse> {
+    return getAllSceneShares({
+      iTwinId: params.iTwinId,
+      sceneId: params.sceneId,
       getAccessToken: this.getAccessToken,
       baseUrl: this.baseUrl,
     });
