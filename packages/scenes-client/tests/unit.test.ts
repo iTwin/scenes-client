@@ -16,6 +16,8 @@ import {
   SceneObjectPagedResponse,
   SceneObjectResponse,
   SceneResponse,
+  SceneShareListResponse,
+  SceneShareResponse,
   SceneVisibility,
   ScenesApiError,
   TagListResponse,
@@ -407,6 +409,111 @@ describe("Scene Object Operations", () => {
   });
 });
 
+describe("Scene Share Operations", () => {
+  it("getSceneShare()", async () => {
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleSceneShareResponse));
+    const client = new SceneClient(getAccessToken);
+    const share = await client.getSceneShare({
+      iTwinId: "itw-1",
+      sceneId: "scene-1",
+      shareId: "share-1",
+    });
+    expect(share).toEqual(exampleSceneShareResponse);
+
+    verifyFetch(fetchMock, {
+      url: `${BASE_DOMAIN}/scene-1/shares/share-1?iTwinId=itw-1`,
+      headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
+    });
+  });
+
+  it("getAllSceneShares()", async () => {
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleSceneShareListResponse));
+    const client = new SceneClient(getAccessToken);
+    const shares = await client.getAllSceneShares({ iTwinId: "itw-1", sceneId: "scene-1" });
+    expect(shares).toEqual(exampleSceneShareListResponse);
+
+    verifyFetch(fetchMock, {
+      url: `${BASE_DOMAIN}/scene-1/shares?iTwinId=itw-1`,
+      headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
+    });
+  });
+
+  it("postSceneShare()", async () => {
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleSceneShareResponse));
+    const client = new SceneClient(getAccessToken);
+    await client.postSceneShare({
+      iTwinId: "itw-1",
+      sceneId: "scene-1",
+      share: { expiration: "2125-07-16T15:00:00.000Z" },
+    });
+
+    verifyFetch(fetchMock, {
+      url: `${BASE_DOMAIN}/scene-1/shares?iTwinId=itw-1`,
+      headers: {
+        Accept: "application/vnd.bentley.itwin-platform.v1+json",
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify({ expiration: "2125-07-16T15:00:00.000Z" }),
+    });
+  });
+
+  it("postSceneShare() with empty body", async () => {
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleSceneShareResponse));
+    const client = new SceneClient(getAccessToken);
+    await client.postSceneShare({
+      iTwinId: "itw-1",
+      sceneId: "scene-1",
+      share: {},
+    });
+
+    verifyFetch(fetchMock, {
+      url: `${BASE_DOMAIN}/scene-1/shares?iTwinId=itw-1`,
+      headers: {
+        Accept: "application/vnd.bentley.itwin-platform.v1+json",
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify({}),
+    });
+  });
+
+  it("postSceneShare() with no body", async () => {
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleSceneShareResponse));
+    const client = new SceneClient(getAccessToken);
+    await client.postSceneShare({
+      iTwinId: "itw-1",
+      sceneId: "scene-1",
+    });
+
+    verifyFetch(fetchMock, {
+      url: `${BASE_DOMAIN}/scene-1/shares?iTwinId=itw-1`,
+      headers: {
+        Accept: "application/vnd.bentley.itwin-platform.v1+json",
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify({}), // Sends empty object
+    });
+  });
+
+  it("revokeSceneShare()", async () => {
+    fetchMock.mockImplementation(() => createNoContentResponse());
+    const client = new SceneClient(getAccessToken);
+    await client.revokeSceneShare({
+      iTwinId: "itw-1",
+      sceneId: "scene-1",
+      shareId: "share-1",
+    });
+
+    verifyFetch(fetchMock, {
+      url: `${BASE_DOMAIN}/scene-1/shares/share-1?iTwinId=itw-1`,
+      headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
+      method: "DELETE",
+    });
+  });
+});
+
 describe("Tag Operations", () => {
   it("getTag()", async () => {
     fetchMock.mockImplementation(() => createSuccessfulResponse(exampleTagResponse));
@@ -558,6 +665,29 @@ describe("Error Handling", () => {
           objectId: "object-1",
           object: { displayName: "Updated" },
         }),
+    },
+    {
+      name: "scene share operations",
+      method: () =>
+        client.getSceneShare({ iTwinId: "itw-1", sceneId: "scene-1", shareId: "share-1" }),
+    },
+    {
+      name: "scene share list operations",
+      method: () => client.getAllSceneShares({ iTwinId: "itw-1", sceneId: "scene-1" }),
+    },
+    {
+      name: "scene share creation",
+      method: () =>
+        client.postSceneShare({
+          iTwinId: "itw-1",
+          sceneId: "scene-1",
+          share: {},
+        }),
+    },
+    {
+      name: "scene share revocation",
+      method: () =>
+        client.revokeSceneShare({ iTwinId: "itw-1", sceneId: "scene-1", shareId: "share-1" }),
     },
     {
       name: "tag operations",
@@ -742,6 +872,7 @@ const exampleSceneResponse: SceneResponse = {
     lastModified: "2025-07-16T15:00:00.000Z",
     tags: [{ id: "tag-1", displayName: "Tag 1" }],
     visibility: SceneVisibility.ITWIN,
+    isPubliclyShared: false,
     sceneData: {
       objects: [
         {
@@ -767,6 +898,7 @@ const exampleSceneMetadataResponse: SceneMetadataResponse = {
     lastModified: "2025-07-16T15:00:00.000Z",
     tags: [{ id: "tag-1", displayName: "Tag 1" }],
     visibility: SceneVisibility.ITWIN,
+    isPubliclyShared: false,
     sceneData: {
       objects: {
         href: `${BASE_DOMAIN}/scene-1/objects?iTwinId=itwin-1`,
@@ -787,6 +919,7 @@ const exampleSceneListResponse: SceneListResponse = {
       creationTime: "2025-07-16T15:00:00.000Z",
       lastModified: "2025-07-16T15:00:00.000Z",
       visibility: SceneVisibility.ITWIN,
+      isPubliclyShared: false,
       tags: [{ id: "tag-1", displayName: "Tag 1" }],
     },
   ],
@@ -835,6 +968,26 @@ const exampleSceneObjectPagedResponse: SceneObjectPagedResponse = {
   sceneContext: {
     displayName: exampleSceneResponse.scene.displayName,
     lastModified: exampleSceneResponse.scene.lastModified,
+    isPubliclyShared: false,
     isPartial: true,
   },
+};
+
+const exampleSceneShareResponse: SceneShareResponse = {
+  share: {
+    id: "share-1",
+    sceneId: "scene-1",
+    iTwinId: "itwin-1",
+    contractName: "SceneDefault",
+    shareKey: "eyJhbGciOiJ...",
+    expiration: "2125-07-16T15:00:00.000Z",
+    createdById: "user-1",
+    lastModifiedById: "user-1",
+    creationTime: "2025-07-16T15:00:00.000Z",
+    lastModified: "2025-07-16T15:00:00.000Z",
+  },
+};
+
+const exampleSceneShareListResponse: SceneShareListResponse = {
+  shares: [exampleSceneShareResponse.share],
 };
