@@ -425,7 +425,7 @@ export class SceneClient {
     return postSceneShare({
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,
-      share: params.share,
+      share: params.share ?? {},
       getAccessToken: this.getAccessToken,
       baseUrl: this.baseUrl,
     });

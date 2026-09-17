@@ -40,7 +40,7 @@ export type DeleteObjectsParams = SceneParams & { objectIds: string[] };
 
 export type GetSceneShareParams = ShareParams;
 export type GetAllSceneSharesParams = SceneParams;
-export type PostSceneShareParams = SceneParams & { share: SceneShareCreate };
+export type PostSceneShareParams = SceneParams & { share?: SceneShareCreate };
 export type RevokeSceneShareParams = ShareParams;
 
 export type GetTagParams = TagParams;

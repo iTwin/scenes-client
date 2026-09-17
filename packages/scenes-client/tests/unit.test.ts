@@ -458,7 +458,7 @@ describe("Scene Share Operations", () => {
     });
   });
 
-  it("postSceneShare() with no body", async () => {
+  it("postSceneShare() with empty body", async () => {
     fetchMock.mockImplementation(() => createSuccessfulResponse(exampleSceneShareResponse));
     const client = new SceneClient(getAccessToken);
     await client.postSceneShare({
@@ -475,6 +475,25 @@ describe("Scene Share Operations", () => {
       },
       method: "POST",
       body: JSON.stringify({}),
+    });
+  });
+
+  it("postSceneShare() with no body", async () => {
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleSceneShareResponse));
+    const client = new SceneClient(getAccessToken);
+    await client.postSceneShare({
+      iTwinId: "itw-1",
+      sceneId: "scene-1",
+    });
+
+    verifyFetch(fetchMock, {
+      url: `${BASE_DOMAIN}/scene-1/shares?iTwinId=itw-1`,
+      headers: {
+        Accept: "application/vnd.bentley.itwin-platform.v1+json",
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify({}), // Sends empty object
     });
   });
 
