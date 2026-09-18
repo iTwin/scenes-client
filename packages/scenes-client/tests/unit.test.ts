@@ -668,16 +668,62 @@ describe("Error Handling", () => {
       expect(details?.[1]?.message).toBe("iTwinId must be a valid UUID");
     }
   });
+
+  it("should populate activityId from the X-Correlation-Id response header", async () => {
+    fetchMock.mockImplementation(() =>
+      createErrorResponse({ code: "ServerError", message: "Internal server error occurred" }, 500, {
+        "X-Correlation-Id": "test-activity-id",
+      }),
+    );
+
+    try {
+      await client.getScene({ iTwinId: "itw-1", sceneId: "scene-1" });
+    } catch (error) {
+      expect((error as ScenesApiError).activityId).toBe("test-activity-id");
+    }
+  });
+
+  it("should leave activityId undefined when the X-Correlation-Id header is absent", async () => {
+    fetchMock.mockImplementation(() =>
+      createErrorResponse({ code: "ServerError", message: "Internal server error occurred" }, 500),
+    );
+
+    try {
+      await client.getScene({ iTwinId: "itw-1", sceneId: "scene-1" });
+    } catch (error) {
+      expect((error as ScenesApiError).activityId).toBeUndefined();
+    }
+  });
+
+  it("should populate activityId for invalid response format errors", async () => {
+    fetchMock.mockImplementation(() =>
+      createSuccessfulResponse(
+        { invalidProperty: "invalid" },
+        {
+          "X-Correlation-Id": "test-activity-id",
+        },
+      ),
+    );
+
+    try {
+      await client.getScene({ iTwinId: "itw-1", sceneId: "scene-1" });
+    } catch (error) {
+      expect((error as ScenesApiError).activityId).toBe("test-activity-id");
+    }
+  });
 });
 
 async function getAccessToken(): Promise<string> {
   return "test_auth_token";
 }
 
-function createSuccessfulResponse(body: unknown) {
+function createSuccessfulResponse(body: unknown, headers?: Record<string, string>) {
   return Promise.resolve({
     ok: true,
     status: 200,
+    headers: {
+      get: (name: string) => headers?.[name] ?? null,
+    },
     json: async () => body,
   } as Response);
 }
@@ -690,10 +736,13 @@ function createNoContentResponse() {
   } as Response);
 }
 
-function createErrorResponse(errorBody: unknown, status: number) {
+function createErrorResponse(errorBody: unknown, status: number, headers?: Record<string, string>) {
   return Promise.resolve({
     ok: false,
     status,
+    headers: {
+      get: (name: string) => headers?.[name] ?? null,
+    },
     json: async () => ({ error: errorBody }),
   } as Response);
 }
