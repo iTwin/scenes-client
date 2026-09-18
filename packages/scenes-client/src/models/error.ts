@@ -41,20 +41,33 @@ export class ScenesApiError extends Error {
   details?: ScenesErrorDetail[];
   /** HTTP status code of the response. */
   status: number;
+  /** Activity id for the request. */
+  activityId?: string;
 
   /**
    * Constructs a new ScenesApiError.
    * @param resp – The error response from the API.
    * @param status – The HTTP status code.
+   * @param activityId – Optional activity id extracted from the response headers.
    */
-  constructor(resp: ScenesErrorResponse, status: number) {
+  constructor(resp: ScenesErrorResponse, status: number, activityId?: string) {
     super(resp.message);
     this.name = "ScenesApiError";
     this.code = resp.code;
     this.target = resp.target;
     this.details = resp.details;
     this.status = status;
+    this.activityId = activityId;
   }
+}
+
+/**
+ * Extracts the activity id from a response's X-Correlation-Id header, if present
+ * @param response HTTP response object from failed API call
+ */
+export function getActivityId(response: Response): string | undefined {
+  const activityId = response.headers.get("X-Correlation-Id");
+  return typeof activityId === "string" ? activityId : undefined;
 }
 
 /**
@@ -112,5 +125,5 @@ export async function handleErrorResponse(response: Response): Promise<never> {
     };
   }
 
-  throw new ScenesApiError(err, response.status);
+  throw new ScenesApiError(err, response.status, getActivityId(response));
 }
