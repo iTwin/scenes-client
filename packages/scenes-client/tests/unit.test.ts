@@ -699,9 +699,7 @@ describe("Error Handling", () => {
     fetchMock.mockImplementation(() =>
       createSuccessfulResponse(
         { invalidProperty: "invalid" },
-        {
-          "X-Correlation-Id": "test-activity-id",
-        },
+        { "X-Correlation-Id": "test-activity-id" },
       ),
     );
 
