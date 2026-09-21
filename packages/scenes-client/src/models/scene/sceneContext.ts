@@ -10,6 +10,8 @@ export interface SceneContext {
   displayName: string;
   /** Time the scene was last modified as an ISO8601 string, 'YYYY-MM-DDTHH:mm:ss.sssZ */
   lastModified: string;
+  /** Whether this scene currently has at least one active (non-expired, non-revoked) public share. */
+  isPubliclyShared: boolean;
   /** Indicates some objects in this scene will be filtered due to insufficient permissions. */
   isPartial?: boolean;
 }
@@ -19,6 +21,7 @@ export const isSceneContext = (v: unknown): v is SceneContext => {
     isObject(v) &&
     typeof v.displayName === "string" &&
     typeof v.lastModified === "string" &&
+    typeof v.isPubliclyShared === "boolean" &&
     (v.isPartial === undefined || typeof v.isPartial === "boolean")
   );
 };

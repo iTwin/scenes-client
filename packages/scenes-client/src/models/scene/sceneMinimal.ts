@@ -25,6 +25,8 @@ export interface SceneMinimal {
   lastModified: string;
   /** Visibility of the scene. `iTwin` means the scene is visible to all iTwin members with `SCENES_READ` permission. */
   visibility: SceneVisibility;
+  /** Whether this scene currently has at least one active (non-expired, non-revoked) public share. */
+  isPubliclyShared: boolean;
   /** Tags associated with this scene */
   tags: TagMinimal[];
 }
@@ -40,6 +42,7 @@ export function isSceneMinimal(v: unknown): v is SceneMinimal {
     typeof v.creationTime === "string" &&
     typeof v.lastModified === "string" &&
     typeof v.visibility === "string" &&
+    typeof v.isPubliclyShared === "boolean" &&
     Array.isArray(v.tags) &&
     v.tags.every((tag) => isTagMinimal(tag)) &&
     (v.description === undefined || typeof v.description === "string")
