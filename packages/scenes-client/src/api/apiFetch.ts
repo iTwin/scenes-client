@@ -2,7 +2,7 @@
  * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
-import { handleErrorResponse, ScenesApiError } from "../models/index.js";
+import { getActivityId, handleErrorResponse, ScenesApiError } from "../models/index.js";
 
 /**
  * Arguments for configuring an API request.
@@ -78,6 +78,7 @@ export async function callApi<T>(args: RequestArgs<T> & AuthArgs): Promise<T | u
     throw new ScenesApiError(
       { code: "InvalidResponse", message: "Unexpected response format" },
       response.status,
+      getActivityId(response),
     );
   }
   return responseJson;

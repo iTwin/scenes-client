@@ -8,6 +8,7 @@ import { isScene, Scene } from "./scene/scene.js";
 import { isSceneContext, SceneContext } from "./scene/sceneContext.js";
 import { isSceneMinimal, SceneMinimal } from "./scene/sceneMinimal.js";
 import { isSceneWithLinks, SceneWithLinks } from "./scene/sceneWithLinks.js";
+import { isSceneShare, SceneShare } from "./share/sceneShare.js";
 import { isTag, Tag } from "./tag/tag.js";
 
 /** Generic href link */
@@ -52,6 +53,16 @@ export interface SceneObjectListResponse {
 export interface SceneObjectPagedResponse extends SceneObjectListResponse {
   sceneContext: SceneContext;
   _links: PagingLinks;
+}
+
+/** Scene share response model */
+export interface SceneShareResponse {
+  share: SceneShare;
+}
+
+/** Scene share list response model */
+export interface SceneShareListResponse {
+  shares: SceneShare[];
 }
 
 /** Tag response model */
@@ -106,6 +117,14 @@ export function isSceneObjectPagedResponse(v: unknown): v is SceneObjectPagedRes
     isPagingLinks(v._links) &&
     isSceneContext(v.sceneContext)
   );
+}
+
+export function isSceneShareResponse(v: unknown): v is SceneShareResponse {
+  return isObject(v) && isSceneShare(v.share);
+}
+
+export function isSceneShareListResponse(v: unknown): v is SceneShareListResponse {
+  return isObject(v) && Array.isArray(v.shares) && v.shares.every((share) => isSceneShare(share));
 }
 
 export function isTagResponse(v: unknown): v is TagResponse {

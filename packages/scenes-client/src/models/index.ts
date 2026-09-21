@@ -25,6 +25,9 @@ export * from "./scene/sceneUpdate.js";
 export * from "./scene/sceneVisibility.js";
 export * from "./scene/sceneWithLinks.js";
 
+export * from "./share/sceneShare.js";
+export * from "./share/sceneShareCreate.js";
+
 export * from "./tag/getTagsOptions.js";
 export * from "./tag/tag.js";
 export * from "./tag/tagCreate.js";
