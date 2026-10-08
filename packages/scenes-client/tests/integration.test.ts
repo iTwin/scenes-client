@@ -13,6 +13,7 @@ import {
   ScenesApiError,
   SceneVisibility,
   ImageSize,
+  ImageContentType,
 } from "../src/models/index.js";
 
 function requireMetaEnv<K extends keyof ImportMetaEnv>(key: K): ImportMetaEnv[K] {
@@ -434,8 +435,8 @@ describe("Scene Object Image operations", () => {
     return created.objects[0].id;
   }
 
-  it.each<[string, () => Uint8Array | ArrayBuffer | Blob]>([
-    ["Uint8Array", () => onePixelPngBytes],
+  it.each<[string, () => Uint8Array | ArrayBuffer | Blob, ImageContentType]>([
+    ["Uint8Array", () => onePixelPngBytes, "image/png"],
     [
       "ArrayBuffer",
       () =>
@@ -443,11 +444,17 @@ describe("Scene Object Image operations", () => {
           onePixelPngBytes.byteOffset,
           onePixelPngBytes.byteOffset + onePixelPngBytes.byteLength,
         ) as ArrayBuffer,
+      "image/png",
     ],
-    ["Blob", () => new Blob([onePixelPngBytes], { type: "image/png" })],
+    ["Blob", () => new Blob([onePixelPngBytes], { type: "image/png" }), "image/png"],
+    [
+      "JPEG from disk",
+      () => readFileSync(new URL("./images/Thumbnail.jpg", import.meta.url)),
+      "image/jpeg",
+    ],
   ])(
     "upload, fetch (small and original), and delete an image provided as %s",
-    async (_label, toImage) => {
+    async (_label, toImage, contentType) => {
       const objectId = await createView3dObject();
 
       const uploaded = await client.uploadObjectImage({
@@ -455,7 +462,7 @@ describe("Scene Object Image operations", () => {
         sceneId,
         objectId,
         image: toImage(),
-        contentType: "image/png",
+        contentType,
       });
       expect(uploaded.image.href).toBeDefined();
 
@@ -480,34 +487,6 @@ describe("Scene Object Image operations", () => {
       ).rejects.toMatchObject({ status: 404, code: "ImageNotFound" } as ScenesApiError);
     },
   );
-
-  it("upload local image file", async () => {
-    const objectId = await createView3dObject();
-    // Real JPEG test resource, checked into the repo
-    const thumbnailJpegBytes = readFileSync(new URL("./images/Thumbnail.jpg", import.meta.url));
-
-    const uploaded = await client.uploadObjectImage({
-      iTwinId: ITWIN_ID,
-      sceneId,
-      objectId,
-      image: thumbnailJpegBytes,
-      contentType: "image/jpeg",
-    });
-    expect(uploaded.image.href.length).toBeGreaterThan(0);
-
-    const original = await client.getObjectImage({
-      iTwinId: ITWIN_ID,
-      sceneId,
-      objectId,
-      size: ImageSize.ORIGINAL,
-    });
-    expect(original.image.href).toBeDefined();
-
-    const objectAfterUpload = await client.getObject({ iTwinId: ITWIN_ID, sceneId, objectId });
-    expect(objectAfterUpload.object.image?.href.length).toBeGreaterThan(0);
-
-    await client.deleteObjectImage({ iTwinId: ITWIN_ID, sceneId, objectId });
-  });
 });
 
 describe("Scene Share operations", () => {
