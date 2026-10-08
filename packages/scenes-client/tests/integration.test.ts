@@ -2,6 +2,7 @@
  * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
+import { readFileSync } from "node:fs";
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { SceneClient } from "../src/client.js";
 import {
@@ -11,7 +12,8 @@ import {
   SceneObjectOperation,
   ScenesApiError,
   SceneVisibility,
-} from "../src/models";
+  ImageSize,
+} from "../src/models/index.js";
 
 function requireMetaEnv<K extends keyof ImportMetaEnv>(key: K): ImportMetaEnv[K] {
   const v = import.meta.env[key];
@@ -47,6 +49,21 @@ const REPO_OBJ: SceneObjectCreate = {
     repositoryId: "imodels",
   },
 };
+const VIEW3D_OBJ: SceneObjectCreate = {
+  kind: "View3d",
+  version: "1.0.0",
+  displayName: "TestView3d",
+  data: {
+    position: { x: -50.0, y: 75.0, z: 150.0 },
+    direction: { x: 0.2, y: 0.2, z: -0.96 },
+    isOrthographic: false,
+    up: { x: 0, y: 1, z: 0 },
+    aspectRatio: 1.33,
+    near: 1,
+    far: 1000,
+    ecefTransform: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+  },
+};
 
 const TEST_SCENES: SceneCreate[] = [
   {
@@ -72,7 +89,7 @@ const getAccessToken = async (): Promise<string> => {
     },
     body: params,
   });
-  const { access_token } = await res.json();
+  const { access_token } = (await res.json()) as { access_token: string };
   return "Bearer " + access_token;
 };
 
@@ -383,6 +400,120 @@ describe("Scenes Objects operations", () => {
         objectId: obj2,
       }),
     ).rejects.toMatchObject({ code: "SceneObjectNotFound" } as ScenesApiError);
+  });
+});
+
+describe("Scene Object Image operations", () => {
+  let sceneId: string;
+
+  // Smallest possible valid PNG (1x1 transparent pixel)
+  const onePixelPngBytes = Buffer.from(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+    "base64",
+  );
+
+  beforeAll(async () => {
+    const scene = await client.postScene({
+      iTwinId: ITWIN_ID,
+      scene: { displayName: "TestSceneForImages", sceneData: { objects: [] } },
+    });
+    sceneId = scene.scene.id;
+  });
+
+  afterAll(async () => {
+    await client.deleteScene({ iTwinId: ITWIN_ID, sceneId });
+  });
+
+  // Images are only supported on View3d objects
+  async function createView3dObject(): Promise<string> {
+    const created = await client.postObjects({
+      iTwinId: ITWIN_ID,
+      sceneId,
+      objects: [VIEW3D_OBJ],
+    });
+    return created.objects[0].id;
+  }
+
+  it("returns 404 before an image has been uploaded", async () => {
+    const objectId = await createView3dObject();
+    await expect(
+      client.getObjectImage({ iTwinId: ITWIN_ID, sceneId, objectId }),
+    ).rejects.toMatchObject({ status: 404, code: "ImageNotFound" } as ScenesApiError);
+  });
+
+  it.each<[string, () => Uint8Array | ArrayBuffer | Blob]>([
+    ["Uint8Array", () => onePixelPngBytes],
+    [
+      "ArrayBuffer",
+      () =>
+        onePixelPngBytes.buffer.slice(
+          onePixelPngBytes.byteOffset,
+          onePixelPngBytes.byteOffset + onePixelPngBytes.byteLength,
+        ) as ArrayBuffer,
+    ],
+    ["Blob", () => new Blob([onePixelPngBytes], { type: "image/png" })],
+  ])(
+    "uploads, fetches (small and original), and deletes an image provided as %s",
+    async (_label, toImage) => {
+      const objectId = await createView3dObject();
+
+      const uploaded = await client.uploadObjectImage({
+        iTwinId: ITWIN_ID,
+        sceneId,
+        objectId,
+        image: toImage(),
+        contentType: "image/png",
+      });
+      expect(uploaded.image.href).toBeDefined();
+
+      const small = await client.getObjectImage({ iTwinId: ITWIN_ID, sceneId, objectId });
+      expect(small.image.href).toBeDefined();
+
+      const original = await client.getObjectImage({
+        iTwinId: ITWIN_ID,
+        sceneId,
+        objectId,
+        size: ImageSize.ORIGINAL,
+      });
+      expect(original.image.href).toBeDefined();
+
+      // The uploaded image's link should also be reflected on the scene object itself
+      const objectAfterUpload = await client.getObject({ iTwinId: ITWIN_ID, sceneId, objectId });
+      expect(objectAfterUpload.object.image?.href).toBeDefined();
+
+      await client.deleteObjectImage({ iTwinId: ITWIN_ID, sceneId, objectId });
+      await expect(
+        client.getObjectImage({ iTwinId: ITWIN_ID, sceneId, objectId }),
+      ).rejects.toMatchObject({ status: 404, code: "ImageNotFound" } as ScenesApiError);
+    },
+  );
+
+  it("uploads a real JPEG image read from disk", async () => {
+    const objectId = await createView3dObject();
+    // Real JPEG test resource, checked into the repo
+    const thumbnailJpegBytes = readFileSync(new URL("./images/Thumbnail.jpg", import.meta.url));
+
+    const uploaded = await client.uploadObjectImage({
+      iTwinId: ITWIN_ID,
+      sceneId,
+      objectId,
+      image: thumbnailJpegBytes,
+      contentType: "image/jpeg",
+    });
+    expect(uploaded.image.href.length).toBeGreaterThan(0);
+
+    const original = await client.getObjectImage({
+      iTwinId: ITWIN_ID,
+      sceneId,
+      objectId,
+      size: ImageSize.ORIGINAL,
+    });
+    expect(original.image.href).toBeDefined();
+
+    const objectAfterUpload = await client.getObject({ iTwinId: ITWIN_ID, sceneId, objectId });
+    expect(objectAfterUpload.object.image?.href.length).toBeGreaterThan(0);
+
+    await client.deleteObjectImage({ iTwinId: ITWIN_ID, sceneId, objectId });
   });
 });
 
