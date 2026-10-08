@@ -1,2 +1,7 @@
 packages:
   - "packages/*"
+
+auditConfig:
+  ignoreGhsas:
+    # TEMPORARY: braces <=3.0.3 has no patched release. Dev-only transitive dep (@changesets/cli>@changesets/config>micromatch). Remove once a fix ships.
+    - GHSA-vfj7-8cjw-p6xm
