@@ -3,9 +3,11 @@
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
 import { describe, it, expect, beforeAll, afterAll, afterEach, vi } from "vitest";
-import { SceneClient } from "../src/client";
+import { SceneClient } from "../src/client.js";
 import {
   GET_SCENES_DEFAULTS,
+  ImageResponse,
+  ImageSize,
   OperationType,
   OrderByProperties,
   PagingLinks,
@@ -22,7 +24,7 @@ import {
   ScenesApiError,
   TagListResponse,
   TagResponse,
-} from "../src/models/index";
+} from "../src/models/index.js";
 
 const BASE_DOMAIN = "https://api.bentley.com/scenes";
 
@@ -409,6 +411,80 @@ describe("Scene Object Operations", () => {
   });
 });
 
+describe("Scene Object Image Operations", () => {
+  it("getObjectImage() without size", async () => {
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleImageResponse));
+    const client = new SceneClient(getAccessToken);
+    const result = await client.getObjectImage({
+      iTwinId: "itw-1",
+      sceneId: "scene-1",
+      objectId: "object-1",
+    });
+    expect(result).toEqual(exampleImageResponse);
+
+    verifyFetch(fetchMock, {
+      url: `${BASE_DOMAIN}/scene-1/objects/object-1/image?iTwinId=itw-1`,
+      headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
+    });
+  });
+
+  it("getObjectImage() with size", async () => {
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleImageResponse));
+    const client = new SceneClient(getAccessToken);
+    await client.getObjectImage({
+      iTwinId: "itw-1",
+      sceneId: "scene-1",
+      objectId: "object-1",
+      size: ImageSize.ORIGINAL,
+    });
+
+    verifyFetch(fetchMock, {
+      url: `${BASE_DOMAIN}/scene-1/objects/object-1/image?iTwinId=itw-1&size=original`,
+      headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
+    });
+  });
+
+  it("uploadObjectImage()", async () => {
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleImageResponse));
+    const client = new SceneClient(getAccessToken);
+    const image = new Uint8Array([1, 2, 3, 4]);
+    const result = await client.uploadObjectImage({
+      iTwinId: "itw-1",
+      sceneId: "scene-1",
+      objectId: "object-1",
+      image,
+      contentType: "image/png",
+    });
+    expect(result).toEqual(exampleImageResponse);
+
+    verifyFetch(fetchMock, {
+      url: `${BASE_DOMAIN}/scene-1/objects/object-1/image?iTwinId=itw-1`,
+      headers: {
+        Accept: "application/vnd.bentley.itwin-platform.v1+json",
+        "Content-Type": "image/png",
+      },
+      method: "PUT",
+      body: image,
+    });
+  });
+
+  it("deleteObjectImage()", async () => {
+    fetchMock.mockImplementation(() => createNoContentResponse());
+    const client = new SceneClient(getAccessToken);
+    await client.deleteObjectImage({
+      iTwinId: "itw-1",
+      sceneId: "scene-1",
+      objectId: "object-1",
+    });
+
+    verifyFetch(fetchMock, {
+      url: `${BASE_DOMAIN}/scene-1/objects/object-1/image?iTwinId=itw-1`,
+      headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
+      method: "DELETE",
+    });
+  });
+});
+
 describe("Scene Share Operations", () => {
   it("getSceneShare()", async () => {
     fetchMock.mockImplementation(() => createSuccessfulResponse(exampleSceneShareResponse));
@@ -667,6 +743,31 @@ describe("Error Handling", () => {
         }),
     },
     {
+      name: "object image operations",
+      method: () =>
+        client.getObjectImage({
+          iTwinId: "itw-1",
+          sceneId: "scene-1",
+          objectId: "object-1",
+        }),
+    },
+    {
+      name: "object image upload",
+      method: () =>
+        client.uploadObjectImage({
+          iTwinId: "itw-1",
+          sceneId: "scene-1",
+          objectId: "object-1",
+          image: new Uint8Array([1, 2, 3, 4]),
+          contentType: "image/png",
+        }),
+    },
+    {
+      name: "object image deletion",
+      method: () =>
+        client.deleteObjectImage({ iTwinId: "itw-1", sceneId: "scene-1", objectId: "object-1" }),
+    },
+    {
       name: "scene share operations",
       method: () =>
         client.getSceneShare({ iTwinId: "itw-1", sceneId: "scene-1", shareId: "share-1" }),
@@ -879,7 +980,7 @@ interface VerifyFetchArgs {
   url: string;
   headers: Record<string, string>;
   method?: string; // fetchOptions default to GET
-  body?: string;
+  body?: unknown;
 }
 
 function verifyFetch(mock: ReturnType<typeof vi.fn>, args: VerifyFetchArgs | VerifyFetchArgs[]) {
@@ -1018,6 +1119,10 @@ const exampleSceneObjectPagedResponse: SceneObjectPagedResponse = {
     isPubliclyShared: false,
     isPartial: true,
   },
+};
+
+const exampleImageResponse: ImageResponse = {
+  image: { href: "https://blob.scene-images/itwin-1/scene-1/objects/object-1/image/small.png" },
 };
 
 const exampleSceneShareResponse: SceneShareResponse = {
