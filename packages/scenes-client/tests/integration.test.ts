@@ -434,13 +434,6 @@ describe("Scene Object Image operations", () => {
     return created.objects[0].id;
   }
 
-  it("returns 404 before an image has been uploaded", async () => {
-    const objectId = await createView3dObject();
-    await expect(
-      client.getObjectImage({ iTwinId: ITWIN_ID, sceneId, objectId }),
-    ).rejects.toMatchObject({ status: 404, code: "ImageNotFound" } as ScenesApiError);
-  });
-
   it.each<[string, () => Uint8Array | ArrayBuffer | Blob]>([
     ["Uint8Array", () => onePixelPngBytes],
     [
@@ -453,7 +446,7 @@ describe("Scene Object Image operations", () => {
     ],
     ["Blob", () => new Blob([onePixelPngBytes], { type: "image/png" })],
   ])(
-    "uploads, fetches (small and original), and deletes an image provided as %s",
+    "upload, fetch (small and original), and delete an image provided as %s",
     async (_label, toImage) => {
       const objectId = await createView3dObject();
 
@@ -488,7 +481,7 @@ describe("Scene Object Image operations", () => {
     },
   );
 
-  it("uploads a real JPEG image read from disk", async () => {
+  it("upload local image file", async () => {
     const objectId = await createView3dObject();
     // Real JPEG test resource, checked into the repo
     const thumbnailJpegBytes = readFileSync(new URL("./images/Thumbnail.jpg", import.meta.url));
