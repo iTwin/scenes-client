@@ -75,6 +75,12 @@ const TEST_SCENES: SceneCreate[] = [
   { displayName: "TestSceneB", sceneData: { objects: [LAYER_OBJ, REPO_OBJ] } },
 ];
 
+// Smallest possible valid PNG (1x1 transparent pixel)
+const onePixelPngBytes = Buffer.from(
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+  "base64",
+);
+
 const getAccessToken = async (): Promise<string> => {
   const params = new URLSearchParams({
     grant_type: "client_credentials",
@@ -206,6 +212,72 @@ describe("Scenes operation", () => {
       code: "SceneNotFound",
     } as ScenesApiError);
   });
+});
+
+describe("Scene Image operations", () => {
+  let sceneId: string;
+
+  beforeAll(async () => {
+    const scene = await client.postScene({
+      iTwinId: ITWIN_ID,
+      scene: { displayName: "TestSceneForSceneImages" },
+    });
+    sceneId = scene.scene.id;
+  });
+
+  afterAll(async () => {
+    await client.deleteScene({ iTwinId: ITWIN_ID, sceneId });
+  });
+
+  it.each<[string, () => Uint8Array | ArrayBuffer | Blob, ImageContentType]>([
+    ["Uint8Array", () => onePixelPngBytes, "image/png"],
+    [
+      "ArrayBuffer",
+      () =>
+        onePixelPngBytes.buffer.slice(
+          onePixelPngBytes.byteOffset,
+          onePixelPngBytes.byteOffset + onePixelPngBytes.byteLength,
+        ) as ArrayBuffer,
+      "image/png",
+    ],
+    ["Blob", () => new Blob([onePixelPngBytes], { type: "image/png" }), "image/png"],
+    [
+      "JPEG from disk",
+      () => readFileSync(new URL("./images/Thumbnail.jpg", import.meta.url)),
+      "image/jpeg",
+    ],
+  ])(
+    "upload, fetch (small and original), and delete a scene image provided as %s",
+    async (_label, toImage, contentType) => {
+      const uploaded = await client.uploadSceneImage({
+        iTwinId: ITWIN_ID,
+        sceneId,
+        image: toImage(),
+        contentType,
+      });
+      expect(uploaded.image.href).toBeDefined();
+
+      const small = await client.getSceneImage({ iTwinId: ITWIN_ID, sceneId });
+      expect(small.image.href).toBeDefined();
+
+      const original = await client.getSceneImage({
+        iTwinId: ITWIN_ID,
+        sceneId,
+        size: ImageSize.ORIGINAL,
+      });
+      expect(original.image.href).toBeDefined();
+
+      // The uploaded image's link should also be reflected on the scene itself
+      const sceneAfterUpload = await client.getSceneMetadata({ iTwinId: ITWIN_ID, sceneId });
+      expect(sceneAfterUpload.scene.image?.href).toBeDefined();
+
+      await client.deleteSceneImage({ iTwinId: ITWIN_ID, sceneId });
+      await expect(client.getSceneImage({ iTwinId: ITWIN_ID, sceneId })).rejects.toMatchObject({
+        status: 404,
+        code: "ImageNotFound",
+      } as ScenesApiError);
+    },
+  );
 });
 
 describe("Scenes Objects operations", () => {
@@ -406,12 +478,6 @@ describe("Scenes Objects operations", () => {
 
 describe("Scene Object Image operations", () => {
   let sceneId: string;
-
-  // Smallest possible valid PNG (1x1 transparent pixel)
-  const onePixelPngBytes = Buffer.from(
-    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
-    "base64",
-  );
 
   beforeAll(async () => {
     const scene = await client.postScene({

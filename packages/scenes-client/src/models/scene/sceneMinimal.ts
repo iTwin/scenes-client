@@ -3,6 +3,7 @@
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
 import { isObject } from "../../utilities.js";
+import { isLink, Link } from "../apiResponse.js";
 import { isTagMinimal, TagMinimal } from "../tag/tagMinimal.js";
 import { SceneVisibility } from "./sceneVisibility.js";
 
@@ -29,6 +30,8 @@ export interface SceneMinimal {
   isPubliclyShared: boolean;
   /** Tags associated with this scene */
   tags: TagMinimal[];
+  /** Link to the scene's thumbnail image, if one has been uploaded. */
+  image?: Link;
 }
 
 export function isSceneMinimal(v: unknown): v is SceneMinimal {
@@ -45,6 +48,7 @@ export function isSceneMinimal(v: unknown): v is SceneMinimal {
     typeof v.isPubliclyShared === "boolean" &&
     Array.isArray(v.tags) &&
     v.tags.every((tag) => isTagMinimal(tag)) &&
-    (v.description === undefined || typeof v.description === "string")
+    (v.description === undefined || typeof v.description === "string") &&
+    (v.image === undefined || isLink(v.image))
   );
 }

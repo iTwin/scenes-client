@@ -138,6 +138,57 @@ await client.deleteScene({
 console.log("Scene deleted successfully");
 ```
 
+#### Upload an Image for a Scene
+
+Every scene can have an associated thumbnail image.
+Maximum supported size is 5 megabytes and maximum supported aspect ratio is 5:1.
+A small thumbnail is automatically generated, and will be returned in the `image` property of the scene for convenience.
+
+```ts
+const imageBytes: Uint8Array = /* raw PNG or JPEG bytes */;
+
+const uploadResponse = await client.uploadSceneImage({
+  iTwinId: "<itwin_id>",
+  sceneId: "<scene_id>",
+  image: imageBytes,
+  contentType: "image/png", // or "image/jpeg"
+});
+
+console.log(uploadResponse.image.href);
+```
+
+#### Get a Scene's Image
+
+```ts
+import { ImageSize } from "@itwin/scenes-client";
+
+// Get a link to the small system-generated thumbnail
+const imageResponse = await client.getSceneImage({
+  iTwinId: "<itwin_id>",
+  sceneId: "<scene_id>",
+  size: ImageSize.SMALL,
+});
+
+// Or request the original, full-size image
+const originalImageResponse = await client.getSceneImage({
+  iTwinId: "<itwin_id>",
+  sceneId: "<scene_id>",
+  size: ImageSize.ORIGINAL,
+});
+
+console.log(imageResponse.image.href);
+```
+
+#### Delete a Scene's Image
+
+```ts
+// Remove existing image
+await client.deleteSceneImage({
+  iTwinId: "<itwin_id>",
+  sceneId: "<scene_id>",
+});
+```
+
 ### Working with Scene Objects
 
 #### Get a Scene Object
