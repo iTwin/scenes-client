@@ -2,6 +2,8 @@
  * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
+import { GetImageOptions } from "./image/getImageOptions.js";
+import { ImageCreate } from "./image/imageCreate.js";
 import { GetObjectsOptions } from "./object/getObjectsOptions.js";
 import { BulkSceneObjectCreate } from "./object/sceneObjectCreate.js";
 import { BulkSceneObjectOperations } from "./object/sceneObjectOperations.js";
@@ -37,6 +39,10 @@ export type PatchObjectsParams = SceneParams & BulkSceneObjectUpdate;
 export type PatchObjectsOperationsParams = SceneParams & BulkSceneObjectOperations;
 export type DeleteObjectParams = ObjectParams;
 export type DeleteObjectsParams = SceneParams & { objectIds: string[] };
+
+export type GetObjectImageParams = ObjectParams & GetImageOptions;
+export type UploadObjectImageParams = ObjectParams & ImageCreate;
+export type DeleteObjectImageParams = ObjectParams;
 
 export type GetSceneShareParams = ShareParams;
 export type GetAllSceneSharesParams = SceneParams;

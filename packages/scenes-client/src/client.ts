@@ -22,6 +22,7 @@ import {
   patchObject,
   patchObjectsOperations,
 } from "./api/sceneObjectApi.js";
+import { deleteObjectImage, getObjectImage, uploadObjectImage } from "./api/sceneObjectImageApi.js";
 import {
   getAllSceneShares,
   getSceneShare,
@@ -52,6 +53,10 @@ import {
   PatchObjectsParams,
   DeleteObjectParams,
   DeleteObjectsParams,
+  GetObjectImageParams,
+  UploadObjectImageParams,
+  DeleteObjectImageParams,
+  ImageResponse,
   GetScenesParams,
   GetObjectsParams,
   PatchObjectParam,
@@ -401,6 +406,65 @@ export class SceneClient {
       iTwinId: params.iTwinId,
       sceneId: params.sceneId,
       objectIds: params.objectIds,
+      getAccessToken: this.getAccessToken,
+      baseUrl: this.baseUrl,
+    });
+  }
+
+  /**
+   * Fetch a link to a scene object's image.
+   * @param params.iTwinId – The iTwin's unique identifier.
+   * @param params.sceneId – The scene's unique identifier.
+   * @param params.objectId – The object's unique identifier.
+   * @param params.size – Optional image size to retrieve (defaults to small thumbnail).
+   * @returns ImageResponse containing a link to the image.
+   * @throws {ScenesApiError} If the API call fails or the response format is invalid.
+   */
+  async getObjectImage(params: GetObjectImageParams): Promise<ImageResponse> {
+    return getObjectImage({
+      iTwinId: params.iTwinId,
+      sceneId: params.sceneId,
+      objectId: params.objectId,
+      size: params.size,
+      getAccessToken: this.getAccessToken,
+      baseUrl: this.baseUrl,
+    });
+  }
+
+  /**
+   * Upload an image for a scene object, replacing any existing image.
+   * @param params.iTwinId – The iTwin's unique identifier.
+   * @param params.sceneId – The scene's unique identifier.
+   * @param params.objectId – The object's unique identifier.
+   * @param params.image – Raw binary image content (max 5MB, max 5:1 aspect ratio).
+   * @param params.contentType – The image's content type (`image/png` or `image/jpeg`).
+   * @returns ImageResponse containing a link to the uploaded image.
+   * @throws {ScenesApiError} If the API call fails or the response format is invalid.
+   */
+  async uploadObjectImage(params: UploadObjectImageParams): Promise<ImageResponse> {
+    return uploadObjectImage({
+      iTwinId: params.iTwinId,
+      sceneId: params.sceneId,
+      objectId: params.objectId,
+      image: params.image,
+      contentType: params.contentType,
+      getAccessToken: this.getAccessToken,
+      baseUrl: this.baseUrl,
+    });
+  }
+
+  /**
+   * Delete a scene object's image.
+   * @param params.iTwinId – The iTwin's unique identifier.
+   * @param params.sceneId – The scene's unique identifier.
+   * @param params.objectId – The object's unique identifier.
+   * @throws {ScenesApiError} If the API call fails.
+   */
+  async deleteObjectImage(params: DeleteObjectImageParams): Promise<void> {
+    return deleteObjectImage({
+      iTwinId: params.iTwinId,
+      sceneId: params.sceneId,
+      objectId: params.objectId,
       getAccessToken: this.getAccessToken,
       baseUrl: this.baseUrl,
     });

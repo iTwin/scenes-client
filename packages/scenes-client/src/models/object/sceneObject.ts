@@ -3,6 +3,7 @@
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
 import { isObject } from "../../utilities.js";
+import { isLink, Link } from "../apiResponse.js";
 import {
   isSceneObjectCreate,
   ResourceStylingObjectCreate,
@@ -27,6 +28,8 @@ interface SceneObjectResponseMetadata {
   creationTime: string;
   /** Time the scene object was last modified as an ISO8601 string, 'YYYY-MM-DDTHH:mm:ss.sssZ'. */
   lastModified: string;
+  /** Link to the object's thumbnail image, if one has been uploaded. */
+  image?: Link;
 }
 
 /**
@@ -70,6 +73,7 @@ export function isSceneObject(v: unknown): v is SceneObject {
     typeof v.lastModifiedById === "string" &&
     typeof v.creationTime === "string" &&
     typeof v.lastModified === "string" &&
+    (v.image === undefined || isLink(v.image)) &&
     isSceneObjectCreate(v)
   );
 }

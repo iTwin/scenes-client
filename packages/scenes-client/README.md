@@ -162,6 +162,7 @@ console.log(objectResponse.object);
   lastModifiedById: "<editor_id>",
   creationTime: "2025-01-01T10:00:00.000Z",
   lastModified: "2025-01-01T10:01:00.000Z"
+  image: { href: "<url to get image data>" }
 }
 */
 ```
@@ -415,6 +416,61 @@ await client.deleteObjects({
   iTwinId: "<itwin_id>",
   sceneId: "<scene_id>",
   objectIds: ["<object_id_1>", "<object_id_2>", "<object_id_3>"],
+});
+```
+
+#### Upload an Image for a Scene Object
+
+Images are currently only supported for the object kind `View3d`.
+Maximum supported size is 5 megabytes and maximum supported aspect ratio is 5:1.
+A small thumbnail is automatically generated, and will be returned in the `image` property of the scene object for convenience.
+
+```ts
+const imageBytes: Uint8Array = /* raw PNG or JPEG bytes */;
+
+const uploadResponse = await client.uploadObjectImage({
+  iTwinId: "<itwin_id>",
+  sceneId: "<scene_id>",
+  objectId: "<object_id>",
+  image: imageBytes,
+  contentType: "image/png", // or "image/jpeg"
+});
+
+console.log(uploadResponse.image.href);
+```
+
+#### Get a Scene Object's Image
+
+```ts
+import { ImageSize } from "@itwin/scenes-client";
+
+// Get a link to the small system-generated thumbnail
+const imageResponse = await client.getObjectImage({
+  iTwinId: "<itwin_id>",
+  sceneId: "<scene_id>",
+  objectId: "<object_id>",
+  size: ImageSize.SMALL,
+});
+
+// Or request the original, full-size image
+const originalImageResponse = await client.getObjectImage({
+  iTwinId: "<itwin_id>",
+  sceneId: "<scene_id>",
+  objectId: "<object_id>",
+  size: ImageSize.ORIGINAL,
+});
+
+console.log(imageResponse.image.href);
+```
+
+#### Delete a Scene Object's Image
+
+```ts
+// Remove existing image
+await client.deleteObjectImage({
+  iTwinId: "<itwin_id>",
+  sceneId: "<scene_id>",
+  objectId: "<object_id>",
 });
 ```
 

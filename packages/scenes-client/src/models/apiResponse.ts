@@ -55,6 +55,11 @@ export interface SceneObjectPagedResponse extends SceneObjectListResponse {
   _links: PagingLinks;
 }
 
+/** Scene object image response model */
+export interface ImageResponse {
+  image: Link;
+}
+
 /** Scene share response model */
 export interface SceneShareResponse {
   share: SceneShare;
@@ -117,6 +122,10 @@ export function isSceneObjectPagedResponse(v: unknown): v is SceneObjectPagedRes
     isPagingLinks(v._links) &&
     isSceneContext(v.sceneContext)
   );
+}
+
+export function isImageResponse(v: unknown): v is ImageResponse {
+  return isObject(v) && isLink(v.image);
 }
 
 export function isSceneShareResponse(v: unknown): v is SceneShareResponse {
