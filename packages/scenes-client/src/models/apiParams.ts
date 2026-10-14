@@ -30,6 +30,10 @@ export type PostSceneParams = ITwinParams & { scene: SceneCreate };
 export type PatchSceneParams = SceneParams & { scene: SceneUpdate };
 export type DeleteSceneParams = SceneParams;
 
+export type GetSceneImageParams = SceneParams & GetImageOptions;
+export type UploadSceneImageParams = SceneParams & ImageCreate;
+export type DeleteSceneImageParams = SceneParams;
+
 export type GetObjectParams = ObjectParams;
 export type GetObjectsParams = SceneParams & Omit<GetObjectsOptions, "delayMs">;
 export type GetAllObjectsParams = SceneParams & GetObjectsOptions;
