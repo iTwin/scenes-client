@@ -192,6 +192,76 @@ describe("Scenes Operations", () => {
   });
 });
 
+describe("Scene Image Operations", () => {
+  it("getSceneImage() without size", async () => {
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleImageResponse));
+    const client = new SceneClient(getAccessToken);
+    const result = await client.getSceneImage({
+      iTwinId: "itw-1",
+      sceneId: "scene-1",
+    });
+    expect(result).toEqual(exampleImageResponse);
+
+    verifyFetch(fetchMock, {
+      url: `${BASE_DOMAIN}/scene-1/image?iTwinId=itw-1`,
+      headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
+    });
+  });
+
+  it("getSceneImage() with size", async () => {
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleImageResponse));
+    const client = new SceneClient(getAccessToken);
+    await client.getSceneImage({
+      iTwinId: "itw-1",
+      sceneId: "scene-1",
+      size: ImageSize.ORIGINAL,
+    });
+
+    verifyFetch(fetchMock, {
+      url: `${BASE_DOMAIN}/scene-1/image?iTwinId=itw-1&size=original`,
+      headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
+    });
+  });
+
+  it("uploadSceneImage()", async () => {
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleImageResponse));
+    const client = new SceneClient(getAccessToken);
+    const image = new Uint8Array([1, 2, 3, 4]);
+    const result = await client.uploadSceneImage({
+      iTwinId: "itw-1",
+      sceneId: "scene-1",
+      image,
+      contentType: "image/png",
+    });
+    expect(result).toEqual(exampleImageResponse);
+
+    verifyFetch(fetchMock, {
+      url: `${BASE_DOMAIN}/scene-1/image?iTwinId=itw-1`,
+      headers: {
+        Accept: "application/vnd.bentley.itwin-platform.v1+json",
+        "Content-Type": "image/png",
+      },
+      method: "PUT",
+      body: image,
+    });
+  });
+
+  it("deleteSceneImage()", async () => {
+    fetchMock.mockImplementation(() => createNoContentResponse());
+    const client = new SceneClient(getAccessToken);
+    await client.deleteSceneImage({
+      iTwinId: "itw-1",
+      sceneId: "scene-1",
+    });
+
+    verifyFetch(fetchMock, {
+      url: `${BASE_DOMAIN}/scene-1/image?iTwinId=itw-1`,
+      headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
+      method: "DELETE",
+    });
+  });
+});
+
 describe("Scene Object Operations", () => {
   it("getObject()", async () => {
     fetchMock.mockImplementation(() => createSuccessfulResponse(exampleSceneObjectResponse));
@@ -722,6 +792,24 @@ describe("Error Handling", () => {
     {
       name: "scene deletion",
       method: () => client.deleteScene({ iTwinId: "itw-1", sceneId: "scene-1" }),
+    },
+    {
+      name: "scene image operations",
+      method: () => client.getSceneImage({ iTwinId: "itw-1", sceneId: "scene-1" }),
+    },
+    {
+      name: "scene image upload",
+      method: () =>
+        client.uploadSceneImage({
+          iTwinId: "itw-1",
+          sceneId: "scene-1",
+          image: new Uint8Array([1, 2, 3, 4]),
+          contentType: "image/png",
+        }),
+    },
+    {
+      name: "scene image deletion",
+      method: () => client.deleteSceneImage({ iTwinId: "itw-1", sceneId: "scene-1" }),
     },
     {
       name: "object operations",
