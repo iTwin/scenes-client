@@ -1,6 +1,10 @@
 packages:
   - "packages/*"
 
+allowBuilds:
+  esbuild: true
+  unrs-resolver: false
+
 auditConfig:
   ignoreGhsas:
     # TEMPORARY: braces <=3.0.3 has no patched release. Dev-only transitive dep (@changesets/cli>@changesets/config>micromatch). Remove once a fix ships.
