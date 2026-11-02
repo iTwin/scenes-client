@@ -4,9 +4,16 @@
  *--------------------------------------------------------------------------------------------*/
 import { isObject } from "../../utilities.js";
 
+/**
+ * Reference to the source that a scene was copied or duplicated from.
+ *
+ * Purely informational: the service validates the reference only when it is written at creation.
+ * It cannot be changed or removed afterwards, creates no ongoing relationship or synchronization between the scenes,
+ * and may become a stale reference if the source scene is later deleted.
+ */
 export interface SceneSource {
   /**
-   * Id of the scene this scene was sourced or copied from.
+   * Id of the scene this source references.
    * The reference is validated at the time of creation, but does not change if the source scene is later deleted.
    * Clients should verify the source's existence if their workflow requires it.
    */
@@ -18,6 +25,7 @@ export interface SceneSource {
   lastModified: string;
 }
 
+/** Type guard that checks whether a value is a {@link SceneSource}. */
 export function isSceneSource(v: unknown): v is SceneSource {
   return isObject(v) && typeof v.id === "string" && typeof v.lastModified === "string";
 }
