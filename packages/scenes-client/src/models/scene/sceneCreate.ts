@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { isObject } from "../../utilities.js";
 import { isSceneObjectCreate, SceneObjectCreate } from "../object/sceneObjectCreate.js";
+import { SceneSource } from "./sceneSource.js";
 import { SceneVisibility } from "./sceneVisibility.js";
 
 export interface SceneDataCreate {
@@ -22,6 +23,13 @@ export interface SceneCreate {
   visibility?: SceneVisibility;
   /** Optional list of tag Ids to apply to this scene. Tags must exist in the same iTwin as the scene itself. */
   tagIds?: string[];
+  /**
+   * Optional reference identifying the scene this scene was copied from.
+   * At creation, the source must exist in the same iTwin and be visible to the caller.
+   * Informational only: it does not create an ongoing relationship, synchronize content, or affect either scene's lifecycle.
+   * It cannot be changed or removed after creation and remains stored if the source is later deleted or becomes inaccessible.
+   */
+  sourceScene?: SceneSource;
   /** Scene informational objects */
   sceneData?: SceneDataCreate;
 }
