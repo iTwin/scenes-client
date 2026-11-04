@@ -767,6 +767,37 @@ const sceneResponse = await sharedClient.getScene({
 
 ---
 
+### Retry Behavior
+
+Transient failures are retried automatically, with exponential backoff and jitter between attempts:
+
+| Failure                  | Retried for                                                                                                     |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------- |
+| `429`                    | All requests. Honors `Retry-After`, unless it exceeds `maxDelayMs`; then the `429` error is thrown immediately. |
+| `5xx` and network errors | Idempotent requests only (`GET`, `PUT`, `DELETE`)                                                               |
+
+Other errors (e.g. `400`) are never retried.
+
+Retries can be configured per client through the constructor's third parameter:
+
+| Option        | Default | Description                                                                         |
+| ------------- | ------- | ----------------------------------------------------------------------------------- |
+| `maxRetries`  | `3`     | Retries after the initial request. `0` disables retries. Values are capped at `10`. |
+| `baseDelayMs` | `500`   | Starting delay for exponential backoff.                                             |
+| `maxDelayMs`  | `10000` | Longest wait before any single retry.                                               |
+
+Invalid values (negative, `NaN`) fall back to the default.
+
+```ts
+import { SceneClient } from "@itwin/scenes-client";
+
+const client = new SceneClient(
+  async () => "<itwin_platform_auth_token>",
+  "<base_url>", // omit to use the default
+  { maxRetries: 5, baseDelayMs: 1000, maxDelayMs: 30000 },
+);
+```
+
 ### Type Safety
 
 This client provides strongly typed interfaces for all scene object operations, giving you compile-time validation:

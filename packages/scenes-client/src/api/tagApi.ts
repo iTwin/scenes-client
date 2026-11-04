@@ -16,7 +16,7 @@ import {
   isTagResponse,
 } from "../models/index.js";
 import { iteratePagedEndpoint } from "../utilities.js";
-import { callApi, AuthArgs } from "./apiFetch.js";
+import { callApi, ClientArgs } from "./apiFetch.js";
 
 /**
  * Fetches a single tag by ID.
@@ -24,16 +24,13 @@ import { callApi, AuthArgs } from "./apiFetch.js";
  * @returns Tag details.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
-export async function getTag({
-  tagId,
-  iTwinId,
-  getAccessToken,
-  baseUrl,
-}: GetTagParams & AuthArgs): Promise<TagResponse> {
+export async function getTag(
+  { tagId, iTwinId }: GetTagParams,
+  clientArgs: ClientArgs,
+): Promise<TagResponse> {
   return callApi<TagResponse>({
     endpoint: `/tags/${tagId}?iTwinId=${iTwinId}`,
-    getAccessToken,
-    baseUrl,
+    ...clientArgs,
     typeGuard: isTagResponse,
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -47,17 +44,13 @@ export async function getTag({
  * @returns One page of tags in the iTwin.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
-export async function getTags({
-  iTwinId,
-  top,
-  skip,
-  getAccessToken,
-  baseUrl,
-}: GetTagsParams & AuthArgs): Promise<TagListResponse> {
+export async function getTags(
+  { iTwinId, top, skip }: GetTagsParams,
+  clientArgs: ClientArgs,
+): Promise<TagListResponse> {
   return callApi<TagListResponse>({
     endpoint: `/tags?iTwinId=${iTwinId}&$top=${top}&$skip=${skip}`,
-    getAccessToken,
-    baseUrl,
+    ...clientArgs,
     typeGuard: isTagListResponse,
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -67,23 +60,24 @@ export async function getTags({
 
 /**
  * Fetches tags in a paginated manner.
- * @param args - {@link GetAllTagsParams}
+ * @param params - {@link GetAllTagsParams}
+ * @param clientArgs - {@link ClientArgs}
  * @param opts - {@link GetTagsOptions}
  * @returns Async iterator of paged tag lists.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
 export function getAllTags(
-  args: GetAllTagsParams & AuthArgs,
+  { iTwinId }: GetAllTagsParams,
+  clientArgs: ClientArgs,
   opts: Required<GetTagsOptions>,
 ): AsyncIterableIterator<TagListResponse> {
-  const { iTwinId, getAccessToken, baseUrl } = args;
   const { top, skip, delayMs } = opts;
-  const initialUrl = `${baseUrl}/tags?iTwinId=${iTwinId}&$top=${top}&$skip=${skip}`;
+  const initialUrl = `${clientArgs.baseUrl}/tags?iTwinId=${iTwinId}&$top=${top}&$skip=${skip}`;
 
   return iteratePagedEndpoint<TagListResponse>(initialUrl, delayMs, async (url) => {
     return callApi<TagListResponse>({
+      ...clientArgs,
       baseUrl: url,
-      getAccessToken,
       typeGuard: isTagListResponse,
       additionalHeaders: {
         Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -98,16 +92,13 @@ export function getAllTags(
  * @returns Created tag details.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
-export async function postTag({
-  iTwinId,
-  tag,
-  getAccessToken,
-  baseUrl,
-}: PostTagParams & AuthArgs): Promise<TagResponse> {
+export async function postTag(
+  { iTwinId, tag }: PostTagParams,
+  clientArgs: ClientArgs,
+): Promise<TagResponse> {
   return callApi<TagResponse>({
     endpoint: `/tags?iTwinId=${iTwinId}`,
-    getAccessToken,
-    baseUrl,
+    ...clientArgs,
     typeGuard: isTagResponse,
     fetchOptions: {
       method: "POST",
@@ -126,17 +117,13 @@ export async function postTag({
  * @returns Updated tag details.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
-export async function patchTag({
-  tagId,
-  iTwinId,
-  tag,
-  getAccessToken,
-  baseUrl,
-}: PatchTagParams & AuthArgs): Promise<TagResponse> {
+export async function patchTag(
+  { tagId, iTwinId, tag }: PatchTagParams,
+  clientArgs: ClientArgs,
+): Promise<TagResponse> {
   return callApi<TagResponse>({
     endpoint: `/tags/${tagId}?iTwinId=${iTwinId}`,
-    getAccessToken,
-    baseUrl,
+    ...clientArgs,
     typeGuard: isTagResponse,
     fetchOptions: {
       method: "PATCH",
@@ -154,16 +141,13 @@ export async function patchTag({
  * @param params - {@link DeleteTagParams}
  * @throws {ScenesApiError} If the API call fails.
  */
-export async function deleteTag({
-  tagId,
-  iTwinId,
-  getAccessToken,
-  baseUrl,
-}: DeleteTagParams & AuthArgs): Promise<void> {
+export async function deleteTag(
+  { tagId, iTwinId }: DeleteTagParams,
+  clientArgs: ClientArgs,
+): Promise<void> {
   await callApi({
     endpoint: `/tags/${tagId}?iTwinId=${iTwinId}`,
-    getAccessToken,
-    baseUrl,
+    ...clientArgs,
     fetchOptions: { method: "DELETE" },
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",

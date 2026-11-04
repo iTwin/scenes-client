@@ -4,6 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 import { PagingLinks } from "./models/index.js";
 
+/** Resolves after `ms` milliseconds. */
+export function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 /**
  * Async generator for iterating through paged API endpoints
  * Follows the 'next' link in the response's _links property until no more pages are available.
@@ -25,7 +30,7 @@ export async function* iteratePagedEndpoint<T extends { _links?: PagingLinks }>(
     yield response;
     url = response._links?.next?.href;
     if (url && delayMs > 0) {
-      await new Promise((resolve) => setTimeout(resolve, delayMs));
+      await sleep(delayMs);
     }
   }
 }
@@ -52,6 +57,26 @@ export function* batched<T>(items: T[], batchSize: number) {
  */
 export function isObject(v: unknown): v is Record<string, unknown> {
   return v !== null && typeof v === "object" && !Array.isArray(v);
+}
+
+/**
+ * Checks if a value is a non-negative integer.
+ *
+ * @param value - The value to check.
+ * @returns True if the value is a non-negative integer, false otherwise.
+ */
+export function isNonNegativeInteger(value: unknown): value is number {
+  return typeof value === "number" && Number.isInteger(value) && value >= 0;
+}
+
+/**
+ * Checks if a value is a non-negative finite number.
+ *
+ * @param value - The value to check.
+ * @returns True if the value is a non-negative finite number, false otherwise.
+ */
+export function isNonNegativeFiniteNumber(value: unknown): value is number {
+  return typeof value === "number" && Number.isFinite(value) && value >= 0;
 }
 
 /**

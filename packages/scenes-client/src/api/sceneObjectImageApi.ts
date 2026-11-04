@@ -9,7 +9,7 @@ import {
   isImageResponse,
   UploadObjectImageParams,
 } from "../models/index.js";
-import { AuthArgs, callApi } from "./apiFetch.js";
+import { ClientArgs, callApi } from "./apiFetch.js";
 
 /**
  * Fetches a link to a scene object's image.
@@ -17,18 +17,13 @@ import { AuthArgs, callApi } from "./apiFetch.js";
  * @returns ImageResponse containing a link to the image.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
-export async function getObjectImage({
-  sceneId,
-  iTwinId,
-  objectId,
-  size,
-  getAccessToken,
-  baseUrl,
-}: GetObjectImageParams & AuthArgs): Promise<ImageResponse> {
+export async function getObjectImage(
+  { sceneId, iTwinId, objectId, size }: GetObjectImageParams,
+  clientArgs: ClientArgs,
+): Promise<ImageResponse> {
   return callApi<ImageResponse>({
     endpoint: `/${sceneId}/objects/${objectId}/image?iTwinId=${iTwinId}${size ? `&size=${size}` : ""}`,
-    getAccessToken,
-    baseUrl,
+    ...clientArgs,
     typeGuard: isImageResponse,
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -42,19 +37,13 @@ export async function getObjectImage({
  * @returns ImageResponse containing a link to the uploaded image.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
-export async function uploadObjectImage({
-  sceneId,
-  iTwinId,
-  objectId,
-  image,
-  contentType,
-  getAccessToken,
-  baseUrl,
-}: UploadObjectImageParams & AuthArgs): Promise<ImageResponse> {
+export async function uploadObjectImage(
+  { sceneId, iTwinId, objectId, image, contentType }: UploadObjectImageParams,
+  clientArgs: ClientArgs,
+): Promise<ImageResponse> {
   return callApi<ImageResponse>({
     endpoint: `/${sceneId}/objects/${objectId}/image?iTwinId=${iTwinId}`,
-    getAccessToken,
-    baseUrl,
+    ...clientArgs,
     typeGuard: isImageResponse,
     fetchOptions: {
       method: "PUT",
@@ -72,17 +61,13 @@ export async function uploadObjectImage({
  * @param params - {@link DeleteObjectImageParams}
  * @throws {ScenesApiError} If the API call fails.
  */
-export async function deleteObjectImage({
-  sceneId,
-  iTwinId,
-  objectId,
-  getAccessToken,
-  baseUrl,
-}: DeleteObjectImageParams & AuthArgs): Promise<void> {
+export async function deleteObjectImage(
+  { sceneId, iTwinId, objectId }: DeleteObjectImageParams,
+  clientArgs: ClientArgs,
+): Promise<void> {
   await callApi({
     endpoint: `/${sceneId}/objects/${objectId}/image?iTwinId=${iTwinId}`,
-    getAccessToken,
-    baseUrl,
+    ...clientArgs,
     fetchOptions: {
       method: "DELETE",
     },

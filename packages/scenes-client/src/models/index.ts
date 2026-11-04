@@ -42,3 +42,4 @@ export * from "./tag/tagUpdate.js";
 export * from "./apiParams.js";
 export * from "./apiResponse.js";
 export * from "./error.js";
+export * from "./retryOptions.js";
