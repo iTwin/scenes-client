@@ -336,6 +336,14 @@ export interface ScenesApiSchemas {
       cutout: PolygonSetCutout | PlaneCutout | BoxCutout;
     };
   };
+  GlobalMapLayerSet: {
+    /**
+     * The organizational container for anything pertaining to the scene's base map layer set (base imagery, terrain, photorealistic tiles, etc.).
+     * A scene may contain at most one GlobalMapLayerSet object.
+     * Additional global map properties may be introduced in the future.
+     */
+    "1.0.0": Record<string, never>; // Record<string, never> for TS to enforce an empty object
+  };
   Layer: {
     /**
      * Layers act as organizational containers for scene content. They are not limited to contain specific data types.
