@@ -40,3 +40,10 @@ jobs:
           # Fix for issue https://github.com/changesets/changesets/issues/517#issuecomment-884778604
           git pull -f origin main:main
           pnpm changeset status --since=main
+
+      - name: Refuse to merge while in prerelease mode
+        run: |
+          if [ -f .changeset/pre.json ]; then
+            echo "::error::.changeset/pre.json is present on this branch. Run 'pnpm changeset pre exit' and commit before merging."
+            exit 1
+          fi

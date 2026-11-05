@@ -55,3 +55,32 @@ Follow the prompts to describe your changes and select the appropriate version b
 When changesets are added and merged into the main branch, a release pull request (PR) will be automatically created by the Changesets GitHub Action. This PR will contain the version updates and changelog entries generated from your changesets. Review the release PR to ensure the version bumps and changelog messages are accurate before merging. Once the release PR is merged, the new package version will be published automatically.
 
 For more details, see the [Changesets documentation](https://github.com/changesets/changesets/blob/main/README.md).
+
+## Publishing Beta Versions
+
+Use the **Publish Beta Version** GitHub Action to publish beta changes as a prerelease under the `beta` npm dist-tag, before it's ready to ship in a stable release. This uses Changesets' built-in [prerelease mode](https://changesets.dev/guide/prereleases) — the workflow computes and commits the `-beta.N` version bump for you based on your branch's pending changesets; you never choose or edit a version by hand.
+
+Before dispatching it:
+
+1. Make sure your branch has at least one pending changeset (`pnpm changeset`). The workflow fails fast if none is found, since there's nothing to bump.
+2. Do **not** trigger this from `main` — the workflow refuses to run there. Entering prerelease mode on `main` would cause the regular release workflow to start publishing prereleases instead of stable releases on every merge.
+3. Trigger the workflow from the [Actions tab](https://github.com/iTwin/scenes-client/actions/workflows/publish-beta-version.yaml) on your branch. This requires approval from one of the code owners.
+
+Each run:
+
+- Enters beta prerelease mode if not already in it (first run on the branch only).
+- Applies your branch's pending changesets, computing the next `-beta.N` version (`1.2.0-beta.0`, then `1.2.0-beta.1`, etc. on subsequent runs).
+- Publishes to npm under the `beta` dist-tag.
+- Commits and pushes the resulting version bump and changelog back to your branch, so the next beta run picks up from the right state.
+
+Consumers can then install the published beta version, e.g. `npm install @itwin/scenes-client@1.2.0-beta.0`.
+
+#### Before merging to main
+
+Your branch must exit prerelease mode before it's merged, otherwise your changesets will be left in a prerelease state. Run:
+
+```shell
+pnpm changeset pre exit
+```
+
+Commit the resulting deletion of `.changeset/pre.json` and push. Your original changesets remain untouched and will still drive the real version bump and changelog when the branch is merged to `main` and released through the normal process.
