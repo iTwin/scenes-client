@@ -2,6 +2,8 @@
  * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
+import { ClientArgs } from "./api/apiFetch.js";
+import { resolveRetryPolicy } from "./api/retry/retryPolicy.js";
 import {
   getScene,
   getAllScenes,
@@ -80,6 +82,7 @@ import {
   RevokeSceneShareParams,
   SceneShareListResponse,
   SceneShareResponse,
+  SceneClientOptions,
 } from "./models/index.js";
 
 type AccessTokenFn = () => Promise<string>;
@@ -87,17 +90,31 @@ type AccessTokenFn = () => Promise<string>;
 const DEFAULT_BASE_URL = "https://api.bentley.com/scenes";
 
 export class SceneClient {
-  private readonly getAccessToken: AccessTokenFn;
-  private readonly baseUrl: string;
+  private readonly clientArgs: ClientArgs;
 
+  /**
+   * Create a new SceneClient instance.
+   * @param getAccessToken – Async function to retrieve an access token.
+   * @param options – Optional client configuration (base URL, retry policy).
+   * @throws {RangeError} If a numeric `options.retry` setting is invalid (e.g. negative, or `maxRetries` above 10).
+   */
+  constructor(getAccessToken: AccessTokenFn, options?: SceneClientOptions);
   /**
    * Create a new SceneClient instance.
    * @param getAccessToken – Async function to retrieve an access token.
    * @param baseUrl – Optional base URL for the API. Defaults to production.
    */
-  constructor(getAccessToken: AccessTokenFn, baseUrl: string = DEFAULT_BASE_URL) {
-    this.getAccessToken = getAccessToken;
-    this.baseUrl = baseUrl;
+  constructor(getAccessToken: AccessTokenFn, baseUrl?: string);
+  constructor(getAccessToken: AccessTokenFn, baseUrlOrOptions?: string | SceneClientOptions) {
+    const options: SceneClientOptions =
+      typeof baseUrlOrOptions === "string"
+        ? { baseUrl: baseUrlOrOptions }
+        : (baseUrlOrOptions ?? {});
+    this.clientArgs = {
+      getAccessToken,
+      baseUrl: options.baseUrl ?? DEFAULT_BASE_URL,
+      retryPolicy: resolveRetryPolicy(options.retry ?? {}),
+    };
   }
 
   /**
@@ -109,13 +126,14 @@ export class SceneClient {
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async getScene(params: GetSceneParams): Promise<SceneResponse> {
-    return getScene({
-      iTwinId: params.iTwinId,
-      sceneId: params.sceneId,
-      orderBy: params.orderBy ?? GET_OBJECTS_DEFAULTS.orderBy,
-      getAccessToken: this.getAccessToken,
-      baseUrl: this.baseUrl,
-    });
+    return getScene(
+      {
+        iTwinId: params.iTwinId,
+        sceneId: params.sceneId,
+        orderBy: params.orderBy ?? GET_OBJECTS_DEFAULTS.orderBy,
+      },
+      this.clientArgs,
+    );
   }
 
   /**
@@ -126,12 +144,13 @@ export class SceneClient {
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async getSceneMetadata(params: GetSceneMetadataParams): Promise<SceneMetadataResponse> {
-    return getSceneMetadata({
-      iTwinId: params.iTwinId,
-      sceneId: params.sceneId,
-      getAccessToken: this.getAccessToken,
-      baseUrl: this.baseUrl,
-    });
+    return getSceneMetadata(
+      {
+        iTwinId: params.iTwinId,
+        sceneId: params.sceneId,
+      },
+      this.clientArgs,
+    );
   }
 
   /**
@@ -143,13 +162,14 @@ export class SceneClient {
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async getScenes(params: GetScenesParams): Promise<SceneListResponse> {
-    return getScenes({
-      iTwinId: params.iTwinId,
-      top: params.top ?? GET_SCENES_DEFAULTS.top,
-      skip: params.skip ?? GET_SCENES_DEFAULTS.skip,
-      getAccessToken: this.getAccessToken,
-      baseUrl: this.baseUrl,
-    });
+    return getScenes(
+      {
+        iTwinId: params.iTwinId,
+        top: params.top ?? GET_SCENES_DEFAULTS.top,
+        skip: params.skip ?? GET_SCENES_DEFAULTS.skip,
+      },
+      this.clientArgs,
+    );
   }
 
   /**
@@ -170,14 +190,7 @@ export class SceneClient {
       delayMs: params.delayMs ?? GET_SCENES_DEFAULTS.delayMs,
     };
 
-    return getAllScenes(
-      {
-        iTwinId: params.iTwinId,
-        getAccessToken: this.getAccessToken,
-        baseUrl: this.baseUrl,
-      },
-      opts,
-    );
+    return getAllScenes({ iTwinId: params.iTwinId }, this.clientArgs, opts);
   }
 
   /**
@@ -188,12 +201,13 @@ export class SceneClient {
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async postScene(params: PostSceneParams): Promise<SceneResponse> {
-    return postScene({
-      iTwinId: params.iTwinId,
-      scene: params.scene,
-      getAccessToken: this.getAccessToken,
-      baseUrl: this.baseUrl,
-    });
+    return postScene(
+      {
+        iTwinId: params.iTwinId,
+        scene: params.scene,
+      },
+      this.clientArgs,
+    );
   }
 
   /**
@@ -205,13 +219,14 @@ export class SceneClient {
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async patchScene(params: PatchSceneParams): Promise<SceneMetadataResponse> {
-    return patchScene({
-      iTwinId: params.iTwinId,
-      sceneId: params.sceneId,
-      scene: params.scene,
-      getAccessToken: this.getAccessToken,
-      baseUrl: this.baseUrl,
-    });
+    return patchScene(
+      {
+        iTwinId: params.iTwinId,
+        sceneId: params.sceneId,
+        scene: params.scene,
+      },
+      this.clientArgs,
+    );
   }
 
   /**
@@ -221,12 +236,13 @@ export class SceneClient {
    * @throws {ScenesApiError} If the API call fails.
    */
   async deleteScene(params: DeleteSceneParams): Promise<void> {
-    return deleteScene({
-      iTwinId: params.iTwinId,
-      sceneId: params.sceneId,
-      getAccessToken: this.getAccessToken,
-      baseUrl: this.baseUrl,
-    });
+    return deleteScene(
+      {
+        iTwinId: params.iTwinId,
+        sceneId: params.sceneId,
+      },
+      this.clientArgs,
+    );
   }
 
   /**
@@ -238,13 +254,14 @@ export class SceneClient {
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async getSceneImage(params: GetSceneImageParams): Promise<ImageResponse> {
-    return getSceneImage({
-      iTwinId: params.iTwinId,
-      sceneId: params.sceneId,
-      size: params.size,
-      getAccessToken: this.getAccessToken,
-      baseUrl: this.baseUrl,
-    });
+    return getSceneImage(
+      {
+        iTwinId: params.iTwinId,
+        sceneId: params.sceneId,
+        size: params.size,
+      },
+      this.clientArgs,
+    );
   }
 
   /**
@@ -257,14 +274,15 @@ export class SceneClient {
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async uploadSceneImage(params: UploadSceneImageParams): Promise<ImageResponse> {
-    return uploadSceneImage({
-      iTwinId: params.iTwinId,
-      sceneId: params.sceneId,
-      image: params.image,
-      contentType: params.contentType,
-      getAccessToken: this.getAccessToken,
-      baseUrl: this.baseUrl,
-    });
+    return uploadSceneImage(
+      {
+        iTwinId: params.iTwinId,
+        sceneId: params.sceneId,
+        image: params.image,
+        contentType: params.contentType,
+      },
+      this.clientArgs,
+    );
   }
 
   /**
@@ -274,12 +292,13 @@ export class SceneClient {
    * @throws {ScenesApiError} If the API call fails.
    */
   async deleteSceneImage(params: DeleteSceneImageParams): Promise<void> {
-    return deleteSceneImage({
-      iTwinId: params.iTwinId,
-      sceneId: params.sceneId,
-      getAccessToken: this.getAccessToken,
-      baseUrl: this.baseUrl,
-    });
+    return deleteSceneImage(
+      {
+        iTwinId: params.iTwinId,
+        sceneId: params.sceneId,
+      },
+      this.clientArgs,
+    );
   }
 
   /**
@@ -291,13 +310,14 @@ export class SceneClient {
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async getObject(params: GetObjectParams): Promise<SceneObjectResponse> {
-    return getObject({
-      sceneId: params.sceneId,
-      iTwinId: params.iTwinId,
-      objectId: params.objectId,
-      getAccessToken: this.getAccessToken,
-      baseUrl: this.baseUrl,
-    });
+    return getObject(
+      {
+        sceneId: params.sceneId,
+        iTwinId: params.iTwinId,
+        objectId: params.objectId,
+      },
+      this.clientArgs,
+    );
   }
 
   /**
@@ -311,15 +331,16 @@ export class SceneClient {
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async getObjects(params: GetObjectsParams): Promise<SceneObjectListResponse> {
-    return getObjects({
-      sceneId: params.sceneId,
-      iTwinId: params.iTwinId,
-      top: params.top ?? GET_OBJECTS_DEFAULTS.top,
-      skip: params.skip ?? GET_OBJECTS_DEFAULTS.skip,
-      orderBy: params.orderBy ?? GET_OBJECTS_DEFAULTS.orderBy,
-      getAccessToken: this.getAccessToken,
-      baseUrl: this.baseUrl,
-    });
+    return getObjects(
+      {
+        sceneId: params.sceneId,
+        iTwinId: params.iTwinId,
+        top: params.top ?? GET_OBJECTS_DEFAULTS.top,
+        skip: params.skip ?? GET_OBJECTS_DEFAULTS.skip,
+        orderBy: params.orderBy ?? GET_OBJECTS_DEFAULTS.orderBy,
+      },
+      this.clientArgs,
+    );
   }
 
   /**
@@ -344,12 +365,8 @@ export class SceneClient {
     };
 
     return getAllObjects(
-      {
-        sceneId: params.sceneId,
-        iTwinId: params.iTwinId,
-        getAccessToken: this.getAccessToken,
-        baseUrl: this.baseUrl,
-      },
+      { sceneId: params.sceneId, iTwinId: params.iTwinId },
+      this.clientArgs,
       opts,
     );
   }
@@ -363,13 +380,14 @@ export class SceneClient {
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async postObjects(params: PostObjectsParams): Promise<SceneObjectListResponse> {
-    return postObjects({
-      iTwinId: params.iTwinId,
-      sceneId: params.sceneId,
-      objects: params.objects,
-      getAccessToken: this.getAccessToken,
-      baseUrl: this.baseUrl,
-    });
+    return postObjects(
+      {
+        iTwinId: params.iTwinId,
+        sceneId: params.sceneId,
+        objects: params.objects,
+      },
+      this.clientArgs,
+    );
   }
 
   /**
@@ -382,14 +400,15 @@ export class SceneClient {
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async patchObject(params: PatchObjectParam): Promise<SceneObjectResponse> {
-    return patchObject({
-      iTwinId: params.iTwinId,
-      sceneId: params.sceneId,
-      objectId: params.objectId,
-      object: params.object,
-      getAccessToken: this.getAccessToken,
-      baseUrl: this.baseUrl,
-    });
+    return patchObject(
+      {
+        iTwinId: params.iTwinId,
+        sceneId: params.sceneId,
+        objectId: params.objectId,
+        object: params.object,
+      },
+      this.clientArgs,
+    );
   }
 
   /**
@@ -402,13 +421,14 @@ export class SceneClient {
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async patchObjects(params: PatchObjectsParams): Promise<SceneObjectListResponse> {
-    return patchObjects({
-      iTwinId: params.iTwinId,
-      sceneId: params.sceneId,
-      objects: params.objects,
-      getAccessToken: this.getAccessToken,
-      baseUrl: this.baseUrl,
-    });
+    return patchObjects(
+      {
+        iTwinId: params.iTwinId,
+        sceneId: params.sceneId,
+        objects: params.objects,
+      },
+      this.clientArgs,
+    );
   }
 
   /**
@@ -425,13 +445,14 @@ export class SceneClient {
   async patchObjectsOperations(
     params: PatchObjectsOperationsParams,
   ): Promise<SceneObjectListResponse> {
-    return patchObjectsOperations({
-      iTwinId: params.iTwinId,
-      sceneId: params.sceneId,
-      operations: params.operations,
-      getAccessToken: this.getAccessToken,
-      baseUrl: this.baseUrl,
-    });
+    return patchObjectsOperations(
+      {
+        iTwinId: params.iTwinId,
+        sceneId: params.sceneId,
+        operations: params.operations,
+      },
+      this.clientArgs,
+    );
   }
 
   /**
@@ -442,13 +463,14 @@ export class SceneClient {
    * @throws {ScenesApiError} If the API call fails.
    */
   async deleteObject(params: DeleteObjectParams): Promise<void> {
-    return deleteObject({
-      iTwinId: params.iTwinId,
-      sceneId: params.sceneId,
-      objectId: params.objectId,
-      getAccessToken: this.getAccessToken,
-      baseUrl: this.baseUrl,
-    });
+    return deleteObject(
+      {
+        iTwinId: params.iTwinId,
+        sceneId: params.sceneId,
+        objectId: params.objectId,
+      },
+      this.clientArgs,
+    );
   }
 
   /**
@@ -459,13 +481,14 @@ export class SceneClient {
    * @throws {ScenesApiError} If the API call fails.
    */
   async deleteObjects(params: DeleteObjectsParams): Promise<void> {
-    return deleteObjects({
-      iTwinId: params.iTwinId,
-      sceneId: params.sceneId,
-      objectIds: params.objectIds,
-      getAccessToken: this.getAccessToken,
-      baseUrl: this.baseUrl,
-    });
+    return deleteObjects(
+      {
+        iTwinId: params.iTwinId,
+        sceneId: params.sceneId,
+        objectIds: params.objectIds,
+      },
+      this.clientArgs,
+    );
   }
 
   /**
@@ -478,14 +501,15 @@ export class SceneClient {
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async getObjectImage(params: GetObjectImageParams): Promise<ImageResponse> {
-    return getObjectImage({
-      iTwinId: params.iTwinId,
-      sceneId: params.sceneId,
-      objectId: params.objectId,
-      size: params.size,
-      getAccessToken: this.getAccessToken,
-      baseUrl: this.baseUrl,
-    });
+    return getObjectImage(
+      {
+        iTwinId: params.iTwinId,
+        sceneId: params.sceneId,
+        objectId: params.objectId,
+        size: params.size,
+      },
+      this.clientArgs,
+    );
   }
 
   /**
@@ -499,15 +523,16 @@ export class SceneClient {
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async uploadObjectImage(params: UploadObjectImageParams): Promise<ImageResponse> {
-    return uploadObjectImage({
-      iTwinId: params.iTwinId,
-      sceneId: params.sceneId,
-      objectId: params.objectId,
-      image: params.image,
-      contentType: params.contentType,
-      getAccessToken: this.getAccessToken,
-      baseUrl: this.baseUrl,
-    });
+    return uploadObjectImage(
+      {
+        iTwinId: params.iTwinId,
+        sceneId: params.sceneId,
+        objectId: params.objectId,
+        image: params.image,
+        contentType: params.contentType,
+      },
+      this.clientArgs,
+    );
   }
 
   /**
@@ -518,13 +543,14 @@ export class SceneClient {
    * @throws {ScenesApiError} If the API call fails.
    */
   async deleteObjectImage(params: DeleteObjectImageParams): Promise<void> {
-    return deleteObjectImage({
-      iTwinId: params.iTwinId,
-      sceneId: params.sceneId,
-      objectId: params.objectId,
-      getAccessToken: this.getAccessToken,
-      baseUrl: this.baseUrl,
-    });
+    return deleteObjectImage(
+      {
+        iTwinId: params.iTwinId,
+        sceneId: params.sceneId,
+        objectId: params.objectId,
+      },
+      this.clientArgs,
+    );
   }
 
   /**
@@ -543,13 +569,14 @@ export class SceneClient {
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async postSceneShare(params: PostSceneShareParams): Promise<SceneShareResponse> {
-    return postSceneShare({
-      iTwinId: params.iTwinId,
-      sceneId: params.sceneId,
-      share: params.share ?? {},
-      getAccessToken: this.getAccessToken,
-      baseUrl: this.baseUrl,
-    });
+    return postSceneShare(
+      {
+        iTwinId: params.iTwinId,
+        sceneId: params.sceneId,
+        share: params.share ?? {},
+      },
+      this.clientArgs,
+    );
   }
 
   /**
@@ -561,13 +588,14 @@ export class SceneClient {
    * @throws {ScenesApiError} If the API call fails.
    */
   async revokeSceneShare(params: RevokeSceneShareParams): Promise<void> {
-    return revokeSceneShare({
-      iTwinId: params.iTwinId,
-      sceneId: params.sceneId,
-      shareId: params.shareId,
-      getAccessToken: this.getAccessToken,
-      baseUrl: this.baseUrl,
-    });
+    return revokeSceneShare(
+      {
+        iTwinId: params.iTwinId,
+        sceneId: params.sceneId,
+        shareId: params.shareId,
+      },
+      this.clientArgs,
+    );
   }
 
   /**
@@ -579,13 +607,14 @@ export class SceneClient {
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async getSceneShare(params: GetSceneShareParams): Promise<SceneShareResponse> {
-    return getSceneShare({
-      iTwinId: params.iTwinId,
-      sceneId: params.sceneId,
-      shareId: params.shareId,
-      getAccessToken: this.getAccessToken,
-      baseUrl: this.baseUrl,
-    });
+    return getSceneShare(
+      {
+        iTwinId: params.iTwinId,
+        sceneId: params.sceneId,
+        shareId: params.shareId,
+      },
+      this.clientArgs,
+    );
   }
 
   /**
@@ -596,12 +625,13 @@ export class SceneClient {
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async getAllSceneShares(params: GetAllSceneSharesParams): Promise<SceneShareListResponse> {
-    return getAllSceneShares({
-      iTwinId: params.iTwinId,
-      sceneId: params.sceneId,
-      getAccessToken: this.getAccessToken,
-      baseUrl: this.baseUrl,
-    });
+    return getAllSceneShares(
+      {
+        iTwinId: params.iTwinId,
+        sceneId: params.sceneId,
+      },
+      this.clientArgs,
+    );
   }
 
   /**
@@ -612,12 +642,13 @@ export class SceneClient {
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async getTag(params: GetTagParams): Promise<TagResponse> {
-    return getTag({
-      iTwinId: params.iTwinId,
-      tagId: params.tagId,
-      getAccessToken: this.getAccessToken,
-      baseUrl: this.baseUrl,
-    });
+    return getTag(
+      {
+        iTwinId: params.iTwinId,
+        tagId: params.tagId,
+      },
+      this.clientArgs,
+    );
   }
 
   /**
@@ -629,13 +660,14 @@ export class SceneClient {
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async getTags(params: GetTagsParams): Promise<TagListResponse> {
-    return getTags({
-      iTwinId: params.iTwinId,
-      top: params.top ?? GET_TAGS_DEFAULTS.top,
-      skip: params.skip ?? GET_TAGS_DEFAULTS.skip,
-      getAccessToken: this.getAccessToken,
-      baseUrl: this.baseUrl,
-    });
+    return getTags(
+      {
+        iTwinId: params.iTwinId,
+        top: params.top ?? GET_TAGS_DEFAULTS.top,
+        skip: params.skip ?? GET_TAGS_DEFAULTS.skip,
+      },
+      this.clientArgs,
+    );
   }
 
   /**
@@ -654,14 +686,7 @@ export class SceneClient {
       delayMs: params.delayMs ?? GET_TAGS_DEFAULTS.delayMs,
     };
 
-    return getAllTags(
-      {
-        iTwinId: params.iTwinId,
-        getAccessToken: this.getAccessToken,
-        baseUrl: this.baseUrl,
-      },
-      opts,
-    );
+    return getAllTags({ iTwinId: params.iTwinId }, this.clientArgs, opts);
   }
 
   /**
@@ -672,12 +697,13 @@ export class SceneClient {
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async postTag(params: PostTagParams): Promise<TagResponse> {
-    return postTag({
-      iTwinId: params.iTwinId,
-      tag: params.tag,
-      getAccessToken: this.getAccessToken,
-      baseUrl: this.baseUrl,
-    });
+    return postTag(
+      {
+        iTwinId: params.iTwinId,
+        tag: params.tag,
+      },
+      this.clientArgs,
+    );
   }
 
   /**
@@ -689,13 +715,14 @@ export class SceneClient {
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
   async patchTag(params: PatchTagParams): Promise<TagResponse> {
-    return patchTag({
-      iTwinId: params.iTwinId,
-      tagId: params.tagId,
-      tag: params.tag,
-      getAccessToken: this.getAccessToken,
-      baseUrl: this.baseUrl,
-    });
+    return patchTag(
+      {
+        iTwinId: params.iTwinId,
+        tagId: params.tagId,
+        tag: params.tag,
+      },
+      this.clientArgs,
+    );
   }
 
   /**
@@ -705,11 +732,12 @@ export class SceneClient {
    * @throws {ScenesApiError} If the API call fails.
    */
   async deleteTag(params: DeleteTagParams): Promise<void> {
-    return deleteTag({
-      iTwinId: params.iTwinId,
-      tagId: params.tagId,
-      getAccessToken: this.getAccessToken,
-      baseUrl: this.baseUrl,
-    });
+    return deleteTag(
+      {
+        iTwinId: params.iTwinId,
+        tagId: params.tagId,
+      },
+      this.clientArgs,
+    );
   }
 }

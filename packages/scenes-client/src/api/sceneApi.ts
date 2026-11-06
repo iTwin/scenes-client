@@ -21,7 +21,7 @@ import {
   SceneMetadataResponse,
 } from "../models/index.js";
 import { iteratePagedEndpoint } from "../utilities.js";
-import { callApi, AuthArgs } from "./apiFetch.js";
+import { callApi, ClientArgs } from "./apiFetch.js";
 import { getAllObjects } from "./sceneObjectApi.js";
 
 /**
@@ -30,17 +30,14 @@ import { getAllObjects } from "./sceneObjectApi.js";
  * @returns Scene metadata and relevant links.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
-export async function getSceneMetadata({
-  sceneId,
-  iTwinId,
-  getAccessToken,
-  baseUrl,
-}: GetSceneMetadataParams & AuthArgs): Promise<SceneMetadataResponse> {
+export async function getSceneMetadata(
+  { sceneId, iTwinId }: GetSceneMetadataParams,
+  clientArgs: ClientArgs,
+): Promise<SceneMetadataResponse> {
   return callApi<SceneMetadataResponse>({
     endpoint: `/${sceneId}?iTwinId=${iTwinId}`,
-    getAccessToken,
+    ...clientArgs,
     typeGuard: isSceneMetadataResponse,
-    baseUrl,
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
     },
@@ -53,14 +50,11 @@ export async function getSceneMetadata({
  * @returns Scene details.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
-export async function getScene({
-  sceneId,
-  orderBy,
-  iTwinId,
-  getAccessToken,
-  baseUrl,
-}: GetSceneParams & AuthArgs): Promise<SceneResponse> {
-  const args = { sceneId, iTwinId, getAccessToken, baseUrl };
+export async function getScene(
+  { sceneId, orderBy, iTwinId }: GetSceneParams,
+  clientArgs: ClientArgs,
+): Promise<SceneResponse> {
+  const params = { sceneId, iTwinId };
   const opts = {
     top: GET_OBJECTS_DEFAULTS.top,
     skip: GET_OBJECTS_DEFAULTS.skip,
@@ -72,7 +66,7 @@ export async function getScene({
     const objects: SceneObject[] = [];
     let isPartial: boolean | undefined;
 
-    const iterable = getAllObjects(args, opts);
+    const iterable = getAllObjects(params, clientArgs, opts);
     for await (const page of iterable) {
       objects.push(...page.objects);
       // Extract isPartial from the first page (sceneContext is consistent across all pages)
@@ -84,7 +78,7 @@ export async function getScene({
   };
 
   const [minimalScene, { objects, isPartial }] = await Promise.all([
-    getSceneMetadata(args),
+    getSceneMetadata(params, clientArgs),
     collectObjects(),
   ]);
 
@@ -103,18 +97,15 @@ export async function getScene({
  * @returns One page of scenes in the iTwin.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
-export async function getScenes({
-  iTwinId,
-  top,
-  skip,
-  getAccessToken,
-  baseUrl,
-}: GetScenesParams & AuthArgs): Promise<SceneListResponse> {
-  const url = `${baseUrl}?iTwinId=${iTwinId}&$top=${top}&$skip=${skip}`;
+export async function getScenes(
+  { iTwinId, top, skip }: GetScenesParams,
+  clientArgs: ClientArgs,
+): Promise<SceneListResponse> {
+  const url = `${clientArgs.baseUrl}?iTwinId=${iTwinId}&$top=${top}&$skip=${skip}`;
 
   const response = await callApi<SceneListResponse>({
+    ...clientArgs,
     baseUrl: url,
-    getAccessToken,
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
     },
@@ -126,23 +117,24 @@ export async function getScenes({
 
 /**
  * Fetches scenes in a paginated manner.
- * @param args - {@link GetAllScenesParams}
+ * @param params - {@link GetAllScenesParams}
+ * @param clientArgs - {@link ClientArgs}
  * @param opts - {@link GetScenesOptions}
  * @returns Async iterator of paged scene lists.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
 export function getAllScenes(
-  args: GetAllScenesParams & AuthArgs,
+  { iTwinId }: GetAllScenesParams,
+  clientArgs: ClientArgs,
   opts: Required<GetScenesOptions>,
 ): AsyncIterableIterator<SceneListResponse> {
-  const { iTwinId, getAccessToken, baseUrl } = args;
   const { top, delayMs, skip } = opts;
-  const initialUrl = `${baseUrl}?iTwinId=${iTwinId}&$top=${top}&$skip=${skip}`;
+  const initialUrl = `${clientArgs.baseUrl}?iTwinId=${iTwinId}&$top=${top}&$skip=${skip}`;
 
   return iteratePagedEndpoint<SceneListResponse>(initialUrl, delayMs, async (url) => {
     return callApi<SceneListResponse>({
+      ...clientArgs,
       baseUrl: url,
-      getAccessToken: getAccessToken,
       additionalHeaders: {
         Accept: "application/vnd.bentley.itwin-platform.v1+json",
       },
@@ -157,16 +149,13 @@ export function getAllScenes(
  * @returns Created scene details.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
-export async function postScene({
-  iTwinId,
-  scene,
-  getAccessToken,
-  baseUrl,
-}: PostSceneParams & AuthArgs): Promise<SceneResponse> {
+export async function postScene(
+  { iTwinId, scene }: PostSceneParams,
+  clientArgs: ClientArgs,
+): Promise<SceneResponse> {
   return callApi<SceneResponse>({
     endpoint: `?iTwinId=${iTwinId}`,
-    getAccessToken,
-    baseUrl,
+    ...clientArgs,
     typeGuard: isSceneResponse,
     fetchOptions: {
       method: "POST",
@@ -185,17 +174,13 @@ export async function postScene({
  * @returns Updated scene details.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
-export async function patchScene({
-  iTwinId,
-  sceneId,
-  scene,
-  getAccessToken,
-  baseUrl,
-}: PatchSceneParams & AuthArgs): Promise<SceneMetadataResponse> {
+export async function patchScene(
+  { iTwinId, sceneId, scene }: PatchSceneParams,
+  clientArgs: ClientArgs,
+): Promise<SceneMetadataResponse> {
   return callApi<SceneMetadataResponse>({
     endpoint: `/${sceneId}?iTwinId=${iTwinId}`,
-    getAccessToken,
-    baseUrl,
+    ...clientArgs,
     typeGuard: isSceneMetadataResponse,
     fetchOptions: {
       method: "PATCH",
@@ -213,16 +198,13 @@ export async function patchScene({
  * @param params - {@link DeleteSceneParams}
  * @throws {ScenesApiError} If the API call fails.
  */
-export async function deleteScene({
-  sceneId,
-  iTwinId,
-  getAccessToken,
-  baseUrl,
-}: DeleteSceneParams & AuthArgs): Promise<void> {
+export async function deleteScene(
+  { sceneId, iTwinId }: DeleteSceneParams,
+  clientArgs: ClientArgs,
+): Promise<void> {
   await callApi({
     endpoint: `/${sceneId}?iTwinId=${iTwinId}`,
-    getAccessToken,
-    baseUrl,
+    ...clientArgs,
     fetchOptions: { method: "DELETE" },
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",

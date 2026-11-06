@@ -4,6 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 import { PagingLinks } from "./models/index.js";
 
+/** Resolves after `ms` milliseconds. */
+export function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 /**
  * Async generator for iterating through paged API endpoints
  * Follows the 'next' link in the response's _links property until no more pages are available.
@@ -25,7 +30,7 @@ export async function* iteratePagedEndpoint<T extends { _links?: PagingLinks }>(
     yield response;
     url = response._links?.next?.href;
     if (url && delayMs > 0) {
-      await new Promise((resolve) => setTimeout(resolve, delayMs));
+      await sleep(delayMs);
     }
   }
 }

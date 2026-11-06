@@ -3,6 +3,8 @@
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
 import { getActivityId, handleErrorResponse, ScenesApiError } from "../models/index.js";
+import { fetchWithRetry } from "./retry/fetchWithRetry.js";
+import { RetryPolicy } from "./retry/retryPolicy.js";
 
 /**
  * Arguments for configuring an API request.
@@ -20,13 +22,15 @@ export interface RequestArgs<T = unknown> {
 }
 
 /**
- * Authentication and base URL arguments for API requests.
+ * Authentication, base URL, and retry policy arguments for all API requests.
  * @property getAccessToken - Async function to retrieve the access token for authentication.
  * @property baseUrl - The base URL for the API.
+ * @property retryPolicy - Fully resolved retry policy to apply to the request.
  */
-export interface AuthArgs {
+export interface ClientArgs {
   getAccessToken: () => Promise<string>;
   baseUrl: string;
+  retryPolicy: RetryPolicy;
 }
 
 /**
@@ -40,14 +44,15 @@ export interface AuthArgs {
  * @param param.endpoint - The endpoint to call, combined with the base URL.
  * @param param.typeGuard - Type guard to validate the response body.
  * @param param.fetchOptions - Additional options for the fetch request.
+ * @param param.retryPolicy - The retry policy to apply to the request.
  * @returns The validated response body (`T`) when a `typeGuard` is supplied; the raw parsed JSON
  *   (`unknown`) when no `typeGuard` is given; or `undefined` for 204 No Content responses.
  */
 export async function callApi<T>(
-  args: RequestArgs<T> & AuthArgs & { typeGuard: (data: unknown) => data is T },
+  args: RequestArgs<T> & ClientArgs & { typeGuard: (data: unknown) => data is T },
 ): Promise<T>;
-export async function callApi(args: Omit<RequestArgs, "typeGuard"> & AuthArgs): Promise<unknown>;
-export async function callApi<T>(args: RequestArgs<T> & AuthArgs): Promise<T | unknown> {
+export async function callApi(args: Omit<RequestArgs, "typeGuard"> & ClientArgs): Promise<unknown>;
+export async function callApi<T>(args: RequestArgs<T> & ClientArgs): Promise<T | unknown> {
   const {
     baseUrl,
     getAccessToken,
@@ -55,16 +60,19 @@ export async function callApi<T>(args: RequestArgs<T> & AuthArgs): Promise<T | u
     endpoint = "",
     typeGuard,
     fetchOptions,
+    retryPolicy,
   } = args;
+
   const headers = {
     Authorization: await getAccessToken(),
     Accept: "application/json",
     ...additionalHeaders,
   };
-  const response = await fetch(`${baseUrl}${endpoint}`, {
-    ...fetchOptions,
-    headers,
-  });
+  const response = await fetchWithRetry(
+    `${baseUrl}${endpoint}`,
+    { ...fetchOptions, headers },
+    retryPolicy,
+  );
 
   if (!response.ok) {
     await handleErrorResponse(response);

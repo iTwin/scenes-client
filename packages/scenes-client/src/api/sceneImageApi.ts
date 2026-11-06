@@ -9,7 +9,7 @@ import {
   isImageResponse,
   UploadSceneImageParams,
 } from "../models/index.js";
-import { AuthArgs, callApi } from "./apiFetch.js";
+import { ClientArgs, callApi } from "./apiFetch.js";
 
 /**
  * Fetches a link to a scene's image.
@@ -17,17 +17,13 @@ import { AuthArgs, callApi } from "./apiFetch.js";
  * @returns ImageResponse containing a link to the image.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
-export async function getSceneImage({
-  sceneId,
-  iTwinId,
-  size,
-  getAccessToken,
-  baseUrl,
-}: GetSceneImageParams & AuthArgs): Promise<ImageResponse> {
+export async function getSceneImage(
+  { sceneId, iTwinId, size }: GetSceneImageParams,
+  clientArgs: ClientArgs,
+): Promise<ImageResponse> {
   return callApi<ImageResponse>({
     endpoint: `/${sceneId}/image?iTwinId=${iTwinId}${size ? `&size=${size}` : ""}`,
-    getAccessToken,
-    baseUrl,
+    ...clientArgs,
     typeGuard: isImageResponse,
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -41,18 +37,13 @@ export async function getSceneImage({
  * @returns ImageResponse containing a link to the uploaded image.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
-export async function uploadSceneImage({
-  sceneId,
-  iTwinId,
-  image,
-  contentType,
-  getAccessToken,
-  baseUrl,
-}: UploadSceneImageParams & AuthArgs): Promise<ImageResponse> {
+export async function uploadSceneImage(
+  { sceneId, iTwinId, image, contentType }: UploadSceneImageParams,
+  clientArgs: ClientArgs,
+): Promise<ImageResponse> {
   return callApi<ImageResponse>({
     endpoint: `/${sceneId}/image?iTwinId=${iTwinId}`,
-    getAccessToken,
-    baseUrl,
+    ...clientArgs,
     typeGuard: isImageResponse,
     fetchOptions: {
       method: "PUT",
@@ -70,16 +61,13 @@ export async function uploadSceneImage({
  * @param params - {@link DeleteSceneImageParams}
  * @throws {ScenesApiError} If the API call fails.
  */
-export async function deleteSceneImage({
-  sceneId,
-  iTwinId,
-  getAccessToken,
-  baseUrl,
-}: DeleteSceneImageParams & AuthArgs): Promise<void> {
+export async function deleteSceneImage(
+  { sceneId, iTwinId }: DeleteSceneImageParams,
+  clientArgs: ClientArgs,
+): Promise<void> {
   await callApi({
     endpoint: `/${sceneId}/image?iTwinId=${iTwinId}`,
-    getAccessToken,
-    baseUrl,
+    ...clientArgs,
     fetchOptions: {
       method: "DELETE",
     },

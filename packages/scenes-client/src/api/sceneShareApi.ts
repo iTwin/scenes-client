@@ -12,7 +12,7 @@ import {
   isSceneShareListResponse,
   isSceneShareResponse,
 } from "../models/index.js";
-import { AuthArgs, callApi } from "./apiFetch.js";
+import { ClientArgs, callApi } from "./apiFetch.js";
 
 /**
  * Fetches a single scene share by ID.
@@ -20,17 +20,13 @@ import { AuthArgs, callApi } from "./apiFetch.js";
  * @returns SceneShareResponse containing the single share details.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
-export async function getSceneShare({
-  iTwinId,
-  sceneId,
-  shareId,
-  getAccessToken,
-  baseUrl,
-}: GetSceneShareParams & AuthArgs): Promise<SceneShareResponse> {
+export async function getSceneShare(
+  { iTwinId, sceneId, shareId }: GetSceneShareParams,
+  clientArgs: ClientArgs,
+): Promise<SceneShareResponse> {
   return callApi<SceneShareResponse>({
     endpoint: `/${sceneId}/shares/${shareId}?iTwinId=${iTwinId}`,
-    getAccessToken,
-    baseUrl,
+    ...clientArgs,
     typeGuard: isSceneShareResponse,
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -44,16 +40,13 @@ export async function getSceneShare({
  * @returns SceneShareListResponse containing all shares for the scene.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
-export async function getAllSceneShares({
-  iTwinId,
-  sceneId,
-  getAccessToken,
-  baseUrl,
-}: GetAllSceneSharesParams & AuthArgs): Promise<SceneShareListResponse> {
+export async function getAllSceneShares(
+  { iTwinId, sceneId }: GetAllSceneSharesParams,
+  clientArgs: ClientArgs,
+): Promise<SceneShareListResponse> {
   return callApi<SceneShareListResponse>({
     endpoint: `/${sceneId}/shares?iTwinId=${iTwinId}`,
-    getAccessToken,
-    baseUrl,
+    ...clientArgs,
     typeGuard: isSceneShareListResponse,
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -67,17 +60,13 @@ export async function getAllSceneShares({
  * @returns Created share details, including the `shareKey`.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
-export async function postSceneShare({
-  iTwinId,
-  sceneId,
-  share,
-  getAccessToken,
-  baseUrl,
-}: PostSceneShareParams & AuthArgs): Promise<SceneShareResponse> {
+export async function postSceneShare(
+  { iTwinId, sceneId, share }: PostSceneShareParams,
+  clientArgs: ClientArgs,
+): Promise<SceneShareResponse> {
   return callApi<SceneShareResponse>({
     endpoint: `/${sceneId}/shares?iTwinId=${iTwinId}`,
-    getAccessToken,
-    baseUrl,
+    ...clientArgs,
     typeGuard: isSceneShareResponse,
     fetchOptions: {
       method: "POST",
@@ -96,17 +85,13 @@ export async function postSceneShare({
  * @param params - {@link RevokeSceneShareParams}
  * @throws {ScenesApiError} If the API call fails.
  */
-export async function revokeSceneShare({
-  iTwinId,
-  sceneId,
-  shareId,
-  getAccessToken,
-  baseUrl,
-}: RevokeSceneShareParams & AuthArgs): Promise<void> {
+export async function revokeSceneShare(
+  { iTwinId, sceneId, shareId }: RevokeSceneShareParams,
+  clientArgs: ClientArgs,
+): Promise<void> {
   await callApi({
     endpoint: `/${sceneId}/shares/${shareId}?iTwinId=${iTwinId}`,
-    getAccessToken,
-    baseUrl,
+    ...clientArgs,
     fetchOptions: { method: "DELETE" },
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
