@@ -26,6 +26,7 @@ export * from "./scene/sceneCreate.js";
 export * from "./scene/sceneData.js";
 export * from "./scene/sceneDataLinks.js";
 export * from "./scene/sceneMinimal.js";
+export * from "./scene/sceneSource.js";
 export * from "./scene/sceneUpdate.js";
 export * from "./scene/sceneVisibility.js";
 export * from "./scene/sceneWithLinks.js";

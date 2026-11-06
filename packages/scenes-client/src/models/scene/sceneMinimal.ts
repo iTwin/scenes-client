@@ -5,6 +5,7 @@
 import { isObject } from "../../utilities.js";
 import { isLink, Link } from "../apiResponse.js";
 import { isTagMinimal, TagMinimal } from "../tag/tagMinimal.js";
+import { isSceneSource, SceneSource } from "./sceneSource.js";
 import { SceneVisibility } from "./sceneVisibility.js";
 
 export interface SceneMinimal {
@@ -32,6 +33,11 @@ export interface SceneMinimal {
   tags: TagMinimal[];
   /** Link to the scene's thumbnail image, if one has been uploaded. */
   image?: Link;
+  /**
+   * Reference to the scene this scene was copied from, if any.
+   * Informational only; the source may have since been deleted or become inaccessible.
+   */
+  sourceScene?: SceneSource;
 }
 
 export function isSceneMinimal(v: unknown): v is SceneMinimal {
@@ -49,6 +55,7 @@ export function isSceneMinimal(v: unknown): v is SceneMinimal {
     Array.isArray(v.tags) &&
     v.tags.every((tag) => isTagMinimal(tag)) &&
     (v.description === undefined || typeof v.description === "string") &&
-    (v.image === undefined || isLink(v.image))
+    (v.image === undefined || isLink(v.image)) &&
+    (v.sourceScene === undefined || isSceneSource(v.sourceScene))
   );
 }

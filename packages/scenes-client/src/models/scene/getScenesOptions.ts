@@ -13,10 +13,13 @@ export interface GetScenesOptions {
   skip?: number;
   /** ms pause between pages */
   delayMs?: number;
+  /** (optional) only return scenes whose `sourceScene.id` matches this value */
+  sourceSceneId?: string;
 }
 
 export const GET_SCENES_DEFAULTS: Required<GetScenesOptions> = {
   top: 100,
   delayMs: 0,
   skip: 0,
+  sourceSceneId: "",
 };

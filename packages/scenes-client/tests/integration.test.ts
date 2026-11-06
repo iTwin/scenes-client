@@ -625,6 +625,36 @@ describe("Scene Share operations", () => {
   });
 });
 
+describe("Scene source operations", () => {
+  let sourceId: string;
+  let copyId: string;
+
+  afterAll(async () => {
+    await client.deleteScene({ iTwinId: ITWIN_ID, sceneId: sourceId });
+    await client.deleteScene({ iTwinId: ITWIN_ID, sceneId: copyId });
+  });
+
+  it("create a scene with source metadata", async () => {
+    const source = await client.postScene({
+      iTwinId: ITWIN_ID,
+      scene: { displayName: "SourceSceneToCopy" },
+    });
+    sourceId = source.scene.id;
+    expect(source.scene.sourceScene).toBeUndefined();
+
+    const sourceScene = { id: sourceId, lastModified: source.scene.lastModified };
+    const copy = await client.postScene({
+      iTwinId: ITWIN_ID,
+      scene: { displayName: "CopiedScene", sourceScene },
+    });
+    copyId = copy.scene.id;
+    expect(copy.scene.sourceScene).toEqual(sourceScene);
+
+    const fetched = await client.getSceneMetadata({ iTwinId: ITWIN_ID, sceneId: copyId });
+    expect(fetched.scene.sourceScene).toEqual(sourceScene);
+  });
+});
+
 describe("Tag operations", () => {
   let tagId: string;
   let sceneId: string;
