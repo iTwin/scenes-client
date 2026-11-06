@@ -58,22 +58,19 @@ For more details, see the [Changesets documentation](https://github.com/changese
 
 ## Beta Versions
 
-Ad hoc publishes let you push a one-off build of `@itwin/scenes-client` to npm under the `beta` dist-tag, so consumers can start testing before it's part of a stable release. This workflow can only publish to the `beta` tag; it has no `latest` option, so it can never affect what consumers get by default. Stable releases always go through the normal changesets-driven flow on `main` instead.
+Ad hoc publishes let you push a one-off build of `@itwin/scenes-client` to npm under the `beta` dist-tag, so consumers can start testing before it's part of a stable release. This never affects the `latest` tag; stable releases go through the normal changesets workflow on `main`.
 
-This is done with the **Manual Publish** GitHub Action (`manual-beta-publish.yaml`), triggered from the Actions tab.
-It can run from any branch and does not compute or bump any version for you — it publishes whatever is currently committed in `packages/scenes-client/package.json`'s `version` field, exactly as-is, under the `beta` tag.
-It also never touches your `.changeset/*.md` files, so the changesets describing your work are left untouched for the stable release later.
+Use the **Manual Beta Publish** GitHub Action (`manual-beta-publish.yaml`), which publishes whatever version is currently set in `packages/scenes-client/package.json`.
 
 **To publish a beta version:**
 
-1. Set the version you want published in `packages/scenes-client/package.json`, e.g. `1.2.0-beta.0`.
-2. Commit and push that change to your branch.
-3. Trigger the **Manual Publish** workflow, selecting your branch.
-4. The `validate` job runs lint/typecheck/audit/build/tests and resolves the version to publish, visible in its step summary. The `publish` job then pauses for approval on the `npm-beta-publish` environment. A codeowner then reviews the resolved version before approving. Once approved, it publishes to npm under the `beta` dist-tag.
-5. To publish another beta, bump the version again (e.g. `1.2.0-beta.1`), push, and re-trigger the workflow.
+1. Set the version you want published in `packages/scenes-client/package.json`, e.g. `1.2.0-beta.0`, and commit/push it to your branch.
+2. Trigger the **Manual Publish** workflow from the Actions tab, selecting your branch.
+3. The `validate` job runs lint/typecheck/audit/build/tests and resolves the version, shown in its step summary. The `publish` job then pauses for codeowner approval on the `npm-beta-publish` environment before publishing to npm under the `beta` dist-tag.
+4. To publish another beta, bump the version again (e.g. `1.2.0-beta.1`), push, and re-trigger the workflow.
 
 Consumers can then install the latest beta with `npm install @itwin/scenes-client@beta`, or pin a specific one, e.g. `npm install @itwin/scenes-client@1.2.0-beta.0`.
 
 #### Before merging to main
 
-Reset `packages/scenes-client/package.json`'s `version` field and commit. Your changesets remain untouched and will drive the stable version bump and changelog when the branch is merged to `main` — review the resulting release PR to confirm the computed version is what you expect.
+Reset `packages/scenes-client/package.json`'s `version` field and commit — CI blocks the merge otherwise. Your changesets remain untouched and will drive the stable version bump and changelog when the branch merges to `main`.
