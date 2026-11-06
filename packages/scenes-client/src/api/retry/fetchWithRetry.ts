@@ -62,6 +62,24 @@ function computeDelayMs(attempt: number, retryPolicy: RetryPolicy): number {
 }
 
 /**
+ * Performs a single fetch and, for `ok` responses, buffers the body into a new `Response`.
+ * `fetch` resolves once the headers arrive, so buffering here makes a connection lost mid-body
+ * reject like any other network error, inside the retry boundary.
+ */
+async function fetchAndBuffer(url: string, fetchOptions: RequestInit): Promise<Response> {
+  const response = await fetch(url, fetchOptions);
+  if (!response.ok) {
+    return response;
+  }
+  const body = response.status === 204 ? null : await response.arrayBuffer();
+  return new Response(body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers: response.headers,
+  });
+}
+
+/**
  * Fetches a URL with retries on transient errors:
  *   - 429: retried for all methods, since the request wasn't processed.
  *   - 408, 5xx and network errors: retried for idempotent methods only.
@@ -81,7 +99,8 @@ export async function fetchWithRetry(
   for (let attempt = 0; attempt < retryPolicy.maxRetries; attempt++) {
     let response: Response;
     try {
-      response = await fetch(url, fetchOptions);
+      // response is buffered inside the retry loop to ensure that any network errors while reading the body are caught and retried
+      response = await fetchAndBuffer(url, fetchOptions);
     } catch (networkError) {
       if (!isIdempotent) {
         throw networkError;

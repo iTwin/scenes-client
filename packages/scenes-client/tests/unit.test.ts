@@ -1070,6 +1070,7 @@ describe("Retry Behavior", () => {
     scene: { displayName: "Test", sceneData: { objects: [] } },
   };
   const serverError = () => createErrorResponse({ code: "ServerError", message: "boom" }, 500);
+  const client = () => new SceneClient(getAccessToken, { retry: fastRetryOptions });
 
   afterEach(() => {
     vi.useRealTimers();
@@ -1157,6 +1158,45 @@ describe("Retry Behavior", () => {
         exampleSceneListResponse,
       );
       expect(fetchMock).toHaveBeenCalledTimes(2);
+    });
+
+    it("retries a GET when the connection is lost while reading the body", async () => {
+      const client = new SceneClient(getAccessToken, { retry: fastRetryOptions });
+      fetchMock
+        .mockImplementationOnce(() => createBodyFailureResponse(new TypeError("terminated")))
+        .mockImplementationOnce(() => createSuccessfulResponse(exampleSceneListResponse));
+
+      await expect(client.getScenes({ iTwinId: "itw-1" })).resolves.toEqual(
+        exampleSceneListResponse,
+      );
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+    });
+
+    it("throws the body read error once retries are exhausted", async () => {
+      const client = new SceneClient(getAccessToken, { retry: fastRetryOptions });
+      fetchMock.mockImplementation(() => createBodyFailureResponse(new TypeError("terminated")));
+
+      await expect(client.getScenes({ iTwinId: "itw-1" })).rejects.toThrow("terminated");
+      expect(fetchMock).toHaveBeenCalledTimes(1 + fastRetryOptions.maxRetries);
+    });
+
+    it.each([
+      ["a GET", () => client().getScenes({ iTwinId: "itw-1" })],
+      ["a POST", () => client().postScene(newScene)],
+    ])("does not retry malformed JSON on %s", async (_, request) => {
+      fetchMock.mockImplementation(() =>
+        Promise.resolve(new Response("{ not json", { status: 200 })),
+      );
+
+      await expect(request()).rejects.toThrow(SyntaxError);
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
+    it("does not retry a POST when the body read fails", async () => {
+      fetchMock.mockImplementation(() => createBodyFailureResponse(new TypeError("terminated")));
+
+      await expect(client().postScene(newScene)).rejects.toThrow("terminated");
+      expect(fetchMock).toHaveBeenCalledTimes(1);
     });
 
     it.each([304, 400, 401, 403, 404, 422])(
@@ -1393,22 +1433,22 @@ async function getAccessToken(): Promise<string> {
 }
 
 function createSuccessfulResponse(body: unknown, headers?: Record<string, string>) {
+  return Promise.resolve(new Response(JSON.stringify(body), { status: 200, headers }));
+}
+
+/** A 200 response whose headers arrive but whose body fails to read, like a connection lost mid-body. */
+function createBodyFailureResponse(error: Error) {
   return Promise.resolve({
     ok: true,
     status: 200,
-    headers: {
-      get: (name: string) => headers?.[name] ?? null,
-    },
-    json: async () => body,
-  } as Response);
+    headers: { get: () => null },
+    arrayBuffer: () => Promise.reject(error),
+    json: () => Promise.reject(error),
+  } as unknown as Response);
 }
 
 function createNoContentResponse() {
-  return Promise.resolve({
-    ok: true,
-    status: 204,
-    json: () => Promise.reject(new Error("No body on 204 response")),
-  } as Response);
+  return Promise.resolve(new Response(null, { status: 204 }));
 }
 
 function createErrorResponse(errorBody: unknown, status: number, headers?: Record<string, string>) {
