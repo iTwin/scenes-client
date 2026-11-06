@@ -46,15 +46,15 @@ jobs:
       - name: Resolve version to publish
         id: version
         run: |
-          VERSION=$(node -p "require('./packages/scenes-client/package.json').version")
-          if [[ "$VERSION" != *-beta.* ]]; then
-            echo "::error::Version '$VERSION' is missing a '-beta.N' prerelease identifier. Refusing to publish a non-prerelease version under the 'beta' tag."
-            exit 1
-          fi
+          # Validate that the version is a proper beta prerelease
+          VERSION=$(jq -r .version packages/scenes-client/package.json)
+          node .github/workflows/scripts/validate-beta-version.js "$VERSION"
+          # Check if already published
           if npm view "@itwin/scenes-client@$VERSION" version > /dev/null 2>&1; then
             echo "::error::Version $VERSION is already published to npm. Bump packages/scenes-client/package.json's version before running this workflow."
             exit 1
           fi
+          # Output the resolved version for review
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           {
             echo "### Pending beta publish"
