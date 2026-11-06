@@ -56,34 +56,24 @@ When changesets are added and merged into the main branch, a release pull reques
 
 For more details, see the [Changesets documentation](https://github.com/changesets/changesets/blob/main/README.md).
 
-## Publishing Beta Versions
+## Beta Versions
 
-Beta prereleases let you publish work-in-progress changes to `@itwin/scenes-client` under the `beta` npm dist-tag before they're included in a stable release. This never affects the `latest` tag, so it has no effect on consumers who install the package normally.
+Ad hoc publishes let you push a one-off build of `@itwin/scenes-client` to npm under the `beta` dist-tag, so consumers can start testing before it's part of a stable release. This workflow can only publish to the `beta` tag; it has no `latest` option, so it can never affect what consumers get by default. Stable releases always go through the normal changesets-driven flow on `main` instead.
 
-This uses Changesets' built-in [prerelease mode](https://changesets.dev/guide/prereleases). A branch is "in beta prerelease mode" for as long as `.changeset/pre.json` exists on it with `"mode": "pre"`. No separate prerelease branch needs to be created or maintained; your normal feature branch can transiently become one for as long as you're iterating.
+This is done with the **Manual Publish** GitHub Action (`manual-beta-publish.yaml`), triggered from the Actions tab.
+It can run from any branch and does not compute or bump any version for you — it publishes whatever is currently committed in `packages/scenes-client/package.json`'s `version` field, exactly as-is, under the `beta` tag.
+It also never touches your `.changeset/*.md` files, so the changesets describing your work are left untouched for the stable release later.
 
-**To start on your feature branch:**
+**To publish a beta version:**
 
-1. Make sure you have at least one pending changeset (`pnpm changeset`) describing the change.
-2. Enter beta prerelease mode and commit the result:
-   ```shell
-   pnpm changeset pre enter beta
-   git add .changeset/pre.json
-   git commit -m "Enter beta prerelease mode"
-   ```
-3. Push. The **Changesets Beta Prerelease** GitHub Action (`release-beta-workflow.yaml`) will open (or update) a "Release beta packages" pull request against your branch, computing the next `-beta.N` version (`1.2.0-beta.0`, then `1.2.0-beta.1`, etc. on subsequent pushes) from your pending changesets.
-4. Once you're ready to actually publish, merge the PR into your branch. This publishes to npm under the `beta` dist-tag. Merging is the approval checkpoint, the same model the stable release workflow uses.
-5. Repeat as the design iterates: add a new changeset, push, and merge the resulting PR to publish another beta version. Do not run `pnpm changeset pre enter` or `pre exit` again mid-cycle.
+1. Set the version you want published in `packages/scenes-client/package.json`, e.g. `1.2.0-beta.0`.
+2. Commit and push that change to your branch.
+3. Trigger the **Manual Publish** workflow, selecting your branch.
+4. The `validate` job runs lint/typecheck/audit/build/tests and resolves the version to publish, visible in its step summary. The `publish` job then pauses for approval on the `npm-beta-publish` environment. A codeowner then reviews the resolved version before approving. Once approved, it publishes to npm under the `beta` dist-tag.
+5. To publish another beta, bump the version again (e.g. `1.2.0-beta.1`), push, and re-trigger the workflow.
 
 Consumers can then install the latest beta with `npm install @itwin/scenes-client@beta`, or pin a specific one, e.g. `npm install @itwin/scenes-client@1.2.0-beta.0`.
 
 #### Before merging to main
 
-Once the feature is finalized, exit prerelease mode before opening your PR to `main`, otherwise your changesets will be left in a prerelease state and CI will block the merge. Run:
-
-```shell
-pnpm changeset pre exit
-```
-
-Commit the changes and push. This sets `"mode": "exit"` in `.changeset/pre.json`.
-Your original changesets remain untouched and will still drive the real version bump and changelog when the branch is merged to `main`.
+Reset `packages/scenes-client/package.json`'s `version` field and commit. Your changesets remain untouched and will drive the stable version bump and changelog when the branch is merged to `main` — review the resulting release PR to confirm the computed version is what you expect.

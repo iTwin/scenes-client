@@ -40,11 +40,3 @@ jobs:
           # Fix for issue https://github.com/changesets/changesets/issues/517#issuecomment-884778604
           git pull -f origin main:main
           pnpm changeset status --since=main
-
-      - name: Check if in prerelease mode
-        run: |
-          # 'changeset pre exit' leaves pre.json with mode "exit"; it is removed by 'changeset version' on main
-          if [ -f .changeset/pre.json ] && [ "$(node -p "require('./.changeset/pre.json').mode")" = "pre" ]; then
-            echo "::error::This branch is still in prerelease mode. Run 'pnpm changeset pre exit' and commit before merging."
-            exit 1
-          fi
