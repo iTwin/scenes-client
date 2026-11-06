@@ -15,13 +15,12 @@ name: Manual Beta Publish
 on:
   workflow_dispatch: {}
 
-permissions:
-  contents: read
-
 jobs:
   validate:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      contents: read
     outputs:
       version: ${{ steps.version.outputs.version }}
 
@@ -48,6 +47,10 @@ jobs:
         id: version
         run: |
           VERSION=$(node -p "require('./packages/scenes-client/package.json').version")
+          if [[ "$VERSION" != *-beta.* ]]; then
+            echo "::error::Version '$VERSION' is missing a '-beta.N' prerelease identifier. Refusing to publish a non-prerelease version under the 'beta' tag."
+            exit 1
+          fi
           if npm view "@itwin/scenes-client@$VERSION" version > /dev/null 2>&1; then
             echo "::error::Version $VERSION is already published to npm. Bump packages/scenes-client/package.json's version before running this workflow."
             exit 1
@@ -57,9 +60,6 @@ jobs:
             echo "### Pending beta publish"
             echo "Will publish \`@itwin/scenes-client@$VERSION\` under the \`beta\` dist-tag."
           } >> "$GITHUB_STEP_SUMMARY"
-          if [[ "$VERSION" != *-beta.* ]]; then
-            echo "::warning::Version '$VERSION' doesn't look like a prerelease (no '-beta.')."
-          fi
 
       - name: Lint
         run: pnpm lint:client
@@ -83,6 +83,7 @@ jobs:
     environment: npm-beta-publish # requires codeowner approval; shows the resolved version from 'validate' for review
     permissions:
       id-token: write
+      contents: read
 
     steps:
       - name: Checkout
