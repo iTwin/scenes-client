@@ -58,29 +58,32 @@ For more details, see the [Changesets documentation](https://github.com/changese
 
 ## Publishing Beta Versions
 
-Use the **Publish Beta Version** GitHub Action to publish beta changes as a prerelease under the `beta` npm dist-tag, before it's ready to ship in a stable release. This uses Changesets' built-in [prerelease mode](https://changesets.dev/guide/prereleases) — the workflow computes and commits the `-beta.N` version bump for you based on your branch's pending changesets; you never choose or edit a version by hand.
+Beta prereleases let you publish work-in-progress changes to `@itwin/scenes-client` under the `beta` npm dist-tag before they're included in a stable release. This never affects the `latest` tag, so it has no effect on consumers who install the package normally.
 
-Before dispatching it:
+This uses Changesets' built-in [prerelease mode](https://changesets.dev/guide/prereleases). A branch is "in beta prerelease mode" for as long as `.changeset/pre.json` exists on it with `"mode": "pre"`. No separate prerelease branch needs to be created or maintained; your normal feature branch can transiently become one for as long as you're iterating.
 
-1. Make sure your branch has at least one pending changeset (`pnpm changeset`). The workflow fails fast if none is found, since there's nothing to bump.
-2. Do **not** trigger this from `main` — the workflow refuses to run there. Entering prerelease mode on `main` would cause the regular release workflow to start publishing prereleases instead of stable releases on every merge.
-3. Trigger the workflow from the [Actions tab](https://github.com/iTwin/scenes-client/actions/workflows/publish-beta-version.yaml) on your branch. This requires approval from one of the code owners.
+**To start on your feature branch:**
 
-Each run:
+1. Make sure you have at least one pending changeset (`pnpm changeset`) describing the change.
+2. Enter beta prerelease mode and commit the result:
+   ```shell
+   pnpm changeset pre enter beta
+   git add .changeset/pre.json
+   git commit -m "Enter beta prerelease mode"
+   ```
+3. Push. The **Changesets Beta Prerelease** GitHub Action (`release-beta-workflow.yaml`) will open (or update) a "Release beta packages" pull request against your branch, computing the next `-beta.N` version (`1.2.0-beta.0`, then `1.2.0-beta.1`, etc. on subsequent pushes) from your pending changesets.
+4. Once you're ready to actually publish, merge the PR into your branch. This publishes to npm under the `beta` dist-tag. Merging is the approval checkpoint, the same model the stable release workflow uses.
+5. Repeat as the design iterates: add a new changeset, push, and merge the resulting PR to publish another beta version. Do not run `pnpm changeset pre enter` or `pre exit` again mid-cycle.
 
-- Enters beta prerelease mode if not already in it (first run on the branch only).
-- Applies your branch's pending changesets, computing the next `-beta.N` version (`1.2.0-beta.0`, then `1.2.0-beta.1`, etc. on subsequent runs).
-- Publishes to npm under the `beta` dist-tag.
-- Commits and pushes the resulting version bump and changelog back to your branch, so the next beta run picks up from the right state.
-
-Consumers can then install the published beta version, e.g. `npm install @itwin/scenes-client@1.2.0-beta.0`.
+Consumers can then install the latest beta with `npm install @itwin/scenes-client@beta`, or pin a specific one, e.g. `npm install @itwin/scenes-client@1.2.0-beta.0`.
 
 #### Before merging to main
 
-Your branch must exit prerelease mode before it's merged, otherwise your changesets will be left in a prerelease state. Run:
+Once the feature is finalized, exit prerelease mode before opening your PR to `main`, otherwise your changesets will be left in a prerelease state and CI will block the merge. Run:
 
 ```shell
 pnpm changeset pre exit
 ```
 
-Commit the resulting deletion of `.changeset/pre.json` and push. Your original changesets remain untouched and will still drive the real version bump and changelog when the branch is merged to `main` and released through the normal process.
+Commit the changes and push. This sets `"mode": "exit"` in `.changeset/pre.json`.
+Your original changesets remain untouched and will still drive the real version bump and changelog when the branch is merged to `main`.
