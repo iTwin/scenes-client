@@ -1,0 +1,119 @@
+# Manually publish beta versions of @itwin/scenes-client to npm. Trigger it from the Actions tab.
+# There is no 'latest' option: stable releases always go through the normal changesets-driven
+# workflow on main (release-workflow.yaml), so this workflow can never publish to npm's default tag.
+#
+# This workflow does NOT compute or bump any version itself. Set the version you want published
+# in packages/scenes-client/package.json on your branch (e.g. `1.2.0-beta.0`) and commit/push it
+# before running this workflow. Pending changesets for the stable release on main are unaffected.
+#
+# Checks (lint/typecheck/audit/build/tests) run unguarded so their results and the resolved
+# version are visible before anyone needs to approve anything. Only the actual publish is gated
+# behind a reviewer approving the 'npm-beta-publish' GitHub Environment — see CONTRIBUTING.md's
+# "Beta Versions" section.
+name: Manual Beta Publish
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ^11.28.6
+          run_install: false
+
+      - name: Use Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Resolve version to publish
+        id: version
+        run: |
+          # Validate that the version is a proper beta prerelease
+          VERSION=$(jq -r .version packages/scenes-client/package.json)
+          node .github/workflows/scripts/validate-beta-version.js "$VERSION"
+          # Check if already published
+          if npm view "@itwin/scenes-client@$VERSION" version > /dev/null 2>&1; then
+            echo "::error::Version $VERSION is already published to npm. Bump packages/scenes-client/package.json's version before running this workflow."
+            exit 1
+          fi
+          # Output the resolved version for review
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          {
+            echo "### Pending beta publish"
+            echo "Will publish \`@itwin/scenes-client@$VERSION\` under the \`beta\` dist-tag."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Lint
+        run: pnpm lint:client
+
+      - name: Typecheck
+        run: pnpm typecheck:client
+
+      - name: Run audit
+        run: pnpm audit --audit-level high
+
+      - name: Build components scenes-client
+        run: pnpm build:client
+
+      - name: Run unit tests
+        run: pnpm test:client:unit
+
+  publish:
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: npm-beta-publish # requires codeowner approval; shows the resolved version from 'validate' for review
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ^11.28.6
+          run_install: false
+
+      - name: Use Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org/
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Rebuilt here because this job runs on a fresh runner with no access to the 'validate' job's filesystem
+      - name: Build components scenes-client
+        run: pnpm build:client
+
+      - name: Publish to npm
+        # --no-git-tag: this is a one-off ad hoc publish, not a tracked release.
+        # It does not create/push git tags or GitHub releases the way main release workflow does.
+        run: |
+          echo "Publishing @itwin/scenes-client@${{ needs.validate.outputs.version }} under the 'beta' tag"
+          pnpm changeset publish --tag beta --no-git-tag
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_PUBLISH_ITWIN }}

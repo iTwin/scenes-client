@@ -55,3 +55,22 @@ Follow the prompts to describe your changes and select the appropriate version b
 When changesets are added and merged into the main branch, a release pull request (PR) will be automatically created by the Changesets GitHub Action. This PR will contain the version updates and changelog entries generated from your changesets. Review the release PR to ensure the version bumps and changelog messages are accurate before merging. Once the release PR is merged, the new package version will be published automatically.
 
 For more details, see the [Changesets documentation](https://github.com/changesets/changesets/blob/main/README.md).
+
+## Beta Versions
+
+Ad hoc publishes let you push a one-off build of `@itwin/scenes-client` to npm under the `beta` dist-tag, so consumers can start testing before it's part of a stable release. This never affects the `latest` tag; stable releases go through the normal changesets workflow on `main`.
+
+Use the **Manual Beta Publish** GitHub Action (`manual-beta-publish.yaml`), which publishes whatever version is currently set in `packages/scenes-client/package.json`.
+
+**To publish a beta version:**
+
+1. Set the version you want published in `packages/scenes-client/package.json`, e.g. `1.2.0-beta.0`, and commit/push it to your branch.
+2. Trigger the **Manual Publish** workflow from the Actions tab, selecting your branch.
+3. The `validate` job runs lint/typecheck/audit/build/tests and resolves the version, shown in its step summary. The `publish` job then pauses for codeowner approval on the `npm-beta-publish` environment before publishing to npm under the `beta` dist-tag.
+4. To publish another beta, bump the version again (e.g. `1.2.0-beta.1`), push, and re-trigger the workflow.
+
+Consumers can then install the latest beta with `npm install @itwin/scenes-client@beta`, or pin a specific one, e.g. `npm install @itwin/scenes-client@1.2.0-beta.0`.
+
+#### Before merging to main
+
+Reset `packages/scenes-client/package.json`'s `version` field and commit — CI blocks the merge otherwise. Your changesets remain untouched and will drive the stable version bump and changelog when the branch merges to `main`.
