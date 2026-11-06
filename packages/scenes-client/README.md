@@ -790,7 +790,7 @@ Optionally configure retries through the constructor's `retry` option:
 import { SceneClient } from "@itwin/scenes-client";
 
 const client = new SceneClient(async () => "<itwin_platform_auth_token>", {
-  retryPolicy: { maxRetries: 5, baseDelayMs: 1000, maxDelayMs: 10000 },
+  retry: { maxRetries: 5, baseDelayMs: 1000, maxDelayMs: 10000 },
 });
 ```
 
