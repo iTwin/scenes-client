@@ -60,26 +60,6 @@ export function isObject(v: unknown): v is Record<string, unknown> {
 }
 
 /**
- * Checks if a value is a non-negative integer.
- *
- * @param value - The value to check.
- * @returns True if the value is a non-negative integer, false otherwise.
- */
-export function isNonNegativeInteger(value: unknown): value is number {
-  return typeof value === "number" && Number.isInteger(value) && value >= 0;
-}
-
-/**
- * Checks if a value is a non-negative finite number.
- *
- * @param value - The value to check.
- * @returns True if the value is a non-negative finite number, false otherwise.
- */
-export function isNonNegativeFiniteNumber(value: unknown): value is number {
-  return typeof value === "number" && Number.isFinite(value) && value >= 0;
-}
-
-/**
  * Omit that works correctly with union types.
  * This applies the omit operation to each union member individually, preserving type-specific properties.
  * See https://github.com/microsoft/TypeScript/issues/54525.

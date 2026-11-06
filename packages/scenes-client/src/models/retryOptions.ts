@@ -4,24 +4,32 @@
  *--------------------------------------------------------------------------------------------*/
 
 /**
- * Options for configuring how {@link SceneClient} retries failed requests.
- * Applies to 429s (rate limit), 5xx responses, and network errors.
+ * Options for configuring how SceneClient retries failed requests.
+ * Applies to 429s (rate limit), 408/5xx responses, and network errors.
+ * Supplied values are validated when the client is constructed; invalid values throw.
  */
 export interface RetryOptions {
-  /** Maximum number of retry attempts after the initial request (default 3, max 10) */
+  /**
+   * Maximum number of retry attempts after the initial request (default 3).
+   * Must be an integer from 0 to 10; `0` disables retries.
+   */
   maxRetries?: number;
-  /** Base delay in milliseconds used for exponential backoff between retries (default 500) */
+  /**
+   * Base delay in milliseconds for exponential backoff (default 500).
+   * The backoff doubles on each retry, and the actual wait is a random value between half and all of it.
+   * Must be a non-negative finite number.
+   */
   baseDelayMs?: number;
   /**
-   * Maximum delay in milliseconds to wait before a retry (default 10000).
-   * Also caps a server-provided `Retry-After`: if honoring it would mean waiting longer than this, the retry is abandoned and the error is surfaced immediately instead.
+   * Upper bound in milliseconds on the exponential backoff (default 5000).
+   * Doesn't apply to a server-requested `Retry-After`; see `maxRetryAfterMs`.
+   * Must be a non-negative finite number.
    */
   maxDelayMs?: number;
+  /**
+   * Longest server-requested `Retry-After` delay, in milliseconds, the client will wait for (default 10000).
+   * If a response asks for a longer wait, it isn't retried and its error is thrown immediately instead.
+   * Must be a non-negative finite number.
+   */
+  maxRetryAfterMs?: number;
 }
-
-/** Default retry policy used when no user-supplied options are provided. */
-export const RETRY_DEFAULTS: Required<RetryOptions> = {
-  maxRetries: 3,
-  baseDelayMs: 500,
-  maxDelayMs: 10000,
-};

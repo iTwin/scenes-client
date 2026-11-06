@@ -3,6 +3,7 @@
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
 import { describe, it, expect, beforeAll, afterAll, afterEach, vi } from "vitest";
+import { RETRY_DEFAULTS } from "../src/api/retry/retryPolicy.js";
 import { SceneClient } from "../src/client.js";
 import {
   GET_SCENES_DEFAULTS,
@@ -11,7 +12,7 @@ import {
   OperationType,
   OrderByProperties,
   PagingLinks,
-  RETRY_DEFAULTS,
+  RetryOptions,
   SceneListResponse,
   SceneMetadataResponse,
   SceneObjectListResponse,
@@ -33,6 +34,34 @@ const fetchMock = vi.fn();
 beforeAll(() => vi.stubGlobal("fetch", fetchMock));
 afterAll(() => vi.unstubAllGlobals());
 afterEach(() => fetchMock.mockReset());
+
+describe("Client Construction", () => {
+  const CUSTOM_BASE = "https://example.com/scenes";
+
+  it.each([
+    ["default base URL with no options", () => new SceneClient(getAccessToken), BASE_DOMAIN],
+    ["baseUrl string", () => new SceneClient(getAccessToken, CUSTOM_BASE), CUSTOM_BASE],
+    [
+      "options.baseUrl",
+      () => new SceneClient(getAccessToken, { baseUrl: CUSTOM_BASE }),
+      CUSTOM_BASE,
+    ],
+    ["default base URL with empty options", () => new SceneClient(getAccessToken, {}), BASE_DOMAIN],
+  ])("uses %s", async (_, createClient, expectedBase) => {
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleSceneMetadataResponse));
+    await createClient().getSceneMetadata({ iTwinId: "itw-1", sceneId: "scene-1" });
+    expect(fetchMock.mock.calls[0][0]).toBe(`${expectedBase}/scene-1?iTwinId=itw-1`);
+  });
+
+  it("applies options.retry", async () => {
+    const client = new SceneClient(getAccessToken, { retry: { maxRetries: 0 } });
+    fetchMock.mockImplementation(() =>
+      createErrorResponse({ code: "ServerError", message: "boom" }, 500),
+    );
+    await expect(client.getScenes({ iTwinId: "itw-1" })).rejects.toThrow(ScenesApiError);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+});
 
 describe("Scenes Operations", () => {
   it("getSceneMetadata()", async () => {
@@ -763,7 +792,7 @@ describe("Tag Operations", () => {
 describe("Error Handling", () => {
   // maxRetries: 0 keeps these tests focused on single-attempt error parsing/mapping;
   // retry behavior itself is covered by the "Retry Behavior" suite below.
-  const client = new SceneClient(getAccessToken, undefined, { maxRetries: 0 });
+  const client = new SceneClient(getAccessToken, { retry: { maxRetries: 0 } });
 
   // Test different client methods to ensure error handling works across all endpoints
   const testCases = [
@@ -1034,169 +1063,328 @@ describe("Error Handling", () => {
 });
 
 describe("Retry Behavior", () => {
-  // Small/fast knobs so these tests don't wait on real backoff delays.
-  const fastRetryOptions = { maxRetries: 2, baseDelayMs: 1, maxDelayMs: 5 };
+  // A zero base delay makes every backoff delay 0ms, so tests don't wait on real backoff.
+  const fastRetryOptions = { maxRetries: 2, baseDelayMs: 0 };
+  const newScene = {
+    iTwinId: "itw-1",
+    scene: { displayName: "Test", sceneData: { objects: [] } },
+  };
+  const serverError = () => createErrorResponse({ code: "ServerError", message: "boom" }, 500);
 
-  afterEach(() => vi.useRealTimers());
-
-  it("uses RETRY_DEFAULTS when no retryOptions are provided", () => {
-    expect(RETRY_DEFAULTS).toEqual({ maxRetries: 3, baseDelayMs: 500, maxDelayMs: 10000 });
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
   });
 
-  it("retries a GET on a 500 response and succeeds", async () => {
-    const client = new SceneClient(getAccessToken, undefined, fastRetryOptions);
-    fetchMock
-      .mockImplementationOnce(() =>
-        createErrorResponse({ code: "ServerError", message: "boom" }, 500),
-      )
-      .mockImplementationOnce(() => createSuccessfulResponse(exampleSceneListResponse));
+  describe("configuration", () => {
+    it("uses RETRY_DEFAULTS when no retry options are provided", async () => {
+      vi.useFakeTimers();
+      const client = new SceneClient(getAccessToken);
+      fetchMock.mockImplementation(serverError);
 
-    const result = await client.getScenes({ iTwinId: "itw-1" });
+      const promise = expect(client.getScenes({ iTwinId: "itw-1" })).rejects.toThrow(
+        ScenesApiError,
+      );
+      await vi.runAllTimersAsync();
+      await promise;
 
-    expect(result).toEqual(exampleSceneListResponse);
-    expect(fetchMock).toHaveBeenCalledTimes(2);
-  });
-
-  it("retries on a thrown network error and succeeds", async () => {
-    const client = new SceneClient(getAccessToken, undefined, fastRetryOptions);
-    fetchMock
-      .mockImplementationOnce(() => Promise.reject(new TypeError("Failed to fetch")))
-      .mockImplementationOnce(() => createSuccessfulResponse(exampleSceneListResponse));
-
-    const result = await client.getScenes({ iTwinId: "itw-1" });
-
-    expect(result).toEqual(exampleSceneListResponse);
-    expect(fetchMock).toHaveBeenCalledTimes(2);
-  });
-
-  it("retries a 429 response, waiting for the Retry-After duration", async () => {
-    vi.useFakeTimers();
-    const client = new SceneClient(getAccessToken, undefined, {
-      maxRetries: 1,
-      baseDelayMs: 1000,
-      maxDelayMs: 6000,
+      expect(fetchMock).toHaveBeenCalledTimes(1 + RETRY_DEFAULTS.maxRetries);
     });
-    fetchMock
-      .mockImplementationOnce(() =>
-        createErrorResponse({ code: "TooManyRequests", message: "slow down" }, 429, {
-          "Retry-After": "5",
-        }),
-      )
-      .mockImplementationOnce(() => createSuccessfulResponse(exampleSceneListResponse));
 
-    const promise = client.getScenes({ iTwinId: "itw-1" });
+    it.each<[keyof RetryOptions, number]>([
+      ["maxRetries", -1],
+      ["maxRetries", NaN],
+      ["maxRetries", 2.5],
+      ["maxRetries", 11],
+      ["baseDelayMs", -1],
+      ["baseDelayMs", NaN],
+      ["baseDelayMs", Infinity],
+      ["maxDelayMs", -1],
+      ["maxDelayMs", NaN],
+      ["maxDelayMs", Infinity],
+      ["maxRetryAfterMs", -1],
+      ["maxRetryAfterMs", NaN],
+      ["maxRetryAfterMs", Infinity],
+    ])("throws a RangeError for an invalid %s (%s)", (name, value) => {
+      const create = () => new SceneClient(getAccessToken, { retry: { [name]: value } });
 
-    await vi.advanceTimersByTimeAsync(0);
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(create).toThrow(RangeError);
+      expect(create).toThrow(`retry.${name}`);
+    });
 
-    // Retry-After (5000ms) plus up to 1000ms of jitter.
-    await vi.advanceTimersByTimeAsync(6000);
-    const result = await promise;
+    it("accepts boundary values and explicitly undefined options", async () => {
+      vi.useFakeTimers();
+      const client = new SceneClient(getAccessToken, {
+        retry: {
+          maxRetries: 10,
+          baseDelayMs: 0,
+          maxDelayMs: undefined,
+          maxRetryAfterMs: 0,
+        },
+      });
+      fetchMock.mockImplementation(serverError);
 
-    expect(result).toEqual(exampleSceneListResponse);
-    expect(fetchMock).toHaveBeenCalledTimes(2);
+      const promise = expect(client.getScenes({ iTwinId: "itw-1" })).rejects.toThrow(
+        ScenesApiError,
+      );
+      await vi.runAllTimersAsync();
+      await promise;
+
+      expect(fetchMock).toHaveBeenCalledTimes(11);
+    });
   });
 
-  it("gives up on a 429 when Retry-After exceeds maxDelayMs", async () => {
-    const client = new SceneClient(getAccessToken, undefined, {
-      maxRetries: 2,
-      baseDelayMs: 1,
-      maxDelayMs: 1000,
+  describe("only retryable requests", () => {
+    it.each([408, 500, 502, 503, 504])("retries a GET on a %i response", async (status) => {
+      const client = new SceneClient(getAccessToken, { retry: fastRetryOptions });
+      fetchMock
+        .mockImplementationOnce(() => createErrorResponse({}, status))
+        .mockImplementationOnce(() => createSuccessfulResponse(exampleSceneListResponse));
+
+      await expect(client.getScenes({ iTwinId: "itw-1" })).resolves.toEqual(
+        exampleSceneListResponse,
+      );
+      expect(fetchMock).toHaveBeenCalledTimes(2);
     });
-    fetchMock.mockImplementation(() =>
-      createErrorResponse({ code: "TooManyRequests", message: "slow down" }, 429, {
-        "Retry-After": "86400",
-      }),
+
+    it("retries a GET on a thrown network error", async () => {
+      const client = new SceneClient(getAccessToken, { retry: fastRetryOptions });
+      fetchMock
+        .mockImplementationOnce(() => Promise.reject(new TypeError("Failed to fetch")))
+        .mockImplementationOnce(() => createSuccessfulResponse(exampleSceneListResponse));
+
+      await expect(client.getScenes({ iTwinId: "itw-1" })).resolves.toEqual(
+        exampleSceneListResponse,
+      );
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+    });
+
+    it.each([304, 400, 401, 403, 404, 422])(
+      "does not retry a GET on a %i response",
+      async (status) => {
+        const client = new SceneClient(getAccessToken, { retry: fastRetryOptions });
+        fetchMock.mockImplementation(() => createErrorResponse({}, status));
+
+        await expect(client.getScenes({ iTwinId: "itw-1" })).rejects.toThrow(ScenesApiError);
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+      },
     );
 
-    await expect(client.getScenes({ iTwinId: "itw-1" })).rejects.toThrow(ScenesApiError);
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-  });
+    it.each([500, 502, 503, 504])("retries a DELETE on a %i response", async (status) => {
+      const client = new SceneClient(getAccessToken, { retry: fastRetryOptions });
+      fetchMock
+        .mockImplementationOnce(() => createErrorResponse({}, status))
+        .mockImplementationOnce(() => createNoContentResponse());
 
-  it("drains the response body before retrying a retryable error", async () => {
-    const client = new SceneClient(getAccessToken, undefined, fastRetryOptions);
-    const cancel = vi.fn().mockResolvedValue(undefined);
-    fetchMock
-      .mockImplementationOnce(() =>
-        Promise.resolve({
-          ok: false,
-          status: 500,
-          headers: { get: () => null },
-          json: async () => ({ error: { code: "ServerError", message: "boom" } }),
-          body: { cancel },
-        } as unknown as Response),
-      )
-      .mockImplementationOnce(() => createSuccessfulResponse(exampleSceneListResponse));
+      await client.deleteScene({ iTwinId: "itw-1", sceneId: "scene-1" });
 
-    await client.getScenes({ iTwinId: "itw-1" });
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+    });
 
-    expect(cancel).toHaveBeenCalledTimes(1);
-  });
+    it("retries a POST on a 429 response", async () => {
+      const client = new SceneClient(getAccessToken, { retry: fastRetryOptions });
+      fetchMock
+        .mockImplementationOnce(() =>
+          createErrorResponse({ code: "TooManyRequests", message: "slow down" }, 429),
+        )
+        .mockImplementationOnce(() => createSuccessfulResponse(exampleSceneResponse));
 
-  it("falls back to the default maxRetries for invalid values", async () => {
-    const invalidValues = [-1, NaN, 2.5, undefined];
-    for (const maxRetries of invalidValues) {
-      fetchMock.mockReset();
-      const client = new SceneClient(getAccessToken, undefined, {
-        maxRetries,
-        baseDelayMs: 1,
-        maxDelayMs: 5,
+      await client.postScene(newScene);
+
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+    });
+
+    it.each([
+      ["a network error", () => Promise.reject(new TypeError("Failed to fetch")), TypeError],
+      ["a 5xx response", serverError, ScenesApiError],
+    ])("does not retry a POST on %s", async (_, failure, expectedError) => {
+      const client = new SceneClient(getAccessToken, { retry: fastRetryOptions });
+      fetchMock.mockImplementation(failure);
+
+      await expect(client.postScene(newScene)).rejects.toThrow(expectedError);
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
+    it("retries a PUT image upload on a 503, resending the body", async () => {
+      const client = new SceneClient(getAccessToken, { retry: fastRetryOptions });
+      const image = new Uint8Array([1, 2, 3, 4]);
+      fetchMock
+        .mockImplementationOnce(() =>
+          createErrorResponse({ code: "ServiceUnavailable", message: "busy" }, 503),
+        )
+        .mockImplementationOnce(() => createSuccessfulResponse(exampleImageResponse));
+
+      const result = await client.uploadSceneImage({
+        iTwinId: "itw-1",
+        sceneId: "scene-1",
+        image,
+        contentType: "image/png",
       });
+
+      expect(result).toEqual(exampleImageResponse);
+      const expectedCall = {
+        url: `${BASE_DOMAIN}/scene-1/image?iTwinId=itw-1`,
+        headers: {
+          Accept: "application/vnd.bentley.itwin-platform.v1+json",
+          "Content-Type": "image/png",
+        },
+        method: "PUT",
+        body: image,
+      };
+      verifyFetch(fetchMock, [expectedCall, expectedCall]);
+    });
+  });
+
+  describe("Retry-After", () => {
+    interface RetryAfterCase {
+      name: string;
+      status: number;
+      retryAfter: string;
+      waitMs: number;
+      retry?: RetryOptions;
+      now?: string;
+    }
+
+    it.each<RetryAfterCase>([
+      { name: "seconds on a 429", status: 429, retryAfter: "5", waitMs: 5000 },
+      { name: "seconds on a 503", status: 503, retryAfter: "2", waitMs: 2000 },
+      {
+        // maxDelayMs only caps backoff; it must not also cap how long a Retry-After is honored for.
+        // Retry-After equal to the default maxRetryAfterMs (10s) is still honored.
+        name: "up to maxRetryAfterMs, even beyond maxDelayMs",
+        status: 429,
+        retryAfter: "10",
+        retry: { maxDelayMs: 1000 },
+        waitMs: 10000,
+      },
+      {
+        name: "an HTTP-date",
+        status: 429,
+        retryAfter: "Wed, 01 Jan 2025 00:00:05 GMT",
+        now: "2025-01-01T00:00:00.000Z",
+        waitMs: 5000,
+      },
+    ])(
+      "waits exactly the requested duration: $name",
+      async ({ status, retryAfter, retry, now, waitMs }) => {
+        vi.useFakeTimers();
+        if (now) {
+          vi.setSystemTime(new Date(now));
+        }
+        const client = new SceneClient(getAccessToken, { retry: { maxRetries: 1, ...retry } });
+        fetchMock
+          .mockImplementationOnce(() =>
+            createErrorResponse({ code: "Throttled", message: "retry later" }, status, {
+              "Retry-After": retryAfter,
+            }),
+          )
+          .mockImplementationOnce(() => createSuccessfulResponse(exampleSceneListResponse));
+
+        const promise = client.getScenes({ iTwinId: "itw-1" });
+
+        await vi.advanceTimersByTimeAsync(waitMs - 1);
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+
+        await vi.advanceTimersByTimeAsync(1);
+        await expect(promise).resolves.toEqual(exampleSceneListResponse);
+        expect(fetchMock).toHaveBeenCalledTimes(2);
+      },
+    );
+
+    it("treats a past HTTP-date as retry-now rather than invalid", async () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2025-01-01T00:00:05.000Z"));
+      const client = new SceneClient(getAccessToken, { retry: { maxRetries: 1 } });
+      fetchMock
+        .mockImplementationOnce(() =>
+          createErrorResponse({ code: "TooManyRequests", message: "slow down" }, 429, {
+            "Retry-After": "Wed, 01 Jan 2025 00:00:00 GMT",
+          }),
+        )
+        .mockImplementationOnce(() => createSuccessfulResponse(exampleSceneListResponse));
+
+      const promise = client.getScenes({ iTwinId: "itw-1" });
+
+      // The date is already in the past, so Retry-After resolves to 0ms.
+      await vi.advanceTimersByTimeAsync(0);
+
+      await expect(promise).resolves.toEqual(exampleSceneListResponse);
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+    });
+
+    it.each([
+      ["the default 10s", {}, "11"],
+      ["a custom maxRetryAfterMs", { maxRetryAfterMs: 1000 }, "2"],
+    ])("gives up on a 429 when Retry-After exceeds %s", async (_, retry, retryAfter) => {
+      const client = new SceneClient(getAccessToken, { retry: { ...fastRetryOptions, ...retry } });
       fetchMock.mockImplementation(() =>
-        createErrorResponse({ code: "ServerError", message: "boom" }, 500),
+        createErrorResponse({ code: "TooManyRequests", message: "slow down" }, 429, {
+          "Retry-After": retryAfter,
+        }),
       );
 
       await expect(client.getScenes({ iTwinId: "itw-1" })).rejects.toThrow(ScenesApiError);
-      expect(fetchMock).toHaveBeenCalledTimes(1 + RETRY_DEFAULTS.maxRetries);
-    }
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it("does not retry non-retryable 4xx errors", async () => {
-    const client = new SceneClient(getAccessToken, undefined, fastRetryOptions);
-    fetchMock.mockImplementation(() =>
-      createErrorResponse({ code: "NotFound", message: "missing" }, 404),
+  describe("backoff and exhaustion", () => {
+    it.each([
+      // Default policy, Math.random() = 1: the full backoff, doubling from 500ms and capped at 5000ms.
+      [{ maxRetries: 5 }, 1, [500, 1000, 2000, 4000, 5000]],
+      // Default policy, Math.random() = 0: never less than half the backoff.
+      [{ maxRetries: 5 }, 0, [250, 500, 1000, 2000, 2500]],
+      // Custom baseDelayMs and maxDelayMs.
+      [{ maxRetries: 3, baseDelayMs: 1000, maxDelayMs: 3000 }, 1, [1000, 2000, 3000]],
+    ])(
+      "waits exponential backoff with equal jitter (%o, random=%d)",
+      async (retry, random, expectedDelays) => {
+        vi.useFakeTimers();
+        vi.spyOn(Math, "random").mockReturnValue(random);
+        const client = new SceneClient(getAccessToken, { retry });
+        fetchMock.mockImplementation(serverError);
+
+        const promise = expect(client.getScenes({ iTwinId: "itw-1" })).rejects.toThrow(
+          ScenesApiError,
+        );
+        await vi.advanceTimersByTimeAsync(0);
+        for (const [i, delayMs] of expectedDelays.entries()) {
+          await vi.advanceTimersByTimeAsync(delayMs - 1);
+          expect(fetchMock).toHaveBeenCalledTimes(i + 1);
+          await vi.advanceTimersByTimeAsync(1);
+          expect(fetchMock).toHaveBeenCalledTimes(i + 2);
+        }
+        await promise;
+      },
     );
 
-    await expect(client.getScenes({ iTwinId: "itw-1" })).rejects.toThrow(ScenesApiError);
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-  });
+    it("exhausts maxRetries and throws the final error", async () => {
+      const client = new SceneClient(getAccessToken, { retry: fastRetryOptions });
+      fetchMock.mockImplementation(serverError);
 
-  it("does not retry a POST on a 500 response", async () => {
-    const client = new SceneClient(getAccessToken, undefined, fastRetryOptions);
-    fetchMock.mockImplementation(() =>
-      createErrorResponse({ code: "ServerError", message: "boom" }, 500),
-    );
+      await expect(client.getScenes({ iTwinId: "itw-1" })).rejects.toThrow(ScenesApiError);
+      expect(fetchMock).toHaveBeenCalledTimes(1 + fastRetryOptions.maxRetries);
+    });
 
-    await expect(
-      client.postScene({
-        iTwinId: "itw-1",
-        scene: { displayName: "Test", sceneData: { objects: [] } },
-      }),
-    ).rejects.toThrow(ScenesApiError);
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-  });
+    it("discards the response body before retrying a retryable error", async () => {
+      const client = new SceneClient(getAccessToken, { retry: fastRetryOptions });
+      const cancel = vi.fn().mockResolvedValue(undefined);
+      fetchMock
+        .mockImplementationOnce(() =>
+          Promise.resolve({
+            ok: false,
+            status: 500,
+            headers: { get: () => null },
+            json: async () => ({ error: { code: "ServerError", message: "boom" } }),
+            body: { cancel },
+          } as unknown as Response),
+        )
+        .mockImplementationOnce(() => createSuccessfulResponse(exampleSceneListResponse));
 
-  it("retries a DELETE on a 500 response", async () => {
-    const client = new SceneClient(getAccessToken, undefined, fastRetryOptions);
-    fetchMock
-      .mockImplementationOnce(() =>
-        createErrorResponse({ code: "ServerError", message: "boom" }, 500),
-      )
-      .mockImplementationOnce(() => createNoContentResponse());
+      await client.getScenes({ iTwinId: "itw-1" });
 
-    await client.deleteScene({ iTwinId: "itw-1", sceneId: "scene-1" });
-
-    expect(fetchMock).toHaveBeenCalledTimes(2);
-  });
-
-  it("exhausts maxRetries and throws the final error", async () => {
-    const client = new SceneClient(getAccessToken, undefined, fastRetryOptions);
-    fetchMock.mockImplementation(() =>
-      createErrorResponse({ code: "ServerError", message: "boom" }, 500),
-    );
-
-    await expect(client.getScenes({ iTwinId: "itw-1" })).rejects.toThrow(ScenesApiError);
-    expect(fetchMock).toHaveBeenCalledTimes(1 + fastRetryOptions.maxRetries);
+      expect(cancel).toHaveBeenCalledTimes(1);
+    });
   });
 });
 

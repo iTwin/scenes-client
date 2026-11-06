@@ -4,8 +4,9 @@
 
 Add retry policy to `SceneClient`.
 
-**Behavior change:** requests that fail with a `429`, `5xx`, or network error are now automatically retried by default, where previously the error surfaced after a single attempt. To restore the previous single-attempt behavior, pass `{ maxRetries: 0 }`.
+**Behavior change:** transient failures are now retried by default (previously they surfaced after a single attempt). Pass `{ retryOptions: { maxRetries: 0 } }` to restore single-attempt behavior.
 
-- A `429` honors the `Retry-After` header, unless the wait it asks for would exceed `maxDelayMs`, in which case the retry is abandoned and the `429` is surfaced immediately.
-- `5xx`/network errors are only retried for idempotent requests (GET, PUT, DELETE) to avoid duplicating a POST/PATCH that may have already been processed.
-- Optionally pass `retryOptions` to client constructor to override the default policy (`maxRetries`, `baseDelayMs`, `maxDelayMs`). Invalid values (negative, `NaN`) fall back to the defaults.
+- Retries `429` for all requests, and `408`, `5xx` and network errors for idempotent requests (GET, PUT, DELETE) only.
+- Waits using the `Retry-After` header when present, otherwise exponential backoff with jitter.
+- Added `RetryOptions` type (`maxRetries`, `baseDelayMs`, `maxDelayMs`, `maxRetryAfterMs`) for clients to override defaults.
+- `SceneClient` constructor now accepts an options object (`{ baseUrl?: string, retry?: RetryOptions }`). The previous `baseUrl` string form is still supported.

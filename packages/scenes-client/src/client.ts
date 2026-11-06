@@ -3,7 +3,7 @@
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
 import { ClientArgs } from "./api/apiFetch.js";
-import { resolveRetryPolicy } from "./api/retry.js";
+import { resolveRetryPolicy } from "./api/retry/retryPolicy.js";
 import {
   getScene,
   getAllScenes,
@@ -82,7 +82,7 @@ import {
   RevokeSceneShareParams,
   SceneShareListResponse,
   SceneShareResponse,
-  RetryOptions,
+  SceneClientOptions,
 } from "./models/index.js";
 
 type AccessTokenFn = () => Promise<string>;
@@ -90,23 +90,30 @@ type AccessTokenFn = () => Promise<string>;
 const DEFAULT_BASE_URL = "https://api.bentley.com/scenes";
 
 export class SceneClient {
-  private readonly clientOptions: ClientArgs;
+  private readonly clientArgs: ClientArgs;
 
   /**
    * Create a new SceneClient instance.
    * @param getAccessToken – Async function to retrieve an access token.
-   * @param baseUrl – Optional base URL for the API. Defaults to production.
-   * @param retryOptions – Optional user overrides for retry policy on transient errors.
+   * @param options – Optional client configuration (base URL, retry policy).
+   * @throws {RangeError} If a numeric `options.retry` setting is invalid (e.g. negative, or `maxRetries` above 10).
    */
-  constructor(
-    getAccessToken: AccessTokenFn,
-    baseUrl: string = DEFAULT_BASE_URL,
-    retryOptions: RetryOptions = {},
-  ) {
-    this.clientOptions = {
+  constructor(getAccessToken: AccessTokenFn, options?: SceneClientOptions);
+  /**
+   * Create a new SceneClient instance.
+   * @param getAccessToken – Async function to retrieve an access token.
+   * @param baseUrl – Optional base URL for the API. Defaults to production.
+   */
+  constructor(getAccessToken: AccessTokenFn, baseUrl?: string);
+  constructor(getAccessToken: AccessTokenFn, baseUrlOrOptions?: string | SceneClientOptions) {
+    const options: SceneClientOptions =
+      typeof baseUrlOrOptions === "string"
+        ? { baseUrl: baseUrlOrOptions }
+        : (baseUrlOrOptions ?? {});
+    this.clientArgs = {
       getAccessToken,
-      baseUrl,
-      retryOptions: resolveRetryPolicy(retryOptions),
+      baseUrl: options.baseUrl ?? DEFAULT_BASE_URL,
+      retryPolicy: resolveRetryPolicy(options.retry ?? {}),
     };
   }
 
@@ -125,7 +132,7 @@ export class SceneClient {
         sceneId: params.sceneId,
         orderBy: params.orderBy ?? GET_OBJECTS_DEFAULTS.orderBy,
       },
-      this.clientOptions,
+      this.clientArgs,
     );
   }
 
@@ -142,7 +149,7 @@ export class SceneClient {
         iTwinId: params.iTwinId,
         sceneId: params.sceneId,
       },
-      this.clientOptions,
+      this.clientArgs,
     );
   }
 
@@ -161,7 +168,7 @@ export class SceneClient {
         top: params.top ?? GET_SCENES_DEFAULTS.top,
         skip: params.skip ?? GET_SCENES_DEFAULTS.skip,
       },
-      this.clientOptions,
+      this.clientArgs,
     );
   }
 
@@ -183,7 +190,7 @@ export class SceneClient {
       delayMs: params.delayMs ?? GET_SCENES_DEFAULTS.delayMs,
     };
 
-    return getAllScenes({ iTwinId: params.iTwinId }, this.clientOptions, opts);
+    return getAllScenes({ iTwinId: params.iTwinId }, this.clientArgs, opts);
   }
 
   /**
@@ -199,7 +206,7 @@ export class SceneClient {
         iTwinId: params.iTwinId,
         scene: params.scene,
       },
-      this.clientOptions,
+      this.clientArgs,
     );
   }
 
@@ -218,7 +225,7 @@ export class SceneClient {
         sceneId: params.sceneId,
         scene: params.scene,
       },
-      this.clientOptions,
+      this.clientArgs,
     );
   }
 
@@ -234,7 +241,7 @@ export class SceneClient {
         iTwinId: params.iTwinId,
         sceneId: params.sceneId,
       },
-      this.clientOptions,
+      this.clientArgs,
     );
   }
 
@@ -253,7 +260,7 @@ export class SceneClient {
         sceneId: params.sceneId,
         size: params.size,
       },
-      this.clientOptions,
+      this.clientArgs,
     );
   }
 
@@ -274,7 +281,7 @@ export class SceneClient {
         image: params.image,
         contentType: params.contentType,
       },
-      this.clientOptions,
+      this.clientArgs,
     );
   }
 
@@ -290,7 +297,7 @@ export class SceneClient {
         iTwinId: params.iTwinId,
         sceneId: params.sceneId,
       },
-      this.clientOptions,
+      this.clientArgs,
     );
   }
 
@@ -309,7 +316,7 @@ export class SceneClient {
         iTwinId: params.iTwinId,
         objectId: params.objectId,
       },
-      this.clientOptions,
+      this.clientArgs,
     );
   }
 
@@ -332,7 +339,7 @@ export class SceneClient {
         skip: params.skip ?? GET_OBJECTS_DEFAULTS.skip,
         orderBy: params.orderBy ?? GET_OBJECTS_DEFAULTS.orderBy,
       },
-      this.clientOptions,
+      this.clientArgs,
     );
   }
 
@@ -359,7 +366,7 @@ export class SceneClient {
 
     return getAllObjects(
       { sceneId: params.sceneId, iTwinId: params.iTwinId },
-      this.clientOptions,
+      this.clientArgs,
       opts,
     );
   }
@@ -379,7 +386,7 @@ export class SceneClient {
         sceneId: params.sceneId,
         objects: params.objects,
       },
-      this.clientOptions,
+      this.clientArgs,
     );
   }
 
@@ -400,7 +407,7 @@ export class SceneClient {
         objectId: params.objectId,
         object: params.object,
       },
-      this.clientOptions,
+      this.clientArgs,
     );
   }
 
@@ -420,7 +427,7 @@ export class SceneClient {
         sceneId: params.sceneId,
         objects: params.objects,
       },
-      this.clientOptions,
+      this.clientArgs,
     );
   }
 
@@ -444,7 +451,7 @@ export class SceneClient {
         sceneId: params.sceneId,
         operations: params.operations,
       },
-      this.clientOptions,
+      this.clientArgs,
     );
   }
 
@@ -462,7 +469,7 @@ export class SceneClient {
         sceneId: params.sceneId,
         objectId: params.objectId,
       },
-      this.clientOptions,
+      this.clientArgs,
     );
   }
 
@@ -480,7 +487,7 @@ export class SceneClient {
         sceneId: params.sceneId,
         objectIds: params.objectIds,
       },
-      this.clientOptions,
+      this.clientArgs,
     );
   }
 
@@ -501,7 +508,7 @@ export class SceneClient {
         objectId: params.objectId,
         size: params.size,
       },
-      this.clientOptions,
+      this.clientArgs,
     );
   }
 
@@ -524,7 +531,7 @@ export class SceneClient {
         image: params.image,
         contentType: params.contentType,
       },
-      this.clientOptions,
+      this.clientArgs,
     );
   }
 
@@ -542,7 +549,7 @@ export class SceneClient {
         sceneId: params.sceneId,
         objectId: params.objectId,
       },
-      this.clientOptions,
+      this.clientArgs,
     );
   }
 
@@ -568,7 +575,7 @@ export class SceneClient {
         sceneId: params.sceneId,
         share: params.share ?? {},
       },
-      this.clientOptions,
+      this.clientArgs,
     );
   }
 
@@ -587,7 +594,7 @@ export class SceneClient {
         sceneId: params.sceneId,
         shareId: params.shareId,
       },
-      this.clientOptions,
+      this.clientArgs,
     );
   }
 
@@ -606,7 +613,7 @@ export class SceneClient {
         sceneId: params.sceneId,
         shareId: params.shareId,
       },
-      this.clientOptions,
+      this.clientArgs,
     );
   }
 
@@ -623,7 +630,7 @@ export class SceneClient {
         iTwinId: params.iTwinId,
         sceneId: params.sceneId,
       },
-      this.clientOptions,
+      this.clientArgs,
     );
   }
 
@@ -640,7 +647,7 @@ export class SceneClient {
         iTwinId: params.iTwinId,
         tagId: params.tagId,
       },
-      this.clientOptions,
+      this.clientArgs,
     );
   }
 
@@ -659,7 +666,7 @@ export class SceneClient {
         top: params.top ?? GET_TAGS_DEFAULTS.top,
         skip: params.skip ?? GET_TAGS_DEFAULTS.skip,
       },
-      this.clientOptions,
+      this.clientArgs,
     );
   }
 
@@ -679,7 +686,7 @@ export class SceneClient {
       delayMs: params.delayMs ?? GET_TAGS_DEFAULTS.delayMs,
     };
 
-    return getAllTags({ iTwinId: params.iTwinId }, this.clientOptions, opts);
+    return getAllTags({ iTwinId: params.iTwinId }, this.clientArgs, opts);
   }
 
   /**
@@ -695,7 +702,7 @@ export class SceneClient {
         iTwinId: params.iTwinId,
         tag: params.tag,
       },
-      this.clientOptions,
+      this.clientArgs,
     );
   }
 
@@ -714,7 +721,7 @@ export class SceneClient {
         tagId: params.tagId,
         tag: params.tag,
       },
-      this.clientOptions,
+      this.clientArgs,
     );
   }
 
@@ -730,7 +737,7 @@ export class SceneClient {
         iTwinId: params.iTwinId,
         tagId: params.tagId,
       },
-      this.clientOptions,
+      this.clientArgs,
     );
   }
 }
