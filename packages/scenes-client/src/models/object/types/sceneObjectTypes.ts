@@ -18,6 +18,11 @@ export type CutoutCreateV2 = StandardObjectCreate<"Cutout", "2.0.0">;
 /** Latest Cutout creation type. Currently points to 2.0.0. */
 export type CutoutCreate = CutoutCreateV2;
 
+/** GlobalMapLayerSet (v1.0.0) Scene Object Creation Type. **A scene may contain at most one.** */
+export type GlobalMapLayerSetCreateV1 = StandardObjectCreate<"GlobalMapLayerSet", "1.0.0">;
+/** Latest GlobalMapLayerSet creation type. Currently points to 1.0.0. **A scene may contain at most one.** */
+export type GlobalMapLayerSetCreate = GlobalMapLayerSetCreateV1;
+
 /** Layer (v1.0.0) Scene Object Creation Type */
 export type LayerCreateV1 = StandardObjectCreate<"Layer", "1.0.0">;
 /** Latest Layer creation type. Currently points to 1.0.0. */
@@ -126,6 +131,11 @@ export type CutoutV2 = StandardObject<"Cutout", "2.0.0">;
 /** Latest Cutout response type. Currently points to 2.0.0. */
 export type Cutout = CutoutV2;
 
+/** GlobalMapLayerSet (v1.0.0) Scene Object Response Type. */
+export type GlobalMapLayerSetV1 = StandardObject<"GlobalMapLayerSet", "1.0.0">;
+/** Latest GlobalMapLayerSet response type. Currently points to 1.0.0. */
+export type GlobalMapLayerSet = GlobalMapLayerSetV1;
+
 /** Layer (v1.0.0) Scene Object Response Type. */
 export type LayerV1 = StandardObject<"Layer", "1.0.0">;
 /** Latest Layer response type. Currently points to 1.0.0. */
@@ -217,6 +227,7 @@ export type SceneObjectCreateType =
   | CameraAnimationCreateV1
   | CutoutCreateV1
   | CutoutCreateV2
+  | GlobalMapLayerSetCreateV1
   | LayerCreateV1
   | MaterialDecorationCreateV1
   | MovieCreateV1
@@ -239,6 +250,7 @@ export type SceneObjectType =
   | CameraAnimationV1
   | CutoutV1
   | CutoutV2
+  | GlobalMapLayerSetV1
   | LayerV1
   | MaterialDecorationV1
   | MovieV1
