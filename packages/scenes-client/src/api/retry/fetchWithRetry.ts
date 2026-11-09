@@ -5,12 +5,15 @@
 import { sleep } from "../../utilities.js";
 import { RetryPolicy } from "./retryPolicy.js";
 
+const IDEMPOTENT_METHODS = new Set(["GET", "PUT", "DELETE"]);
+
 /**
  * Determines whether an HTTP method is safe to retry without risking a duplicate side effect.
  * @param method - The HTTP method of the request.
+ * @returns True if the method is idempotent, false otherwise.
  */
 function isIdempotentMethod(method: string): boolean {
-  return ["GET", "PUT", "DELETE"].includes(method.toUpperCase());
+  return IDEMPOTENT_METHODS.has(method.toUpperCase());
 }
 
 /**
@@ -24,7 +27,7 @@ function isRetryable(status: number, isIdempotent: boolean): boolean {
     return true; // Rate-limited requests weren't processed, so any method is safe to retry
   }
   // 408: the server timed out waiting for the request; 5xx: transient server-side failures
-  return isIdempotent && [408, 500, 502, 503, 504].includes(status);
+  return isIdempotent && (status === 408 || status >= 500);
 }
 
 /**
@@ -83,7 +86,8 @@ async function fetchAndBuffer(url: string, fetchOptions: RequestInit): Promise<R
  * Fetches a URL with retries on transient errors:
  *   - 429: retried for all methods, since the request wasn't processed.
  *   - 408, 5xx and network errors: retried for idempotent methods only.
- * A `Retry-After` header on a retryable response is honored if it's at most `maxRetryAfterMs`; if it's longer, the response is returned immediately without retrying.
+ * A `Retry-After` header on a retryable response is honored if it's at most `maxRetryAfterMs`.
+ * If it's longer, the response is returned immediately without retrying.
  * Otherwise the delay comes from exponential backoff.
  * @param url - The URL to fetch.
  * @param fetchOptions - Fetch options (method, body, headers, etc.)
