@@ -1,5 +1,14 @@
 # @itwin/scenes-client
 
+## 0.21.0
+
+### Minor Changes
+
+- 84b1cc0: Add GlobalMapLayerSet v1.0.0 schema support
+
+  - Update `SceneApiSchemas` interface to include GlobalMapLayerSet v1.0.0 schema
+  - Add create types (`GlobalMapLayerSetCreate`/`GlobalMapLayerSetCreateV1`) and response types (`GlobalMapLayerSet`/`GlobalMapLayerSetV1`).
+
 ## 0.20.0
 
 ### Minor Changes
