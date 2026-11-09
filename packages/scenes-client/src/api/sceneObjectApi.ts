@@ -21,7 +21,7 @@ import {
   PatchObjectsOperationsParams,
 } from "../models/index.js";
 import { iteratePagedEndpoint, batched } from "../utilities.js";
-import { callApi, AuthArgs } from "./apiFetch.js";
+import { callApi, ClientArgs } from "./apiFetch.js";
 
 /**
  * Fetches a single scene object by its object ID.
@@ -29,17 +29,13 @@ import { callApi, AuthArgs } from "./apiFetch.js";
  * @returns SceneObjectResponse containing the single object details.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
-export async function getObject({
-  sceneId,
-  iTwinId,
-  objectId,
-  getAccessToken,
-  baseUrl,
-}: GetObjectParams & AuthArgs): Promise<SceneObjectResponse> {
+export async function getObject(
+  { sceneId, iTwinId, objectId }: GetObjectParams,
+  clientArgs: ClientArgs,
+): Promise<SceneObjectResponse> {
   return callApi<SceneObjectResponse>({
     endpoint: `/${sceneId}/objects/${objectId}?iTwinId=${iTwinId}`,
-    getAccessToken,
-    baseUrl,
+    ...clientArgs,
     typeGuard: isSceneObjectResponse,
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -53,19 +49,13 @@ export async function getObject({
  * @returns SceneObjectListResponse containing the objects in the scene.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid
  */
-export async function getObjects({
-  sceneId,
-  iTwinId,
-  top,
-  skip,
-  orderBy,
-  getAccessToken,
-  baseUrl,
-}: GetObjectsParams & AuthArgs): Promise<SceneObjectListResponse> {
+export async function getObjects(
+  { sceneId, iTwinId, top, skip, orderBy }: GetObjectsParams,
+  clientArgs: ClientArgs,
+): Promise<SceneObjectListResponse> {
   return callApi<SceneObjectListResponse>({
     endpoint: `/${sceneId}/objects?iTwinId=${iTwinId}&$top=${top}&$skip=${skip}&orderBy=${orderBy}`,
-    getAccessToken,
-    baseUrl,
+    ...clientArgs,
     typeGuard: isSceneObjectListResponse,
     additionalHeaders: {
       Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -75,23 +65,24 @@ export async function getObjects({
 
 /**
  * Fetches scene objects with pagination.
- * @param args - {@link GetAllObjectsParams}
+ * @param params - {@link GetAllObjectsParams}
+ * @param clientArgs - {@link ClientArgs}
  * @param opts - {@link GetObjectsOptions}
  * @returns Async iterator of paged scene object lists.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
 export function getAllObjects(
-  args: GetAllObjectsParams & AuthArgs,
+  { sceneId, iTwinId }: GetAllObjectsParams,
+  clientArgs: ClientArgs,
   opts: Required<GetObjectsOptions>,
 ): AsyncIterableIterator<SceneObjectPagedResponse> {
-  const { sceneId, iTwinId, getAccessToken, baseUrl } = args;
   const { top, skip, delayMs, orderBy } = opts;
-  const initialUrl = `${baseUrl}/${sceneId}/objects?iTwinId=${iTwinId}&$top=${top}&$skip=${skip}&orderBy=${orderBy}`;
+  const initialUrl = `${clientArgs.baseUrl}/${sceneId}/objects?iTwinId=${iTwinId}&$top=${top}&$skip=${skip}&orderBy=${orderBy}`;
 
   return iteratePagedEndpoint<SceneObjectPagedResponse>(initialUrl, delayMs, async (url) => {
     return callApi<SceneObjectPagedResponse>({
+      ...clientArgs,
       baseUrl: url,
-      getAccessToken,
       typeGuard: isSceneObjectPagedResponse,
       additionalHeaders: {
         Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -106,20 +97,16 @@ export function getAllObjects(
  * @returns Created scene objects details in list.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
-export async function postObjects({
-  sceneId,
-  iTwinId,
-  objects,
-  getAccessToken,
-  baseUrl,
-}: PostObjectsParams & AuthArgs): Promise<SceneObjectListResponse> {
+export async function postObjects(
+  { sceneId, iTwinId, objects }: PostObjectsParams,
+  clientArgs: ClientArgs,
+): Promise<SceneObjectListResponse> {
   const batchSize = 20;
   const results: SceneObjectListResponse[] = [];
   for (const batch of batched(objects, batchSize)) {
     const response = await callApi<SceneObjectListResponse>({
       endpoint: `/${sceneId}/objects?iTwinId=${iTwinId}`,
-      getAccessToken,
-      baseUrl,
+      ...clientArgs,
       typeGuard: isSceneObjectListResponse,
       fetchOptions: {
         method: "POST",
@@ -144,18 +131,13 @@ export async function postObjects({
  * @returns Updated scene object details.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
-export async function patchObject({
-  sceneId,
-  iTwinId,
-  objectId,
-  object,
-  getAccessToken,
-  baseUrl,
-}: PatchObjectParam & AuthArgs): Promise<SceneObjectResponse> {
+export async function patchObject(
+  { sceneId, iTwinId, objectId, object }: PatchObjectParam,
+  clientArgs: ClientArgs,
+): Promise<SceneObjectResponse> {
   return callApi<SceneObjectResponse>({
     endpoint: `/${sceneId}/objects/${objectId}?iTwinId=${iTwinId}`,
-    getAccessToken,
-    baseUrl,
+    ...clientArgs,
     typeGuard: isSceneObjectResponse,
     fetchOptions: {
       method: "PATCH",
@@ -175,20 +157,16 @@ export async function patchObject({
  * @returns Updated scene objects details.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
-export async function patchObjects({
-  sceneId,
-  iTwinId,
-  objects,
-  getAccessToken,
-  baseUrl,
-}: PatchObjectsParams & AuthArgs): Promise<SceneObjectListResponse> {
+export async function patchObjects(
+  { sceneId, iTwinId, objects }: PatchObjectsParams,
+  clientArgs: ClientArgs,
+): Promise<SceneObjectListResponse> {
   const batchSize = 20;
   const results: SceneObjectListResponse[] = [];
   for (const batch of batched(objects, batchSize)) {
     const response = await callApi<SceneObjectListResponse>({
       endpoint: `/${sceneId}/objects?iTwinId=${iTwinId}`,
-      getAccessToken,
-      baseUrl,
+      ...clientArgs,
       typeGuard: isSceneObjectListResponse,
       fetchOptions: {
         method: "PATCH",
@@ -216,17 +194,13 @@ export async function patchObjects({
  * @returns Updated scene objects details.
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
-export async function patchObjectsOperations({
-  sceneId,
-  iTwinId,
-  operations,
-  getAccessToken,
-  baseUrl,
-}: PatchObjectsOperationsParams & AuthArgs): Promise<SceneObjectListResponse> {
+export async function patchObjectsOperations(
+  { sceneId, iTwinId, operations }: PatchObjectsOperationsParams,
+  clientArgs: ClientArgs,
+): Promise<SceneObjectListResponse> {
   return callApi<SceneObjectListResponse>({
     endpoint: `/${sceneId}/objects?iTwinId=${iTwinId}`,
-    getAccessToken,
-    baseUrl,
+    ...clientArgs,
     typeGuard: isSceneObjectListResponse,
     fetchOptions: {
       method: "PATCH",
@@ -244,17 +218,13 @@ export async function patchObjectsOperations({
  * @param params - {@link DeleteObjectParams}
  * @throws {ScenesApiError} If the API call fails.
  */
-export async function deleteObject({
-  sceneId,
-  iTwinId,
-  objectId,
-  getAccessToken,
-  baseUrl,
-}: DeleteObjectParams & AuthArgs): Promise<void> {
+export async function deleteObject(
+  { sceneId, iTwinId, objectId }: DeleteObjectParams,
+  clientArgs: ClientArgs,
+): Promise<void> {
   await callApi({
     endpoint: `/${sceneId}/objects/${objectId}?iTwinId=${iTwinId}`,
-    getAccessToken,
-    baseUrl,
+    ...clientArgs,
     fetchOptions: {
       method: "DELETE",
     },
@@ -269,20 +239,16 @@ export async function deleteObject({
  * @param params - {@link DeleteObjectsParams}
  * @throws {ScenesApiError} If the API call fails.
  */
-export async function deleteObjects({
-  sceneId,
-  iTwinId,
-  objectIds,
-  getAccessToken,
-  baseUrl,
-}: DeleteObjectsParams & AuthArgs): Promise<void> {
+export async function deleteObjects(
+  { sceneId, iTwinId, objectIds }: DeleteObjectsParams,
+  clientArgs: ClientArgs,
+): Promise<void> {
   const promises: Promise<unknown>[] = [];
   for (const batch of batched(objectIds, 20)) {
     promises.push(
       callApi({
         endpoint: `/${sceneId}/objects?iTwinId=${iTwinId}&ids=${batch.join(",")}`,
-        getAccessToken,
-        baseUrl,
+        ...clientArgs,
         fetchOptions: {
           method: "DELETE",
         },

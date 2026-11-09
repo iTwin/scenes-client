@@ -767,6 +767,35 @@ const sceneResponse = await sharedClient.getScene({
 
 ---
 
+### Retry Behavior
+
+Transient failures are retried automatically by default:
+
+- `429` is retried for all requests.
+- `408`, `5xx` and network errors are retried for idempotent requests only (`GET`, `PUT`, `DELETE`).
+- Other errors (e.g. `400`) are never retried.
+
+Each retry waits for the response's `Retry-After` if it has one. If that exceeds `maxRetryAfterMs`, the error is thrown immediately instead. Otherwise it waits with exponential backoff (starting at `baseDelayMs`, doubling each retry, capped at `maxDelayMs`) plus jitter.
+
+Optionally configure retries through the constructor's `retry` option:
+
+| Option            | Default | Description                                                                 |
+| ----------------- | ------- | --------------------------------------------------------------------------- |
+| `maxRetries`      | `3`     | Retries after the initial request (integer `0`-`10`). `0` disables retries. |
+| `baseDelayMs`     | `500`   | Initial backoff delay.                                                      |
+| `maxDelayMs`      | `5000`  | Upper bound on backoff delay (not applied to `Retry-After`).                |
+| `maxRetryAfterMs` | `10000` | Longest `Retry-After` the client will wait for.                             |
+
+```ts
+import { SceneClient } from "@itwin/scenes-client";
+
+const client = new SceneClient(async () => "<itwin_platform_auth_token>", {
+  retry: { maxRetries: 5, baseDelayMs: 1000, maxDelayMs: 10000 },
+});
+```
+
+**Worst-case latency:** with the defaults, backoff adds at most 3.5s per request, but `Retry-After` waits can add up to `maxRetries × maxRetryAfterMs` (30s). Lower these options if you need a smaller bound.
+
 ### Type Safety
 
 This client provides strongly typed interfaces for all scene object operations, giving you compile-time validation:

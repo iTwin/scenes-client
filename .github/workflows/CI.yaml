@@ -40,3 +40,13 @@ jobs:
           # Fix for issue https://github.com/changesets/changesets/issues/517#issuecomment-884778604
           git pull -f origin main:main
           pnpm changeset status --since=main
+
+      - name: Refuse to merge a manually edited version into main
+        if: github.actor != 'imodeljs-admin'
+        run: |
+          MAIN_VERSION=$(git show main:packages/scenes-client/package.json | jq -r .version)
+          PR_VERSION=$(jq -r .version packages/scenes-client/package.json)
+          if [ "$MAIN_VERSION" != "$PR_VERSION" ]; then
+            echo "::error::packages/scenes-client/package.json version changed from '$MAIN_VERSION' to '$PR_VERSION' on this branch. The version on main should only ever be updated by the automated release workflow."
+            exit 1
+          fi

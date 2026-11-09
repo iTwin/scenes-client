@@ -1,0 +1,8 @@
+{
+  "$id": "/schemas/GlobalMapLayerSet.1.0.0",
+  "description": "The organizational container for anything pertaining to the scene's base map layer set (base imagery, terrain, photorealistic tiles, etc.). A scene may contain at most one GlobalMapLayerSet object. Additional global map properties may be introduced in the future.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {},
+  "required": []
+}
