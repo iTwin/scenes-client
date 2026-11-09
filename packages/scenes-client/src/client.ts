@@ -158,6 +158,7 @@ export class SceneClient {
    * @param params.iTwinId – The iTwin's unique identifier.
    * @param params.top – Number of items per page.
    * @param params.skip – Number of items to skip.
+   * @param params.sourceSceneId – Only return scenes whose sourceScene.id matches this value (optional).
    * @returns SceneListResponse containing the list of scenes details.
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
@@ -167,6 +168,7 @@ export class SceneClient {
         iTwinId: params.iTwinId,
         top: params.top ?? GET_SCENES_DEFAULTS.top,
         skip: params.skip ?? GET_SCENES_DEFAULTS.skip,
+        sourceSceneId: params.sourceSceneId ?? "",
       },
       this.clientArgs,
     );
@@ -178,6 +180,7 @@ export class SceneClient {
    * @param params.top – Number of items per page.
    * @param params.skip – Number of items to skip.
    * @param params.delayMs – Milliseconds to wait between requests.
+   * @param params.sourceSceneId – Only return scenes whose sourceScene.id matches this value (optional).
    * @returns An async iterator of SceneListResponse.
    * @throws {ScenesApiError} If the API call fails or the response format is invalid.
    */
@@ -188,6 +191,7 @@ export class SceneClient {
       top: params.top ?? GET_SCENES_DEFAULTS.top,
       skip: params.skip ?? GET_SCENES_DEFAULTS.skip,
       delayMs: params.delayMs ?? GET_SCENES_DEFAULTS.delayMs,
+      sourceSceneId: params.sourceSceneId ?? "",
     };
 
     return getAllScenes({ iTwinId: params.iTwinId }, this.clientArgs, opts);

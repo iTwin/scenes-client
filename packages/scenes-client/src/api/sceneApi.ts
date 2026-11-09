@@ -19,6 +19,7 @@ import {
   GetSceneMetadataParams,
   isSceneMetadataResponse,
   SceneMetadataResponse,
+  GET_SCENES_DEFAULTS,
 } from "../models/index.js";
 import { iteratePagedEndpoint } from "../utilities.js";
 import { callApi, ClientArgs } from "./apiFetch.js";
@@ -91,6 +92,18 @@ export async function getScene(
   };
 }
 
+/** Builds the URL for fetching scene lists */
+function buildScenesUrl(
+  baseUrl: string,
+  iTwinId: string,
+  top = GET_SCENES_DEFAULTS.top,
+  skip = GET_SCENES_DEFAULTS.skip,
+  sourceSceneId?: string,
+): string {
+  const sourceFilter = sourceSceneId ? `&sourceSceneId=${encodeURIComponent(sourceSceneId)}` : "";
+  return `${baseUrl}?iTwinId=${iTwinId}&$top=${top}&$skip=${skip}${sourceFilter}`;
+}
+
 /**
  * Fetches scenes in single page specified by the options.
  * @param params - {@link GetScenesParams}
@@ -98,10 +111,10 @@ export async function getScene(
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
 export async function getScenes(
-  { iTwinId, top, skip }: GetScenesParams,
+  { iTwinId, top, skip, sourceSceneId }: GetScenesParams,
   clientArgs: ClientArgs,
 ): Promise<SceneListResponse> {
-  const url = `${clientArgs.baseUrl}?iTwinId=${iTwinId}&$top=${top}&$skip=${skip}`;
+  const url = buildScenesUrl(clientArgs.baseUrl, iTwinId, top, skip, sourceSceneId);
 
   const response = await callApi<SceneListResponse>({
     ...clientArgs,
@@ -128,8 +141,8 @@ export function getAllScenes(
   clientArgs: ClientArgs,
   opts: Required<GetScenesOptions>,
 ): AsyncIterableIterator<SceneListResponse> {
-  const { top, delayMs, skip } = opts;
-  const initialUrl = `${clientArgs.baseUrl}?iTwinId=${iTwinId}&$top=${top}&$skip=${skip}`;
+  const { top, delayMs, skip, sourceSceneId } = opts;
+  const initialUrl = buildScenesUrl(clientArgs.baseUrl, iTwinId, top, skip, sourceSceneId);
 
   return iteratePagedEndpoint<SceneListResponse>(initialUrl, delayMs, async (url) => {
     return callApi<SceneListResponse>({

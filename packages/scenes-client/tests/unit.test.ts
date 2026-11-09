@@ -159,6 +159,27 @@ describe("Scenes Operations", () => {
     });
   });
 
+  it("getScenes() filters by sourceSceneId", async () => {
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleSceneListResponse));
+    const client = new SceneClient(getAccessToken);
+    await client.getScenes({ iTwinId: "itw-1", sourceSceneId: "src 1" });
+    verifyFetch(fetchMock, {
+      url: `${BASE_DOMAIN}?iTwinId=itw-1&$top=${GET_SCENES_DEFAULTS.top}&$skip=${GET_SCENES_DEFAULTS.skip}&sourceSceneId=src%201`,
+      headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
+    });
+  });
+
+  it("getAllScenes() filters by sourceSceneId", async () => {
+    fetchMock.mockImplementation(() => createSuccessfulResponse(exampleSceneListResponse));
+    const client = new SceneClient(getAccessToken);
+    const it = await client.getAllScenes({ iTwinId: "itw-1", sourceSceneId: "src-1" });
+    await it.next();
+    verifyFetch(fetchMock, {
+      url: `${BASE_DOMAIN}?iTwinId=itw-1&$top=${GET_SCENES_DEFAULTS.top}&$skip=${GET_SCENES_DEFAULTS.skip}&sourceSceneId=src-1`,
+      headers: { Accept: "application/vnd.bentley.itwin-platform.v1+json" },
+    });
+  });
+
   it("postScene()", async () => {
     fetchMock.mockImplementation(() => createSuccessfulResponse(exampleSceneResponse));
     const client = new SceneClient(getAccessToken);
