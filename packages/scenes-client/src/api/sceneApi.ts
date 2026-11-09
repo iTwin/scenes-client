@@ -137,11 +137,11 @@ export async function getScenes(
  * @throws {ScenesApiError} If the API call fails or the response format is invalid.
  */
 export function getAllScenes(
-  { iTwinId, sourceSceneId }: GetAllScenesParams,
+  { iTwinId }: GetAllScenesParams,
   clientArgs: ClientArgs,
   opts: Required<GetScenesOptions>,
 ): AsyncIterableIterator<SceneListResponse> {
-  const { top, delayMs, skip } = opts;
+  const { top, delayMs, skip, sourceSceneId } = opts;
   const initialUrl = buildScenesUrl(clientArgs.baseUrl, iTwinId, top, skip, sourceSceneId);
 
   return iteratePagedEndpoint<SceneListResponse>(initialUrl, delayMs, async (url) => {
