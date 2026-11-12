@@ -77,9 +77,13 @@ export type SceneObjectCreate<
   K extends SchemaKind = SchemaKind,
   V extends SchemaVersion<K> = SchemaVersion<K>,
 > = K extends ResourceStylingSchemas
-  ? ResourceStylingObjectCreate<K, V>
+  ? V extends SchemaVersion<K>
+    ? ResourceStylingObjectCreate<K, V>
+    : never
   : K extends StandardSchemas
-    ? StandardObjectCreate<K, V>
+    ? V extends SchemaVersion<K>
+      ? StandardObjectCreate<K, V>
+      : never
     : never;
 
 /**

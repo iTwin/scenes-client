@@ -702,14 +702,20 @@ export interface ScenesApiSchemas {
 export type SchemaKind = keyof ScenesApiSchemas;
 
 /**
- * Available versions for a specific schema kind
- * @template K Schema kind to get versions for
+ * Versions of one or more schema kinds.
+ * For example, `SchemaVersion<"Cutout" | "Layer">` is `"1.0.0" | "2.0.0"`.
+ * @template K Schema kind, or several kinds joined with `|`
  */
-export type SchemaVersion<K extends SchemaKind> = keyof ScenesApiSchemas[K];
+export type SchemaVersion<K extends SchemaKind> = K extends SchemaKind
+  ? keyof ScenesApiSchemas[K]
+  : never;
 
 /**
  * Gets the data structure for a specific schema kind and version.
  * Core type that provides the actual schema interface.
+ * With several kinds or versions, this is the data of each kind at each of its
+ * versions. For example, `SchemaData<"Cutout" | "Layer", "2.0.0">` is the Cutout
+ * 2.0.0 data, because Layer has no 2.0.0.
  * @template K Schema kind (ex: 'Layer', 'View3d')
  * @template V Schema version (ex: '1.0.0')
  *
@@ -728,4 +734,8 @@ export type SchemaVersion<K extends SchemaKind> = keyof ScenesApiSchemas[K];
  * }
  * ```
  */
-export type SchemaData<K extends SchemaKind, V extends SchemaVersion<K>> = ScenesApiSchemas[K][V];
+export type SchemaData<K extends SchemaKind, V extends SchemaVersion<K>> = K extends SchemaKind
+  ? V extends keyof ScenesApiSchemas[K]
+    ? ScenesApiSchemas[K][V]
+    : never
+  : never;

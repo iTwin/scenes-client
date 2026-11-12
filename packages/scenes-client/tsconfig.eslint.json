@@ -3,6 +3,7 @@
   "include": [ "src", "tests", "*.d.ts" ],
   "compilerOptions": {
     "declaration": false,
+    "rootDir": ".",
     "noEmit": true
   }
 }

@@ -15,7 +15,7 @@
   "scripts": {
     "build": "tsc 1>&2",
     "test": "pnpm vitest",
-    "test:unit": "pnpm vitest tests/unit.test.ts",
+    "test:unit": "pnpm vitest tests/unit.test.ts tests/sceneObjectTypes.test-d.ts",
     "test:integration": "pnpm vitest tests/integration.test.ts",
     "lint": "eslint src tests",
     "typecheck": "tsc --noEmit"
